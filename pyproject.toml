@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "typingsql"
+version = "0.1.0"
+description = ""
+authors = ["yassun7010 <yassun7010@outlook.com>"]
+readme = "README.md"
+packages = [{ include = "typingsql", from = "src" }]
+
+[tool.poetry.group.dev.dependencies]
+taskipy = "^1.12.2"
+pyright = "^1.1.339"
+ruff = "^0.1.7"
+pytest = "^7.4.3"
+
+[tool.taskipy.tasks]
+format = "ruff format ."
+lint = "ruff check ."
+typecheck = "pyright src/** tests/**"
+test = "pytest"
+ci = "task format && task lint && task typecheck && task test"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typing-extensions = "^4.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
