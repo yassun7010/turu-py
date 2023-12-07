@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "typingsql"
+name = "turu-core"
 version = "0.1.0"
 description = ""
 authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
-packages = [{ include = "typingsql", from = "src" }]
+packages = [{ include = "turu", from = "src" }]
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
@@ -23,6 +23,9 @@ ci = "task format && task lint && task typecheck && task test"
 python = "^3.8"
 typing-extensions = "^4.8.0"
 
+[tool.poetry-dynamic-versioning]
+enable = false
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"

@@ -1,11 +1,13 @@
+import importlib.metadata
 import sqlite3
 from typing import Callable, Optional, Type, Union, overload
 
+from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import NotRequired, Self, TypedDict, Unpack
 
-from typingsql.protocols.connection import ConnectionProtocol
-
 from .cursor import Cursor
+
+__version__ = importlib.metadata.version("turu-sqlite3")
 
 
 class Connection(sqlite3.Connection, ConnectionProtocol):

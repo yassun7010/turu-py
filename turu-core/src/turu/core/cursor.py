@@ -1,8 +1,7 @@
 from typing import Iterator, List, NamedTuple, Optional, Sequence, Type, TypeVar
 
+from turu.core.protocols.cursor import CursorProtocol, _Parameters
 from typing_extensions import Self, override
-
-from typingsql.protocols.cursor import CursorProtocol, _Parameters
 
 RowType = TypeVar("RowType", bound=NamedTuple)
 

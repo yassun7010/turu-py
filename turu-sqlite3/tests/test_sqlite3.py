@@ -1,11 +1,11 @@
 from typing import NamedTuple
 
-import typingsql.sqlite3
+import turu.sqlite3
 
 
 class TestSqlite3:
     def test_execute(self):
-        cursor = typingsql.sqlite3.connect("test.db").cursor().execute("select 1")
+        cursor = turu.sqlite3.connect("test.db").cursor().execute("select 1")
         assert cursor.fetchone() == (1,)
 
     def test_execute_typing(self):
@@ -14,7 +14,7 @@ class TestSqlite3:
             name: str
 
         rows = (
-            typingsql.sqlite3.connect("test.db")
+            turu.sqlite3.connect("test.db")
             .cursor()
             .execute_typing(Row, "select 1, 'a'")
         )

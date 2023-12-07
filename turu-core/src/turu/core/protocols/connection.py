@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from typingsql.protocols.cursor import CursorProtocol
+from turu.core.protocols.cursor import CursorProtocol
 
 
 class ConnectionProtocol(Protocol):
