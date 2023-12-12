@@ -17,6 +17,22 @@ class TestRowType:
 
         assert next(rows) == Row(1, "a")
 
+    def test_dataclass(self):
+        from dataclasses import dataclass
+
+        @dataclass
+        class Row:
+            id: int
+            name: str
+
+        rows = (
+            turu.sqlite3.connect("test.db")
+            .cursor()
+            .execute_typing(Row, "select 1, 'a'")
+        )
+
+        assert next(rows) == Row(1, "a")
+
     def test_pydantic(self):
         from pydantic import BaseModel
 

@@ -1,6 +1,7 @@
+from dataclasses import is_dataclass
 from typing import Iterator, List, Optional, Sequence, Type, TypeVar
 
-from turu.core._feature_flags import USE_PYDANTIC
+from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeError
 from turu.core.protocols.cursor import CursorProtocol, _Parameters
 from typing_extensions import Self, override
@@ -78,10 +79,16 @@ def _map_cursor(row_type: Type[RowType], row: Cursor) -> RowType:
     if issubclass(row_type, tuple):
         return row_type._make(row)  # type: ignore
 
-    if USE_PYDANTIC:
-        from pydantic import BaseModel
+    if is_dataclass(row_type):
+        return row_type(
+            **{
+                key: data
+                for key, data in zip(row_type.__dataclass_fields__.keys(), row)
+            }
+        )  # type: ignore
 
-        if issubclass(row_type, BaseModel):
+    if USE_PYDANTIC:
+        if issubclass(row_type, PydanticModel):
             return row_type(
                 **{key: data for key, data in zip(row_type.model_fields.keys(), row)}
             )
