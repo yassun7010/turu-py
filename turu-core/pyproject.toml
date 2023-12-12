@@ -6,12 +6,6 @@ authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 packages = [{ include = "turu", from = "src" }]
 
-[tool.poetry.group.dev.dependencies]
-taskipy = "^1.12.2"
-pyright = "^1.1.339"
-ruff = "^0.1.7"
-pytest = "^7.4.3"
-
 [tool.taskipy.tasks]
 format = "ruff format ."
 lint = "ruff check ."
@@ -19,9 +13,19 @@ typecheck = "pyright src/** tests/**"
 test = "pytest"
 ci = "task format && task lint && task typecheck && task test"
 
+[tool.poetry.extras]
+pydantic = ["pydantic"]
+
 [tool.poetry.dependencies]
 python = "^3.8"
 typing-extensions = "^4.8.0"
+pydantic = { version = "^2.5.2", optional = true }
+
+[tool.poetry.group.dev.dependencies]
+taskipy = "^1.12.2"
+pyright = "^1.1.339"
+ruff = "^0.1.7"
+pytest = "^7.4.3"
 
 [tool.poetry-dynamic-versioning]
 enable = false

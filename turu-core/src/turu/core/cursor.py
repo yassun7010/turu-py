@@ -1,9 +1,11 @@
-from typing import Iterator, List, NamedTuple, Optional, Sequence, Type, TypeVar
+from typing import Iterator, List, Optional, Sequence, Type, TypeVar
 
+from turu.core._feature_flags import USE_PYDANTIC
+from turu.core.exception import TuruRowTypeError
 from turu.core.protocols.cursor import CursorProtocol, _Parameters
 from typing_extensions import Self, override
 
-RowType = TypeVar("RowType", bound=NamedTuple)
+RowType = TypeVar("RowType")
 
 
 class Cursor(CursorProtocol[_Parameters]):
@@ -42,9 +44,12 @@ class Cursor(CursorProtocol[_Parameters]):
         /,
     ) -> Iterator[RowType]:
         if parameters is None:
-            return map(row_type._make, self.execute(operation))
+            return map(lambda row: _map_cursor(row_type, row), self.execute(operation))
         else:
-            return map(row_type._make, self.execute(operation, parameters))
+            return map(
+                lambda row: _map_cursor(row_type, row),
+                self.execute(operation, parameters),
+            )
 
     def executemany_typing(
         self,
@@ -52,15 +57,33 @@ class Cursor(CursorProtocol[_Parameters]):
         operation: str,
         seq_of_parameters: Sequence[_Parameters],
     ) -> Iterator[RowType]:
-        return map(row_type._make, self.executemany(operation, seq_of_parameters))
+        return map(
+            lambda row: _map_cursor(row_type, row),
+            self.executemany(operation, seq_of_parameters),
+        )
 
     def fetchone_typing(self, row_type: Type[RowType]) -> RowType:
-        return row_type._make(self.fetchone())
+        return row_type(self.fetchone())
 
     def fetchmany_typing(
         self, row_type: Type[RowType], size: Optional[int] = None
     ) -> Iterator[RowType]:
-        return map(row_type._make, self.fetchmany(size))
+        return map(lambda row: _map_cursor(row_type, row), self.fetchmany(size))
 
     def fetchall_typing(self, row_type: Type[RowType]) -> Iterator[RowType]:
-        return map(row_type._make, self.fetchall())
+        return map(lambda row: _map_cursor(row_type, row), self.fetchall())
+
+
+def _map_cursor(row_type: Type[RowType], row: Cursor) -> RowType:
+    if issubclass(row_type, tuple):
+        return row_type._make(row)  # type: ignore
+
+    if USE_PYDANTIC:
+        from pydantic import BaseModel
+
+        if issubclass(row_type, BaseModel):
+            return row_type(
+                **{key: data for key, data in zip(row_type.model_fields.keys(), row)}
+            )
+
+    raise TuruRowTypeError(row_type, row.__class__)

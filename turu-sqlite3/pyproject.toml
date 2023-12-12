@@ -11,6 +11,7 @@ taskipy = "^1.12.2"
 pyright = "^1.1.339"
 ruff = "^0.1.7"
 pytest = "^7.4.3"
+pydantic = "^2.5.2"
 
 [tool.taskipy.tasks]
 format = "ruff format ."
