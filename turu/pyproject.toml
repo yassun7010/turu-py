@@ -1,0 +1,60 @@
+[tool.poetry]
+name = "turu"
+version = "0.1.0"
+description = ""
+authors = ["yassun7010 <yassun7010@outlook.com>"]
+readme = "README.md"
+
+[tool.taskipy.tasks]
+format = "ruff format ."
+lint = "ruff check ."
+typecheck = "pyright src/** tests/**"
+test = "pytest"
+ci = "task format && task lint && task typecheck && task test"
+
+[tool.poetry.extras]
+snowflake = ["turu-snowflake"]
+sqlite3 = ["turu-sqlite3"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dependencies.turu-core]
+# INFO: poetry-dynamic-versioning to replace this.
+path = "../turu-core"
+develop = true
+# version = "0.0.0"
+
+[tool.poetry.dependencies.turu-sqlite3]
+# INFO: poetry-dynamic-versioning to replace this.
+path = "../turu-sqlite3"
+develop = true
+# version = "0.0.0"
+optional = true
+
+[tool.poetry.dependencies.turu-snowflake]
+# INFO: poetry-dynamic-versioning to replace this.
+path = "../turu-snowflake"
+develop = true
+# version = "0.0.0"
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+taskipy = "^1.12.0"
+pyright = "^1.1.337"
+ruff = "^0.1.4"
+
+[tool.poetry-dynamic-versioning]
+enable = false
+
+[[tool.poetry-dynamic-versioning.substitution.folders]]
+path = "."
+files = ["pyproject.toml"]
+patterns = [
+    "path = \"\\.\\./tipsql-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
