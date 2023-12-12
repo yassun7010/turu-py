@@ -10,6 +10,9 @@
         {
             "path": "turu-sqlite3",
         },
+        {
+            "path": "turu-snowflake",
+        },
     ],
     "settings": {
         "files.trimTrailingWhitespace": true,

@@ -20,12 +20,15 @@ class Cursor(CursorProtocol[_Parameters]):
     ) -> Self:
         ...
 
+    @override
     def fetchone(self) -> Self:
         ...
 
+    @override
     def fetchmany(self, size: Optional[int] = None) -> List[Self]:
         ...
 
+    @override
     def fetchall(self) -> List[Self]:
         ...
 
