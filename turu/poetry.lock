@@ -435,13 +435,13 @@ test = ["flaky", "pretend", "pytest (>=3.0.1)"]
 
 [[package]]
 name = "pyright"
-version = "1.1.339"
+version = "1.1.340"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.339-py3-none-any.whl", hash = "sha256:662f3df170fdeda76fd21b158ab20c518dad99c2f14b0a7f84c2bfd60d5a8d2a"},
-    {file = "pyright-1.1.339.tar.gz", hash = "sha256:581ce4e281575814380dd67a331e75c0ccdca31eb848005ee1ae46e7bfa8b4f9"},
+    {file = "pyright-1.1.340-py3-none-any.whl", hash = "sha256:cce44db270382caa2dd8e19fbb370c7550863454cfd4bcd971de6b6bf444e525"},
+    {file = "pyright-1.1.340.tar.gz", hash = "sha256:2486cc2410b62c57ede245d9f5cb854a8a85dd789a82b8a9a1bbd787a9b5e449"},
 ]
 
 [package.dependencies]
@@ -671,6 +671,22 @@ type = "directory"
 url = "../turu-core"
 
 [[package]]
+name = "turu-mock"
+version = "0.1.0"
+description = ""
+optional = true
+python-versions = "^3.8"
+files = []
+develop = true
+
+[package.dependencies]
+turu-core = {path = "../turu-core", develop = true}
+
+[package.source]
+type = "directory"
+url = "../turu-mock"
+
+[[package]]
 name = "turu-snowflake"
 version = "0.1.0"
 description = ""
@@ -733,10 +749,11 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "p
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [extras]
+mock = ["turu-mock"]
 snowflake = ["turu-snowflake"]
 sqlite3 = ["turu-sqlite3"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "b0d0c2150644e7739814858f7f59473673da7b137b8940723fadd6160a14cbb0"
+content-hash = "5d16e3ca4bfe16b9e85d21fb7fe3a1345124bc4d0c1402c0cb9c59bb02e51fce"
