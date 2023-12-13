@@ -1,3 +1,7 @@
+class _NotSupportFeature:
+    pass
+
+
 try:
     import pydantic  # noqa: F401
 
@@ -6,4 +10,5 @@ try:
 
 except ImportError:
     USE_PYDANTIC = False
-    PydanticModel = None
+
+    PydanticModel = _NotSupportFeature

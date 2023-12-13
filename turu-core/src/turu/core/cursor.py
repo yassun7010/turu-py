@@ -1,12 +1,13 @@
 from dataclasses import is_dataclass
-from typing import Iterator, List, Optional, Sequence, Type, TypeVar
+from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypeVar, Union
 
 from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeError
 from turu.core.protocols.cursor import CursorProtocol, _Parameters
+from turu.core.protocols.dataclass import Dataclass
 from typing_extensions import Self, override
 
-RowType = TypeVar("RowType")
+RowType = TypeVar("RowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 
 
 class Cursor(CursorProtocol[_Parameters]):
@@ -67,7 +68,7 @@ class Cursor(CursorProtocol[_Parameters]):
         )
 
     def fetchone_typing(self, row_type: Type[RowType]) -> RowType:
-        return row_type(self.fetchone())
+        return _map_cursor(row_type, self.fetchone())
 
     def fetchmany_typing(
         self, row_type: Type[RowType], size: Optional[int] = None
