@@ -1,5 +1,7 @@
 from typing import NamedTuple
 
+import pytest
+from turu.mock.extension import TuruMockUnexpectedFetchError
 from turu.sqlite3.connection import MockConnection
 
 
@@ -9,6 +11,13 @@ class TestMock:
 
         cursor = mock_connection.cursor().execute("SELECT 1")
         assert list(cursor.fetchall()) == [(1,)]
+
+    def test_mock_execute_without_response_data(self, mock_connection: MockConnection):
+        mock_connection.inject_response(None)
+
+        cursor = mock_connection.cursor().execute("SELECT 1")
+        with pytest.raises(TuruMockUnexpectedFetchError):
+            assert list(cursor.fetchall())
 
     def test_mock_execute_typing(self, mock_connection: MockConnection):
         class Row(NamedTuple):

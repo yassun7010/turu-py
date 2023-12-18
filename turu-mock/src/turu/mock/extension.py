@@ -26,3 +26,9 @@ class TuruMockFetchOneSizeError(TuruError):
     @property
     def message(self) -> str:
         return f"Mock fetchone size mismatch: Expected 1, got {self.size}"
+
+
+class TuruMockUnexpectedFetchError(TuruError):
+    @property
+    def message(self) -> str:
+        return "Mock fetch is unexpected. use execute_typing() or executemany_typing() to specify row type."

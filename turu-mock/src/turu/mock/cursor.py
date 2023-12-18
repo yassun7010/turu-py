@@ -19,7 +19,7 @@ from turu.core.cursor import (
     map_row,
 )
 from turu.mock.extension import (
-    TuruMockStoreDataNotFoundError,
+    TuruMockUnexpectedFetchError,
 )
 from turu.mock.store import TuruMockStore
 from typing_extensions import Self, override
@@ -96,7 +96,7 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
     @override
     def fetchmany(self, size: Optional[int] = None) -> Sequence[RowType]:
         if self._turu_mock_cursor is None:
-            raise TuruMockStoreDataNotFoundError()
+            raise TuruMockUnexpectedFetchError()
 
         return map(
             lambda row: map_row(self._row_type, row),
@@ -106,20 +106,20 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
     @override
     def fetchall(self) -> Sequence[RowType]:
         if self._turu_mock_cursor is None:
-            raise TuruMockStoreDataNotFoundError()
+            raise TuruMockUnexpectedFetchError()
 
         return map(lambda row: map_row(self._row_type, row), self._turu_mock_cursor)  # type: ignore
 
     @override
     def __iter__(self) -> Self:
         if self._turu_mock_cursor is None:
-            raise TuruMockStoreDataNotFoundError()
+            raise TuruMockUnexpectedFetchError()
         return self
 
     @override
     def __next__(self) -> RowType:
         if self._turu_mock_cursor is None:
-            raise TuruMockStoreDataNotFoundError()
+            raise TuruMockUnexpectedFetchError()
 
         return next(self._turu_mock_cursor)
 

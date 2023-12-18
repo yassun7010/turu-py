@@ -42,7 +42,7 @@ class Cursor(
         self,
         row_type: Type[RowType],
         operation: str,
-        parameters: Optional[_Parameters] = None,
+        parameters: "Optional[_Parameters]" = None,
     ) -> "Cursor[RowType]":
         return Cursor(
             self._raw_cursor.execute(operation, parameters or ()),
@@ -95,7 +95,7 @@ try:
     import turu.mock
 
     class MockCursor(
-        Generic[RowType], turu.mock.MockCursor[RowType, _Parameters], Cursor[RowType]
+        Generic[RowType], turu.mock.MockCursor[RowType, "_Parameters"], Cursor[RowType]
     ):
         pass
 
