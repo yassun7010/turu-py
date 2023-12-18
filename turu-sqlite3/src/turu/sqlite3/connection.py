@@ -3,7 +3,7 @@ import sqlite3
 from typing import Optional, Type, Union
 
 from turu.core.protocols.connection import ConnectionProtocol
-from typing_extensions import NotRequired, TypedDict, Unpack
+from typing_extensions import Never, NotRequired, TypedDict, Unpack
 
 from .cursor import Cursor
 
@@ -26,7 +26,7 @@ try:
         def __init__(self, **kwargs):
             turu.mock.MockConnection.__init__(self)
 
-        def cursor(self) -> "turu.sqlite3.cursor.MockCursor":
+        def cursor(self) -> "turu.sqlite3.cursor.MockCursor[Never]":
             return turu.sqlite3.cursor.MockCursor(self._turu_mock_store)
 
 except ImportError:

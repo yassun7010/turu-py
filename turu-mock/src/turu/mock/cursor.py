@@ -31,13 +31,15 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
     def __init__(
         self,
         store: TuruMockStore,
-        cursor: Optional[Iterator] = None,
+        *,
+        row_count: Optional[int] = None,
+        rows: Optional[Iterator] = None,
         row_type: Optional[Type[RowType]] = None,
     ) -> None:
         self._turu_mock_store = store
-        self._turu_mock_cursor = cursor
+        self._rowcount = row_count
+        self._turu_mock_rows = rows
         self._row_type = row_type
-        self._rowcount = None
 
     @property
     def rowcount(self) -> int:
@@ -47,17 +49,13 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
     def execute(
         self, operation: str, parameters: Optional[_Parameters] = None
     ) -> "MockCursor[Any, _Parameters]":
-        self._update_response(None)
-
-        return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
+        return self._make_new_cursor(None)
 
     @override
     def executemany(
         self, operation: str, seq_of_parameters: Sequence, /
     ) -> "MockCursor[Any, _Parameters]":
-        self._update_response(None)
-
-        return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
+        return self._make_new_cursor(None)
 
     @override
     def execute_typing(
@@ -66,9 +64,7 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
         operation: str,
         parameters: Optional[_Parameters] = None,
     ) -> "MockCursor[NewRowType, _Parameters]":
-        self._update_response(row_type)
-
-        return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
+        return self._make_new_cursor(row_type)
 
     @override
     def executemany_typing(
@@ -78,56 +74,60 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
         seq_of_parameters: Sequence[_Parameters],
         /,
     ) -> "MockCursor[NewRowType, _Parameters]":
-        self._update_response(row_type)
-
-        return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
+        return self._make_new_cursor(row_type)
 
     @override
     def fetchone(self) -> Optional[RowType]:
-        if self._turu_mock_cursor is None:
+        if self._turu_mock_rows is None:
             return None
 
         try:
-            return next(self._turu_mock_cursor)
+            return next(self._turu_mock_rows)
 
         except StopIteration:
             return None
 
     @override
     def fetchmany(self, size: Optional[int] = None) -> Sequence[RowType]:
-        if self._turu_mock_cursor is None:
+        if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return map(
-            lambda row: map_row(self._row_type, row),
-            zip(self._turu_mock_cursor, range(size or self.rowcount)),
-        )  # type: ignore
+        return [
+            map_row(self._row_type, row)
+            for row, _ in zip(self._turu_mock_rows, range(size or self.rowcount))
+        ]
 
     @override
     def fetchall(self) -> Sequence[RowType]:
-        if self._turu_mock_cursor is None:
+        if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return map(lambda row: map_row(self._row_type, row), self._turu_mock_cursor)  # type: ignore
+        return [map_row(self._row_type, row) for row in self._turu_mock_rows]
 
     @override
     def __iter__(self) -> Self:
-        if self._turu_mock_cursor is None:
+        if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
         return self
 
     @override
     def __next__(self) -> RowType:
-        if self._turu_mock_cursor is None:
+        if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return next(self._turu_mock_cursor)
+        return next(self._turu_mock_rows)
 
-    def _update_response(self, row_type: Optional[Type]) -> None:
+    def _make_new_cursor(
+        self, row_type: Optional[Type]
+    ) -> Union[Tuple[int, list], Tuple[None, None]]:
         responses = self._turu_mock_store.provide_response(row_type)
 
         if responses is None:
-            return
-
-        self._rowcount = len(responses)
-        self._turu_mock_cursor = iter(responses)
+            return MockCursor(responses, row_type=row_type)
+        else:
+            return MockCursor(
+                responses,
+                row_count=len(responses),
+                rows=iter(responses),
+                row_type=row_type,
+            )

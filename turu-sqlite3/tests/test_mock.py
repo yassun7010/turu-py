@@ -5,6 +5,10 @@ from turu.mock.extension import TuruMockUnexpectedFetchError
 from turu.sqlite3.connection import MockConnection
 
 
+class Row(NamedTuple):
+    id: int
+
+
 class TestMock:
     def test_mock_execute(self, mock_connection: MockConnection):
         mock_connection.inject_response(None, [(1,)])
@@ -20,9 +24,6 @@ class TestMock:
             assert list(cursor.fetchall())
 
     def test_mock_execute_typing(self, mock_connection: MockConnection):
-        class Row(NamedTuple):
-            id: int
-
         expected = [Row(1)]
         mock_connection.inject_response(Row, expected)
 
@@ -33,3 +34,27 @@ class TestMock:
         mock_connection.inject_response(None)
 
         mock_connection.cursor().executemany("SELECT 1", [])
+
+    def test_mock_execute_typing_fetchone(self, mock_connection: MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+
+        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        assert cursor.fetchone() == expected[0]
+        assert cursor.fetchone() is None
+
+    def test_mock_execute_typing_fetchmany(self, mock_connection: MockConnection):
+        expected = [Row(1), Row(2)]
+        mock_connection.inject_response(Row, expected)
+
+        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        assert list(cursor.fetchmany()) == expected
+        assert cursor.fetchmany() == []
+
+    def test_mock_execute_typing_fetchall(self, mock_connection: MockConnection):
+        expected = [Row(1), Row(2)]
+        mock_connection.inject_response(Row, expected)
+
+        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        assert list(cursor.fetchall()) == expected
+        assert cursor.fetchall() == []
