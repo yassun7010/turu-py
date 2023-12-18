@@ -18,7 +18,7 @@ class Connection(ConnectionProtocol):
 
 
 try:
-    import turu.mock
+    import turu.mock  # type: ignore
     import turu.snowflake.cursor
 
     class MockConnection(Connection, turu.mock.MockConnection):

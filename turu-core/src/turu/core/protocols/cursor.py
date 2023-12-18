@@ -10,7 +10,7 @@ class CursorProtocol(Generic[Parameters], Protocol):
         ...
 
     def executemany(
-        self, operation: str, seq_ofParameters: Sequence[Parameters], /
+        self, operation: str, seq_of_parameters: Sequence[Parameters], /
     ) -> Self:
         ...
 

@@ -28,7 +28,7 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
 
     @override
     def executemany(
-        self, operation: str, seq_ofParameters: Sequence[Parameters], /
+        self, operation: str, seq_of_parameters: Sequence[Parameters], /
     ) -> Self:
         ...
 
@@ -44,7 +44,7 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
         self,
         row_type: Type[RowType],
         operation: str,
-        seq_ofParameters: Sequence[Parameters],
+        seq_of_parameters: Sequence[Parameters],
     ) -> "Cursor":
         ...
 

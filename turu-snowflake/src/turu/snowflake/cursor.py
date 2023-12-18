@@ -35,9 +35,9 @@ class Cursor(
     def executemany(
         self,
         operation: str,
-        seq_ofParameters: "Sequence[Any]",
+        seq_of_parameters: "Sequence[Any]",
     ) -> "Cursor[Any, Parameters]":
-        return Cursor(self._raw_cursor.executemany(operation, seq_ofParameters))
+        return Cursor(self._raw_cursor.executemany(operation, seq_of_parameters))
 
     @override
     def execute_map(
@@ -59,12 +59,12 @@ class Cursor(
         self,
         row_type: Type[turu.core.cursor.NewRowType],
         operation: str,
-        seq_ofParameters: "Sequence[Parameters]",
+        seq_of_parameters: "Sequence[Parameters]",
     ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
         return Cursor(
             cast(
                 snowflake.connector.cursor.SnowflakeCursor,
-                self._raw_cursor.executemany(operation, seq_ofParameters),
+                self._raw_cursor.executemany(operation, seq_of_parameters),
             ),
             row_type=row_type,
         )
@@ -106,12 +106,12 @@ class Cursor(
 
 
 try:
-    import turu.mock
+    import turu.mock  # type: ignore
 
     class MockCursor(  # type: ignore
-        Generic[turu.core.cursor.RowType],
-        turu.mock.MockCursor[turu.core.cursor.RowType, Any],
-        Cursor[turu.core.cursor.RowType, Any],
+        Generic[turu.core.cursor.RowType],  # type: ignore
+        turu.mock.MockCursor[turu.core.cursor.RowType, Any],  # type: ignore
+        Cursor[turu.core.cursor.RowType, Any],  # type: ignore
     ):
         pass
 
