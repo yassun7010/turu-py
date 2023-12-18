@@ -38,7 +38,7 @@ class Cursor(
         return Cursor(self._raw_cursor.executemany(operation, seq_of_parameters))
 
     @override
-    def execute_typing(
+    def execute_map(
         self,
         row_type: Type[RowType],
         operation: str,
@@ -50,7 +50,7 @@ class Cursor(
         )
 
     @override
-    def executemany_typing(
+    def executemany_map(
         self,
         row_type: Type[RowType],
         operation: str,

@@ -23,11 +23,11 @@ class TestMock:
         with pytest.raises(TuruMockUnexpectedFetchError):
             assert list(cursor.fetchall())
 
-    def test_mock_execute_typing(self, mock_connection: MockConnection):
+    def test_mock_execute_map(self, mock_connection: MockConnection):
         expected = [Row(1)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
         assert list(cursor) == expected
 
     def test_mock_executemany(self, mock_connection: MockConnection):
@@ -36,19 +36,19 @@ class TestMock:
         mock_connection.cursor().executemany("SELECT 1", [])
 
     @pytest.mark.parametrize("rowsize", range(5))
-    def test_mock_execute_typing_fetchone(
+    def test_mock_execute_map_fetchone(
         self, mock_connection: MockConnection, rowsize: int
     ):
         expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
         for i in range(rowsize):
             assert cursor.fetchone() == expected[i]
         assert cursor.fetchone() is None
 
     @pytest.mark.parametrize("rowsize", range(5))
-    def test_mock_execute_typing_fetchmany(
+    def test_mock_execute_map_fetchmany(
         self,
         mock_connection: MockConnection,
         rowsize: int,
@@ -56,17 +56,17 @@ class TestMock:
         expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
         assert list(cursor.fetchmany()) == expected
         assert cursor.fetchmany() == []
 
     @pytest.mark.parametrize("rowsize", range(5))
-    def test_mock_execute_typing_fetchall(
+    def test_mock_execute_map_fetchall(
         self, mock_connection: MockConnection, rowsize: int
     ):
         expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
         assert list(cursor.fetchall()) == expected
         assert cursor.fetchall() == []

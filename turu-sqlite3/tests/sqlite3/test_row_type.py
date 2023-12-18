@@ -10,9 +10,7 @@ class TestRowType:
             name: str
 
         rows = (
-            turu.sqlite3.connect("test.db")
-            .cursor()
-            .execute_typing(Row, "select 1, 'a'")
+            turu.sqlite3.connect("test.db").cursor().execute_map(Row, "select 1, 'a'")
         )
 
         assert next(rows) == Row(1, "a")
@@ -26,9 +24,7 @@ class TestRowType:
             name: str
 
         rows = (
-            turu.sqlite3.connect("test.db")
-            .cursor()
-            .execute_typing(Row, "select 1, 'a'")
+            turu.sqlite3.connect("test.db").cursor().execute_map(Row, "select 1, 'a'")
         )
 
         assert next(rows) == Row(1, "a")
@@ -41,9 +37,7 @@ class TestRowType:
             name: str
 
         rows = (
-            turu.sqlite3.connect("test.db")
-            .cursor()
-            .execute_typing(Row, "select 1, 'a'")
+            turu.sqlite3.connect("test.db").cursor().execute_map(Row, "select 1, 'a'")
         )
 
         assert next(rows) == Row(id=1, name="a")

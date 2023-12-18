@@ -31,4 +31,4 @@ class TuruMockFetchOneSizeError(TuruError):
 class TuruMockUnexpectedFetchError(TuruError):
     @property
     def message(self) -> str:
-        return "Mock fetch is unexpected. use execute_typing() or executemany_typing() to specify row type."
+        return "Mock fetch is unexpected. use execute_map() or executemany_map() to specify row type."

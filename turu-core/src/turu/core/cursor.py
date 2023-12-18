@@ -31,7 +31,7 @@ class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
     ) -> Self:
         ...
 
-    def execute_typing(
+    def execute_map(
         self,
         row_type: Type[RowType],
         operation: str,
@@ -40,7 +40,7 @@ class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
     ) -> "Cursor[RowType, _Parameters]":
         ...
 
-    def executemany_typing(
+    def executemany_map(
         self,
         row_type: Type[RowType],
         operation: str,

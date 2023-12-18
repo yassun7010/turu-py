@@ -58,7 +58,7 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
         return self._make_new_cursor(None)
 
     @override
-    def execute_typing(
+    def execute_map(
         self,
         row_type: Type[NewRowType],
         operation: str,
@@ -67,7 +67,7 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
         return self._make_new_cursor(row_type)
 
     @override
-    def executemany_typing(
+    def executemany_map(
         self,
         row_type: Type[NewRowType],
         operation: str,
