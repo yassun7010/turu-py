@@ -1,5 +1,15 @@
 from dataclasses import is_dataclass
-from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypeVar, Union
+from typing import (
+    Any,
+    Generic,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeError
@@ -10,7 +20,7 @@ from typing_extensions import Self, override
 RowType = TypeVar("RowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 
 
-class Cursor(CursorProtocol[_Parameters]):
+class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
     @override
     def execute(self, operation: str, parameters: _Parameters = ..., /) -> Self:
         ...
@@ -21,16 +31,33 @@ class Cursor(CursorProtocol[_Parameters]):
     ) -> Self:
         ...
 
-    @override
-    def fetchone(self) -> Self:
+    def execute_typing(
+        self,
+        row_type: Type[RowType],
+        operation: str,
+        parameters: Optional[_Parameters] = None,
+        /,
+    ) -> "Cursor[RowType, _Parameters]":
+        ...
+
+    def executemany_typing(
+        self,
+        row_type: Type[RowType],
+        operation: str,
+        seq_of_parameters: Sequence[_Parameters],
+    ) -> "Cursor[RowType, _Parameters]":
         ...
 
     @override
-    def fetchmany(self, size: Optional[int] = None) -> List[Self]:
+    def fetchone(self) -> Optional[RowType]:
         ...
 
     @override
-    def fetchall(self) -> List[Self]:
+    def fetchmany(self, size: Optional[int] = None) -> List[RowType]:
+        ...
+
+    @override
+    def fetchall(self) -> List[RowType]:
         ...
 
     @override
@@ -38,48 +65,14 @@ class Cursor(CursorProtocol[_Parameters]):
         ...
 
     @override
-    def __next__(self) -> Self:
+    def __next__(self) -> RowType:
         ...
 
-    def execute_typing(
-        self,
-        row_type: Type[RowType],
-        operation: str,
-        parameters: Optional[_Parameters] = None,
-        /,
-    ) -> Iterator[RowType]:
-        if parameters is None:
-            return map(lambda row: _map_cursor(row_type, row), self.execute(operation))
-        else:
-            return map(
-                lambda row: _map_cursor(row_type, row),
-                self.execute(operation, parameters),
-            )
 
-    def executemany_typing(
-        self,
-        row_type: Type[RowType],
-        operation: str,
-        seq_of_parameters: Sequence[_Parameters],
-    ) -> Iterator[RowType]:
-        return map(
-            lambda row: _map_cursor(row_type, row),
-            self.executemany(operation, seq_of_parameters),
-        )
+def map_row(row_type: Optional[Type[RowType]], row: Any) -> RowType:
+    if row_type is None:
+        return row
 
-    def fetchone_typing(self, row_type: Type[RowType]) -> RowType:
-        return _map_cursor(row_type, self.fetchone())
-
-    def fetchmany_typing(
-        self, row_type: Type[RowType], size: Optional[int] = None
-    ) -> Iterator[RowType]:
-        return map(lambda row: _map_cursor(row_type, row), self.fetchmany(size))
-
-    def fetchall_typing(self, row_type: Type[RowType]) -> Iterator[RowType]:
-        return map(lambda row: _map_cursor(row_type, row), self.fetchall())
-
-
-def _map_cursor(row_type: Type[RowType], row: Cursor) -> RowType:
     if issubclass(row_type, tuple):
         return row_type._make(row)  # type: ignore
 

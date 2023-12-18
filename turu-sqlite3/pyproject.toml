@@ -6,12 +6,8 @@ authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 packages = [{ include = "turu", from = "src" }]
 
-[tool.taskipy.tasks]
-format = "ruff format ."
-lint = "ruff check ."
-typecheck = "pyright src/** tests/**"
-test = "pytest"
-ci = "task format && task lint && task typecheck && task test"
+[tool.poetry.extras]
+mock = ["turu-mock"]
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
@@ -30,6 +26,13 @@ path = "../turu-core"
 develop = true
 # version = "0.0.0"
 
+[tool.poetry.dependencies.turu-mock]
+# INFO: poetry-dynamic-versioning to replace this.
+path = "../turu-mock"
+develop = true
+# version = "0.0.0"
+optional = true
+
 [tool.poetry-dynamic-versioning]
 enable = false
 
@@ -39,6 +42,13 @@ files = ["pyproject.toml"]
 patterns = [
     "path = \"\\.\\./tipsql-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
 ]
+
+[tool.taskipy.tasks]
+format = "ruff format ."
+lint = "ruff check ."
+typecheck = "pyright src/** tests/**"
+test = "pytest"
+ci = "task format && task lint && task typecheck && task test"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]

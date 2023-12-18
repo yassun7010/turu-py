@@ -1,9 +1,9 @@
 import importlib.metadata
 import sqlite3
-from typing import Callable, Optional, Type, Union, overload
+from typing import Optional, Type, Union
 
 from turu.core.protocols.connection import ConnectionProtocol
-from typing_extensions import NotRequired, Self, TypedDict, Unpack
+from typing_extensions import NotRequired, TypedDict, Unpack
 
 from .cursor import Cursor
 
@@ -11,16 +11,26 @@ __version__ = importlib.metadata.version("turu-sqlite3")
 
 
 class Connection(sqlite3.Connection, ConnectionProtocol):
-    @overload
-    def cursor(self, cursorClass: None = None) -> Cursor:
-        ...
+    def __init__(self, raw_connection: sqlite3.Connection):
+        self._raw_connection = raw_connection
 
-    @overload
-    def cursor(self, cursorClass: Callable[[Self], sqlite3.Cursor]) -> Cursor:
-        ...
+    def cursor(self) -> Cursor:
+        return Cursor(self._raw_connection.cursor())
 
-    def cursor(self, cursorClass=None) -> Cursor:  # type: ignore[override]
-        return super().cursor(cursorClass or Cursor)
+
+try:
+    import turu.mock
+    import turu.sqlite3.cursor
+
+    class MockConnection(Connection, turu.mock.MockConnection):
+        def __init__(self, **kwargs):
+            turu.mock.MockConnection.__init__(self)
+
+        def cursor(self) -> "turu.sqlite3.cursor.MockCursor":
+            return turu.sqlite3.cursor.MockCursor(self._turu_mock_store)
+
+except ImportError:
+    pass
 
 
 class _ConnectArgs(TypedDict):
@@ -37,4 +47,4 @@ def connect(
     database: Union[str, bytes],
     **kwargs: Unpack[_ConnectArgs],
 ) -> Connection:
-    return Connection(database, **kwargs)
+    return Connection(sqlite3.Connection(database, **kwargs))

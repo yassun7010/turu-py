@@ -5,13 +5,6 @@ description = ""
 authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 
-[tool.taskipy.tasks]
-format = "ruff format ."
-lint = "ruff check ."
-typecheck = "pyright src/** tests/**"
-test = "pytest"
-ci = "task format && task lint && task typecheck && task test"
-
 [tool.poetry.extras]
 mock = ["turu-mock"]
 sqlite3 = ["turu-sqlite3"]
@@ -62,6 +55,13 @@ files = ["pyproject.toml"]
 patterns = [
     "path = \"\\.\\./tipsql-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
 ]
+
+[tool.taskipy.tasks]
+format = "ruff format ."
+lint = "ruff check ."
+typecheck = "pyright src/** tests/**"
+test = "pytest"
+ci = "task format && task lint && task typecheck && task test"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]

@@ -1,13 +1,29 @@
+from abc import abstractmethod
+
+
 class TuruException(Exception):
     """Base class for all Turu exceptions."""
 
 
-class TuruRowTypeError(TuruException):
+class TuruError(TuruException):
+    """Raised when an error occurs in Turu."""
+
+    @property
+    @abstractmethod
+    def message(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        return self.message
+
+
+class TuruRowTypeError(TuruError):
     """Raised when a row is not of the expected type."""
 
     def __init__(self, expected: type, actual: type) -> None:
         self.expected = expected
         self.actual = actual
 
-    def __str__(self) -> str:
+    @property
+    def message(self) -> str:
         return f"Unsupported row type: Expected {self.expected.__name__}, got {self.actual.__name__}."

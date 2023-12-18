@@ -1,4 +1,4 @@
-from typing import Generic, List, Protocol, Sequence, TypeVar
+from typing import Any, Generic, Optional, Protocol, Sequence, TypeVar
 
 from typing_extensions import Self
 
@@ -14,17 +14,17 @@ class CursorProtocol(Generic[_Parameters], Protocol):
     ) -> Self:
         ...
 
-    def fetchone(self) -> Self:
+    def fetchone(self) -> Optional[Any]:
         ...
 
-    def fetchmany(self, size: int = 1) -> List[Self]:
+    def fetchmany(self, size: int = 1) -> Sequence[Any]:
         ...
 
-    def fetchall(self) -> List[Self]:
+    def fetchall(self) -> Sequence[Any]:
         ...
 
     def __iter__(self) -> Self:
         ...
 
-    def __next__(self) -> Self:
+    def __next__(self) -> Any:
         ...
