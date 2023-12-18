@@ -1,9 +1,7 @@
 import sqlite3
-from collections.abc import Iterable
-from typing import TYPE_CHECKING, Any, Generic, Optional, Sequence, Type
+from typing import TYPE_CHECKING, Any, Generic, List, Optional, Sequence, Type
 
 import turu.core.cursor
-from turu.core.cursor import NewRowType, RowType, map_row
 from typing_extensions import override
 
 if TYPE_CHECKING:
@@ -11,14 +9,14 @@ if TYPE_CHECKING:
 
 
 class Cursor(
-    Generic[RowType],
-    turu.core.cursor.Cursor[RowType, "_Parameters"],
+    Generic[turu.core.cursor.RowType],
+    turu.core.cursor.Cursor[turu.core.cursor.RowType, "_Parameters"],
 ):
     def __init__(
         self,
         raw_cursor: sqlite3.Cursor,
         *,
-        row_type: Optional[Type[RowType]] = None,
+        row_type: Optional[Type[turu.core.cursor.RowType]] = None,
     ):
         self._raw_cursor = raw_cursor
         self._row_type = row_type
@@ -33,17 +31,17 @@ class Cursor(
     def executemany(
         self,
         operation: str,
-        seq_of_parameters: "Iterable[_Parameters]",
+        seq_of_parameters: "Sequence[_Parameters]",
     ) -> "Cursor[Any]":
         return Cursor(self._raw_cursor.executemany(operation, seq_of_parameters))
 
     @override
     def execute_map(
         self,
-        row_type: Type[NewRowType],
+        row_type: Type[turu.core.cursor.NewRowType],
         operation: str,
         parameters: "Optional[_Parameters]" = None,
-    ) -> "Cursor[NewRowType]":
+    ) -> "Cursor[turu.core.cursor.NewRowType]":
         return Cursor(
             self._raw_cursor.execute(operation, parameters or ()),
             row_type=row_type,
@@ -52,40 +50,50 @@ class Cursor(
     @override
     def executemany_map(
         self,
-        row_type: Type[NewRowType],
+        row_type: Type[turu.core.cursor.NewRowType],
         operation: str,
-        seq_of_parameters: "Iterable[_Parameters]",
-    ) -> "Cursor[NewRowType]":
+        seq_of_parameters: "Sequence[_Parameters]",
+    ) -> "Cursor[turu.core.cursor.NewRowType]":
         return Cursor(
             self._raw_cursor.executemany(operation, seq_of_parameters),
             row_type=row_type,
         )
 
     @override
-    def fetchone(self) -> Optional[RowType]:
+    def fetchone(self) -> Optional[turu.core.cursor.RowType]:
         row = self._raw_cursor.fetchone()
         if row is None:
             return None
+
         elif self._row_type is not None:
-            return map_row(self._row_type, row)
+            return turu.core.cursor.map_row(self._row_type, row)
+
         else:
             return row
 
     @override
-    def fetchmany(self, size: Optional[int] = 1) -> Sequence[RowType]:
+    def fetchmany(self, size: int = 1) -> List[turu.core.cursor.RowType]:
         return [
-            map_row(self._row_type, row) for row in self._raw_cursor.fetchmany(size)
+            turu.core.cursor.map_row(self._row_type, row)
+            for row in (
+                self._raw_cursor.fetchmany(size)
+                if size is not None
+                else self._raw_cursor.fetchmany()
+            )
         ]
 
     @override
-    def fetchall(self) -> Sequence[RowType]:
-        return [map_row(self._row_type, row) for row in self._raw_cursor.fetchall()]
+    def fetchall(self) -> List[turu.core.cursor.RowType]:
+        return [
+            turu.core.cursor.map_row(self._row_type, row)
+            for row in self._raw_cursor.fetchall()
+        ]
 
     @override
-    def __next__(self) -> RowType:
+    def __next__(self) -> turu.core.cursor.RowType:
         next_row = next(self._raw_cursor)
         if self._row_type is not None and next_row is not None:
-            return map_row(self._row_type, next_row)
+            return turu.core.cursor.map_row(self._row_type, next_row)
 
         else:
             return next_row
@@ -95,7 +103,9 @@ try:
     import turu.mock
 
     class MockCursor(
-        Generic[RowType], turu.mock.MockCursor[RowType, "_Parameters"], Cursor[RowType]
+        Generic[turu.core.cursor.RowType],
+        turu.mock.MockCursor[turu.core.cursor.RowType, "_Parameters"],
+        Cursor[turu.core.cursor.RowType],
     ):
         pass
 

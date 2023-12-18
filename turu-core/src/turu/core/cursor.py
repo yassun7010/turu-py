@@ -13,7 +13,7 @@ from typing import (
 
 from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeError
-from turu.core.protocols.cursor import CursorProtocol, _Parameters
+from turu.core.protocols.cursor import CursorProtocol, Parameters
 from turu.core.protocols.dataclass import Dataclass
 from typing_extensions import Self, override
 
@@ -21,14 +21,14 @@ RowType = TypeVar("RowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 NewRowType = TypeVar("NewRowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 
 
-class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
+class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
     @override
-    def execute(self, operation: str, parameters: _Parameters = ..., /) -> Self:
+    def execute(self, operation: str, parameters: Parameters = ..., /) -> Self:
         ...
 
     @override
     def executemany(
-        self, operation: str, seq_of_parameters: Sequence[_Parameters], /
+        self, operation: str, seq_ofParameters: Sequence[Parameters], /
     ) -> Self:
         ...
 
@@ -36,17 +36,16 @@ class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
         self,
         row_type: Type[RowType],
         operation: str,
-        parameters: Optional[_Parameters] = None,
-        /,
-    ) -> "Cursor[RowType, _Parameters]":
+        parameters: Optional[Parameters] = None,
+    ) -> "Cursor":
         ...
 
     def executemany_map(
         self,
         row_type: Type[RowType],
         operation: str,
-        seq_of_parameters: Sequence[_Parameters],
-    ) -> "Cursor[RowType, _Parameters]":
+        seq_ofParameters: Sequence[Parameters],
+    ) -> "Cursor":
         ...
 
     @override
@@ -54,7 +53,7 @@ class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
         ...
 
     @override
-    def fetchmany(self, size: Optional[int] = None) -> List[RowType]:
+    def fetchmany(self, size: int = 1) -> List[RowType]:
         ...
 
     @override
@@ -63,7 +62,7 @@ class Cursor(Generic[RowType, _Parameters], CursorProtocol[_Parameters]):
 
     @override
     def __iter__(self) -> Self:
-        ...
+        return self
 
     @override
     def __next__(self) -> RowType:

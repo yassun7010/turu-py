@@ -1,7 +1,14 @@
+import sqlite3
+
 import pytest
-from turu.sqlite3.connection import MockConnection
+import turu.sqlite3
 
 
 @pytest.fixture
-def mock_connection() -> MockConnection:
-    return MockConnection()
+def connection() -> turu.sqlite3.Connection:
+    return turu.sqlite3.Connection(sqlite3.connect("test.db"))
+
+
+@pytest.fixture
+def mock_connection() -> turu.sqlite3.MockConnection:
+    return turu.sqlite3.MockConnection()

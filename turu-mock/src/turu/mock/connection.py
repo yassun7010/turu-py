@@ -6,6 +6,8 @@ from turu.core.protocols.connection import ConnectionProtocol
 from turu.mock.store import TuruMockStore
 from typing_extensions import Self
 
+from .cursor import MockCursor
+
 
 class MockConnection(ConnectionProtocol):
     def __init__(self, store: Optional[TuruMockStore] = None):
@@ -52,5 +54,5 @@ class MockConnection(ConnectionProtocol):
         return self
 
     @abstractmethod
-    def cursor(self):
+    def cursor(self) -> MockCursor:
         ...
