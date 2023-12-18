@@ -5,9 +5,8 @@ from turu.core.cursor import (
     NewRowType,
     Parameters,
     RowType,
-    map_row,
 )
-from turu.mock.extension import (
+from turu.mock.exception import (
     TuruMockUnexpectedFetchError,
 )
 from turu.mock.store import TuruMockStore
@@ -78,17 +77,14 @@ class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return [
-            map_row(self._row_type, next(self._turu_mock_rows))
-            for _ in range(size or self.rowcount)
-        ]
+        return [next(self._turu_mock_rows) for _ in range(size or self.rowcount)]
 
     @override
     def fetchall(self) -> List[RowType]:
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return [map_row(self._row_type, row) for row in self._turu_mock_rows]
+        return list(self._turu_mock_rows)
 
     @override
     def __iter__(self) -> Self:

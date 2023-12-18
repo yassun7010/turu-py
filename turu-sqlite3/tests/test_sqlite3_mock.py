@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 import pytest
-from turu.mock.extension import TuruMockUnexpectedFetchError
+from turu.mock.exception import TuruMockUnexpectedFetchError
 from turu.sqlite3.connection import MockConnection
 
 
