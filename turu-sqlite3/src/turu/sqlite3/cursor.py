@@ -102,7 +102,7 @@ class Cursor(
 try:
     import turu.mock
 
-    class MockCursor(
+    class MockCursor(  # type: ignore
         Generic[turu.core.cursor.RowType],
         turu.mock.MockCursor[turu.core.cursor.RowType, "_Parameters"],
         Cursor[turu.core.cursor.RowType],
