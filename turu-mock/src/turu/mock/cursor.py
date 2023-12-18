@@ -1,11 +1,30 @@
-from typing import Any, Generic, Iterator, Optional, Sequence, Type
+from typing import (
+    Any,
+    Generic,
+    Iterator,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
-from turu.core.cursor import Cursor, RowType, _Parameters, map_row
+from turu.core.cursor import (
+    Cursor,
+    Dataclass,
+    PydanticModel,
+    RowType,
+    _Parameters,
+    map_row,
+)
 from turu.mock.extension import (
     TuruMockStoreDataNotFoundError,
 )
 from turu.mock.store import TuruMockStore
 from typing_extensions import Never, Self, override
+
+NewRowType = TypeVar("NewRowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 
 
 class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
@@ -42,19 +61,26 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
 
     @override
     def execute_typing(
-        self, row_type: Type[RowType], operation: str, parameters: Optional[Any] = None
-    ) -> "MockCursor[RowType, _Parameters]":
+        self,
+        row_type: Type[NewRowType],
+        operation: str,
+        parameters: Optional[_Parameters] = None,
+    ) -> "MockCursor[NewRowType, _Parameters]":
         self._update_response(row_type)
 
-        return MockCursor(self._turu_mock_store, self._turu_mock_cursor, row_type)
+        return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
 
     @override
     def executemany_typing(
-        self, row_type: Type[RowType], operation: str, seq_of_parameters: Sequence, /
-    ) -> "MockCursor[RowType, _Parameters]":
+        self,
+        row_type: Type[NewRowType],
+        operation: str,
+        seq_of_parameters: Sequence[_Parameters],
+        /,
+    ) -> "MockCursor[NewRowType, _Parameters]":
         self._update_response(row_type)
 
-        return MockCursor(self._turu_mock_store, self._turu_mock_cursor, row_type)
+        return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
 
     @override
     def fetchone(self) -> Optional[RowType]:
