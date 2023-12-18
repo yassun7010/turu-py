@@ -6,14 +6,12 @@ from typing import (
     Sequence,
     Tuple,
     Type,
-    TypeVar,
     Union,
 )
 
 from turu.core.cursor import (
     Cursor,
-    Dataclass,
-    PydanticModel,
+    NewRowType,
     RowType,
     _Parameters,
     map_row,
@@ -23,8 +21,6 @@ from turu.mock.extension import (
 )
 from turu.mock.store import TuruMockStore
 from typing_extensions import Self, override
-
-NewRowType = TypeVar("NewRowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 
 
 class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):

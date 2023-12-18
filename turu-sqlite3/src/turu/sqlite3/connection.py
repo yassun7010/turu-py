@@ -14,7 +14,7 @@ class Connection(ConnectionProtocol):
     def __init__(self, raw_connection: sqlite3.Connection):
         self._raw_connection = raw_connection
 
-    def cursor(self) -> Cursor:
+    def cursor(self) -> Cursor[Never]:
         return Cursor(self._raw_connection.cursor())
 
 

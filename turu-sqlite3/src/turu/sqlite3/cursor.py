@@ -3,7 +3,7 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, Generic, Optional, Sequence, Type
 
 import turu.core.cursor
-from turu.core.cursor import RowType, map_row
+from turu.core.cursor import NewRowType, RowType, map_row
 from typing_extensions import override
 
 if TYPE_CHECKING:
@@ -40,10 +40,10 @@ class Cursor(
     @override
     def execute_map(
         self,
-        row_type: Type[RowType],
+        row_type: Type[NewRowType],
         operation: str,
         parameters: "Optional[_Parameters]" = None,
-    ) -> "Cursor[RowType]":
+    ) -> "Cursor[NewRowType]":
         return Cursor(
             self._raw_cursor.execute(operation, parameters or ()),
             row_type=row_type,
@@ -52,10 +52,10 @@ class Cursor(
     @override
     def executemany_map(
         self,
-        row_type: Type[RowType],
+        row_type: Type[NewRowType],
         operation: str,
         seq_of_parameters: "Iterable[_Parameters]",
-    ) -> "Cursor[RowType]":
+    ) -> "Cursor[NewRowType]":
         return Cursor(
             self._raw_cursor.executemany(operation, seq_of_parameters),
             row_type=row_type,
