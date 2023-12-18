@@ -1,3 +1,7 @@
+.PHONY: install
+install:
+	bash scripts/poetry-install.sh
+
 .PHONY: ci
 ci:
 	bash scripts/ci.sh
