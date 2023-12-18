@@ -35,24 +35,36 @@ class TestMock:
 
         mock_connection.cursor().executemany("SELECT 1", [])
 
-    def test_mock_execute_typing_fetchone(self, mock_connection: MockConnection):
-        expected = [Row(1)]
+    @pytest.mark.parametrize("rowsize", range(5))
+    def test_mock_execute_typing_fetchone(
+        self, mock_connection: MockConnection, rowsize: int
+    ):
+        expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
         cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
-        assert cursor.fetchone() == expected[0]
+        for i in range(rowsize):
+            assert cursor.fetchone() == expected[i]
         assert cursor.fetchone() is None
 
-    def test_mock_execute_typing_fetchmany(self, mock_connection: MockConnection):
-        expected = [Row(1), Row(2)]
+    @pytest.mark.parametrize("rowsize", range(5))
+    def test_mock_execute_typing_fetchmany(
+        self,
+        mock_connection: MockConnection,
+        rowsize: int,
+    ):
+        expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
         cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
         assert list(cursor.fetchmany()) == expected
         assert cursor.fetchmany() == []
 
-    def test_mock_execute_typing_fetchall(self, mock_connection: MockConnection):
-        expected = [Row(1), Row(2)]
+    @pytest.mark.parametrize("rowsize", range(5))
+    def test_mock_execute_typing_fetchall(
+        self, mock_connection: MockConnection, rowsize: int
+    ):
+        expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
         cursor = mock_connection.cursor().execute_typing(Row, "SELECT 1")
