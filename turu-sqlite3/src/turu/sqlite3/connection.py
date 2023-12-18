@@ -10,7 +10,7 @@ from .cursor import Cursor
 __version__ = importlib.metadata.version("turu-sqlite3")
 
 
-class Connection(sqlite3.Connection, ConnectionProtocol):
+class Connection(ConnectionProtocol):
     def __init__(self, raw_connection: sqlite3.Connection):
         self._raw_connection = raw_connection
 

@@ -22,7 +22,7 @@ from turu.mock.extension import (
     TuruMockStoreDataNotFoundError,
 )
 from turu.mock.store import TuruMockStore
-from typing_extensions import Never, Self, override
+from typing_extensions import Self, override
 
 NewRowType = TypeVar("NewRowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
 
@@ -46,7 +46,7 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
     @override
     def execute(
         self, operation: str, parameters: Optional[_Parameters] = None
-    ) -> "MockCursor[Never, _Parameters]":
+    ) -> "MockCursor[Any, _Parameters]":
         self._update_response(None)
 
         return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
@@ -54,7 +54,7 @@ class MockCursor(Generic[RowType, _Parameters], Cursor[RowType, _Parameters]):
     @override
     def executemany(
         self, operation: str, seq_of_parameters: Sequence, /
-    ) -> "MockCursor[Never, _Parameters]":
+    ) -> "MockCursor[Any, _Parameters]":
         self._update_response(None)
 
         return MockCursor(self._turu_mock_store, self._turu_mock_cursor)
