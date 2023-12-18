@@ -51,9 +51,12 @@ class TestTuruMock:
         assert cursor.fetchall() == expected
         assert cursor.fetchall() == []
 
-    def test_execute_map_fetchall_with_none(
-        self, mock_connection: turu.mock.MockConnection
-    ):
+    def test_execute_fetch(self, mock_connection: turu.mock.MockConnection):
+        mock_connection.inject_response(None, [(1,)])
+        cursor = mock_connection.cursor().execute("select 1")
+        assert cursor.fetchall() == [(1,)]
+
+    def test_execute_fetch_with_none(self, mock_connection: turu.mock.MockConnection):
         mock_connection.inject_response(None)
         cursor = mock_connection.cursor().execute("select 1")
         with pytest.raises(TuruMockUnexpectedFetchError):
