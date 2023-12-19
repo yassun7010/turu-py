@@ -2,6 +2,8 @@ import turu.core.mock
 from pydantic import BaseModel
 from turu.core.record import record_as_csv
 
+from tests.data import TEST_DATA_DIR
+
 
 class RowPydantic(BaseModel):
     id: int
@@ -15,7 +17,8 @@ class TestRecord:
         mock_connection.inject_response(None, expected)
 
         with record_as_csv(
-            "test_record_as_csv_execute.csv", mock_connection.cursor()
+            TEST_DATA_DIR / "test_record_as_csv_execute.csv",
+            mock_connection.cursor(),
         ) as cursor:
             cursor = cursor.execute("select 1")
 
@@ -28,7 +31,8 @@ class TestRecord:
         mock_connection.inject_response(RowPydantic, expected)
 
         with record_as_csv(
-            "test_record_as_csv_execute_map.csv", mock_connection.cursor()
+            TEST_DATA_DIR / "test_record_as_csv_execute_map.csv",
+            mock_connection.cursor(),
         ) as cursor:
             cursor = cursor.execute_map(RowPydantic, "select 1")
 
