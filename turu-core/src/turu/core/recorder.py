@@ -22,6 +22,7 @@ GenericCursor = TypeVar("GenericCursor", bound=turu.core.cursor.Cursor)
 class RecordOptions(TypedDict):
     has_header: NotRequired[bool]
     enable: NotRequired[bool]
+    rowsize: NotRequired[int]
 
 
 class RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]):
