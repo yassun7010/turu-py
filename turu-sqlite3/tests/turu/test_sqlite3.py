@@ -3,6 +3,10 @@ from typing import NamedTuple
 import turu.sqlite3
 
 
+def test_turu_sqlite3_version():
+    assert turu.sqlite3.__version__
+
+
 class TestSqlite3:
     def test_execute(self):
         cursor = turu.sqlite3.connect("test.db").cursor().execute("select 1")
