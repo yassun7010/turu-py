@@ -31,6 +31,7 @@ class TestTuruMock:
     def test_execute_fetch(self, mock_connection: turu.mock.MockConnection):
         mock_connection.inject_response(None, [(1,)])
         cursor = mock_connection.cursor().execute("select 1")
+
         assert cursor.fetchall() == [(1,)]
 
     def test_execute_without_injection(self, mock_connection: turu.mock.MockConnection):
@@ -46,6 +47,7 @@ class TestTuruMock:
     def test_execute(self, mock_connection: turu.mock.MockConnection):
         mock_connection.inject_response(None, [(1,)])
         cursor = mock_connection.cursor().execute("select 1")
+
         assert cursor.fetchone() == (1,)
         assert cursor.fetchone() is None
 
@@ -59,6 +61,7 @@ class TestTuruMock:
         cursor = mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
         for i in range(rowsize):
             assert cursor.fetchone() == expected[i]
+
         assert cursor.fetchone() is None
 
     @pytest.mark.parametrize("rowsize", range(5))
@@ -71,6 +74,7 @@ class TestTuruMock:
         mock_connection.inject_response(RowPydantic, expected)
 
         cursor = mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+
         assert list(cursor.fetchmany(rowsize)) == expected
         assert cursor.fetchone() is None
 
@@ -82,6 +86,7 @@ class TestTuruMock:
         mock_connection.inject_response(RowPydantic, expected)
 
         cursor = mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+
         assert list(cursor.fetchall()) == expected
         assert cursor.fetchall() == []
 
@@ -93,6 +98,7 @@ class TestTuruMock:
         mock_connection.inject_response(rowtype, expected)
 
         cursor = mock_connection.cursor().execute_map(rowtype, "SELECT 1")
+
         assert list(cursor) == expected
 
     @pytest.mark.parametrize("execition_time", range(5))

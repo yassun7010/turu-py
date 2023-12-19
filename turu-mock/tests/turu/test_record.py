@@ -14,6 +14,7 @@ class TestRecord:
 
         with record("test.csv", mock_connection.cursor()) as cursor:
             cursor = cursor.execute("select 1")
+
             assert cursor.fetchall() == expected
 
     def test_record_execute_map(self, mock_connection: turu.mock.MockConnection):
@@ -22,4 +23,5 @@ class TestRecord:
 
         with record("test.csv", mock_connection.cursor()) as cursor:
             cursor = cursor.execute_map(RowPydantic, "select 1")
+
             assert cursor.fetchall() == expected
