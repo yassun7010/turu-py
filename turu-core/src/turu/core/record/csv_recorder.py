@@ -24,14 +24,18 @@ class CsvRecorder(RecorderProtcol):
         self._file = Path(filename).open("w")
         self._writer = csv.writer(self._file)
         self._options = options
-        self._first_row = True
+        self._writed_rowsize = 0
 
     def write_row(self, row: turu.core.cursor.RowType) -> None:
-        if self._first_row:
+        if self._writed_rowsize == 0:
             if self._options.get("header"):
                 self._write_header(row)
 
-            self._first_row = False
+        if (rowsize := self._options.get("rowsize")) is not None:
+            if self._writed_rowsize >= rowsize:
+                return
+
+        self._writed_rowsize += 1
 
         if is_dataclass(row):
             self._writer.writerow(row.__dict__.values())
