@@ -1,8 +1,18 @@
 import contextlib
 from pathlib import Path
-from typing import Generator, Generic, Optional, Sequence, Type, TypeVar, Union, cast
+from typing import (
+    Generator,
+    List,
+    Optional,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 import turu.core.cursor
+from turu.core.exception import TuruUnexpectedFetchError
 from turu.core.protocols.cursor import Parameters
 from typing_extensions import NotRequired, TypedDict, Unpack
 
@@ -14,9 +24,7 @@ class RecordOptions(TypedDict):
     enable: NotRequired[bool]
 
 
-class RecordCursor(
-    turu.core.cursor.Cursor, Generic[turu.core.cursor.RowType, Parameters]
-):
+class RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]):
     def __init__(
         self,
         record_filepath: Union[str, Path],
@@ -44,13 +52,19 @@ class RecordCursor(
 
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
-    ) -> "turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]":
-        return self._cursor.execute(operation, parameters)
+    ) -> "RecordCursor[turu.core.cursor.RowType, Parameters]":
+        return cast(
+            RecordCursor,
+            self._cursor.execute(operation, parameters),
+        )
 
     def executemany(
         self, operation: str, seq_of_parameters: "Sequence[Parameters]", /
-    ) -> "turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]":
-        return self._cursor.executemany(operation, seq_of_parameters)
+    ) -> "RecordCursor[turu.core.cursor.RowType, Parameters]":
+        return cast(
+            RecordCursor,
+            self._cursor.executemany(operation, seq_of_parameters),
+        )
 
     def execute_map(
         self,
@@ -71,21 +85,19 @@ class RecordCursor(
         return self._cursor.executemany_map(row_type, operation, seq_of_parameters)
 
     def fetchone(self) -> Optional[turu.core.cursor.RowType]:
-        return self._cursor.fetchone()
+        raise TuruUnexpectedFetchError()
 
-    def fetchmany(
-        self, size: Optional[int] = None
-    ) -> Sequence[turu.core.cursor.RowType]:
-        return self._cursor.fetchmany(size)
+    def fetchmany(self, size: Optional[int] = None) -> List[turu.core.cursor.RowType]:
+        raise TuruUnexpectedFetchError()
 
-    def fetchall(self) -> Sequence[turu.core.cursor.RowType]:
-        return self._cursor.fetchall()
+    def fetchall(self) -> List[turu.core.cursor.RowType]:
+        raise TuruUnexpectedFetchError()
 
     def __iter__(self) -> "RecordCursor[turu.core.cursor.RowType, Parameters]":
-        return self
+        raise TuruUnexpectedFetchError()
 
     def __next__(self) -> turu.core.cursor.RowType:
-        return next(self._cursor)
+        raise TuruUnexpectedFetchError()
 
 
 @contextlib.contextmanager

@@ -1,5 +1,5 @@
 import sqlite3
-from typing import TYPE_CHECKING, Any, Generic, List, Optional, Sequence, Type
+from typing import TYPE_CHECKING, Any, List, Optional, Sequence, Type, cast
 
 import turu.core.cursor
 from typing_extensions import override
@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 class Cursor(
-    Generic[turu.core.cursor.RowType],
     turu.core.cursor.Cursor[turu.core.cursor.RowType, "_Parameters"],
 ):
     def __init__(
@@ -19,7 +18,7 @@ class Cursor(
         row_type: Optional[Type[turu.core.cursor.RowType]] = None,
     ):
         self._raw_cursor = raw_cursor
-        self._row_type = row_type
+        self._row_type: Optional[Type[turu.core.cursor.RowType]] = row_type
 
     @property
     def rowcount(self) -> int:
@@ -41,13 +40,19 @@ class Cursor(
     def execute(
         self, operation: str, parameters: Optional["_Parameters"] = None, /
     ) -> "Cursor[Any]":
-        return Cursor(self._raw_cursor.execute(operation, parameters or ()))
+        self._raw_cursor.execute(operation, parameters or ())
+        self._row_type = None
+
+        return cast(Cursor, self)
 
     @override
     def executemany(
         self, operation: str, seq_of_parameters: "Sequence[_Parameters]", /
     ) -> "Cursor[Any]":
-        return Cursor(self._raw_cursor.executemany(operation, seq_of_parameters))
+        self._raw_cursor.executemany(operation, seq_of_parameters)
+        self._row_type = None
+
+        return cast(Cursor, self)
 
     @override
     def execute_map(
@@ -57,10 +62,10 @@ class Cursor(
         parameters: "Optional[_Parameters]" = None,
         /,
     ) -> "Cursor[turu.core.cursor.NewRowType]":
-        return Cursor(
-            self._raw_cursor.execute(operation, parameters or ()),
-            row_type=row_type,
-        )
+        self._raw_cursor.execute(operation, parameters or ())
+        self._row_type = cast(turu.core.cursor.RowType, row_type)
+
+        return cast(Cursor, self)
 
     @override
     def executemany_map(
@@ -70,10 +75,10 @@ class Cursor(
         seq_of_parameters: "Sequence[_Parameters]",
         /,
     ) -> "Cursor[turu.core.cursor.NewRowType]":
-        return Cursor(
-            self._raw_cursor.executemany(operation, seq_of_parameters),
-            row_type=row_type,
-        )
+        self._raw_cursor.executemany(operation, seq_of_parameters)
+        self._row_type = cast(turu.core.cursor.RowType, row_type)
+
+        return cast(Cursor, self)
 
     @override
     def fetchone(self) -> Optional[turu.core.cursor.RowType]:
@@ -117,7 +122,6 @@ try:
     import turu.mock
 
     class MockCursor(  # type: ignore
-        Generic[turu.core.cursor.RowType],
         turu.mock.MockCursor[turu.core.cursor.RowType, "_Parameters"],
         Cursor[turu.core.cursor.RowType],
     ):

@@ -1,4 +1,4 @@
-from typing import Any, Generic, Iterator, List, Optional, Sequence, Type
+from typing import Any, Iterator, List, Optional, Sequence, Type
 
 from turu.core.cursor import (
     Cursor,
@@ -13,7 +13,7 @@ from turu.mock.store import TuruMockStore
 from typing_extensions import Self, override
 
 
-class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
+class MockCursor(Cursor[RowType, Parameters]):
     def __init__(
         self,
         store: TuruMockStore,

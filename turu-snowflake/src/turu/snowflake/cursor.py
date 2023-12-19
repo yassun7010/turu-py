@@ -1,14 +1,12 @@
-from typing import Any, Generic, List, Optional, Sequence, Type, cast
+from typing import Any, List, Optional, Sequence, Type, cast
 
 import turu.core.cursor
-from turu.core.protocols.cursor import Parameters
 from typing_extensions import override
 
 import snowflake.connector
 
 
 class Cursor(
-    Generic[turu.core.cursor.RowType, Parameters],
     turu.core.cursor.Cursor[turu.core.cursor.RowType, Any],
 ):
     def __init__(
@@ -39,7 +37,7 @@ class Cursor(
     @override
     def execute(
         self, operation: str, parameters: Optional["Any"] = None, /
-    ) -> "Cursor[Any, Parameters]":
+    ) -> "Cursor[Any]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = None
 
@@ -48,7 +46,7 @@ class Cursor(
     @override
     def executemany(
         self, operation: str, seq_of_parameters: "Sequence[Any]", /
-    ) -> "Cursor[Any, Parameters]":
+    ) -> "Cursor[Any]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = None
 
@@ -61,7 +59,7 @@ class Cursor(
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
-    ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
+    ) -> "Cursor[turu.core.cursor.NewRowType]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = cast(turu.core.cursor.RowType, row_type)
 
@@ -72,9 +70,9 @@ class Cursor(
         self,
         row_type: Type[turu.core.cursor.NewRowType],
         operation: str,
-        seq_of_parameters: "Sequence[Parameters]",
+        seq_of_parameters: "Sequence[Any]",
         /,
-    ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
+    ) -> "Cursor[turu.core.cursor.NewRowType]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = cast(turu.core.cursor.RowType, row_type)
 
@@ -122,9 +120,8 @@ try:
     import turu.mock  # type: ignore
 
     class MockCursor(  # type: ignore
-        Generic[turu.core.cursor.RowType],  # type: ignore
         turu.mock.MockCursor[turu.core.cursor.RowType, Any],  # type: ignore
-        Cursor[turu.core.cursor.RowType, Any],  # type: ignore
+        Cursor[turu.core.cursor.RowType],  # type: ignore
     ):
         pass
 

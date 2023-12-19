@@ -27,3 +27,9 @@ class TuruRowTypeError(TuruError):
     @property
     def message(self) -> str:
         return f"Unsupported row type: Expected {self.expected.__name__}, got {self.actual.__name__}."
+
+
+class TuruUnexpectedFetchError(TuruError):
+    @property
+    def message(self) -> str:
+        return "Fetch is unexpected. use execute_*() to specify row type."
