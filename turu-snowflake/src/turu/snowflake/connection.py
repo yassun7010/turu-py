@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import Never
@@ -22,7 +22,7 @@ class Connection(ConnectionProtocol):
     def rollback(self) -> None:
         self._raw_connection.rollback()
 
-    def cursor(self) -> Cursor:
+    def cursor(self) -> Cursor[Never, Any]:
         return Cursor(self._raw_connection.cursor())
 
 
