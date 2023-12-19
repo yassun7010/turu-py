@@ -56,20 +56,20 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
 
     def execute_map(
         self,
-        row_type: Type[RowType],
+        row_type: Type[NewRowType],
         operation: str,
         parameters: Optional[Parameters] = None,
         /,
-    ) -> "Cursor":
+    ) -> "Cursor[NewRowType, Parameters]":
         ...
 
     def executemany_map(
         self,
-        row_type: Type[RowType],
+        row_type: Type[NewRowType],
         operation: str,
         seq_of_parameters: Sequence[Parameters],
         /,
-    ) -> "Cursor":
+    ) -> "Cursor[NewRowType, Parameters]":
         ...
 
     @override
