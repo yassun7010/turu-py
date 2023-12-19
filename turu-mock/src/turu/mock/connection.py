@@ -11,7 +11,7 @@ from typing import (
     overload,
 )
 
-from turu.core.cursor import RowType, map_row
+from turu.core.cursor import GenericRowType, map_row
 from turu.core.protocols.connection import ConnectionProtocol
 from turu.mock.store import TuruMockStore
 from typing_extensions import Never, NotRequired, Self, Unpack
@@ -43,8 +43,8 @@ class MockConnection(ConnectionProtocol):
     @overload
     def inject_response(
         self,
-        row_type: Type[RowType],
-        response: Union[Sequence[RowType], Exception],
+        row_type: Type[GenericRowType],
+        response: Union[Sequence[GenericRowType], Exception],
     ) -> Self:
         ...
 
@@ -68,7 +68,7 @@ class MockConnection(ConnectionProtocol):
     @overload
     def inject_response_from_csv(
         self,
-        row_type: Type[RowType],
+        row_type: Type[GenericRowType],
         filepath: Union[str, pathlib.Path, Exception],
         **options: Unpack[CSVOptions],
     ) -> Self:
@@ -76,7 +76,7 @@ class MockConnection(ConnectionProtocol):
 
     def inject_response_from_csv(
         self,
-        row_type: Optional[Type[RowType]],
+        row_type: Optional[Type[GenericRowType]],
         filepath: Union[str, pathlib.Path, Exception],
         **options: Unpack[CSVOptions],
     ):

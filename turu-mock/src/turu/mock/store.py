@@ -1,6 +1,6 @@
 from typing import Optional, Sequence, Type, Union, overload
 
-from turu.core.cursor import RowType
+from turu.core.cursor import GenericRowType
 from turu.mock.exception import (
     TuruMockResponseTypeMismatchError,
     TuruMockStoreDataNotFoundError,
@@ -15,22 +15,22 @@ class TuruMockStore:
     def inject_response(
         self,
         row_type: None,
-        response: Union[Optional[Sequence[RowType]], Exception] = None,
+        response: Union[Optional[Sequence[GenericRowType]], Exception] = None,
     ):
         ...
 
     @overload
     def inject_response(
         self,
-        row_type: Type[RowType],
-        response: Union[Sequence[RowType], Exception],
+        row_type: Type[GenericRowType],
+        response: Union[Sequence[GenericRowType], Exception],
     ):
         ...
 
     def inject_response(
         self,
-        row_type: Optional[Type[RowType]],
-        response: Union[Sequence[RowType], None, Exception] = None,
+        row_type: Optional[Type[GenericRowType]],
+        response: Union[Sequence[GenericRowType], None, Exception] = None,
     ):
         self._data.append((row_type, response))
 

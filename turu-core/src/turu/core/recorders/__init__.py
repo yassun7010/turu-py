@@ -20,11 +20,13 @@ from typing_extensions import Unpack
 GenericCursor = TypeVar("GenericCursor", bound=turu.core.cursor.Cursor)
 
 
-class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]):
+class _RecordCursor(
+    turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameters]
+):
     def __init__(
         self,
         recorder: RecorderProtcol,
-        cursor: turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters],
+        cursor: turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameters],
         *,
         enable: bool,
     ):
@@ -50,25 +52,25 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
 
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
-    ) -> "_RecordCursor[turu.core.cursor.RowType, Parameters]":
+    ) -> "_RecordCursor[turu.core.cursor.GenericRowType, Parameters]":
         self._cursor = self._cursor.execute(operation, parameters)
 
         return self
 
     def executemany(
         self, operation: str, seq_of_parameters: "Sequence[Parameters]", /
-    ) -> "_RecordCursor[turu.core.cursor.RowType, Parameters]":
+    ) -> "_RecordCursor[turu.core.cursor.GenericRowType, Parameters]":
         self._cursor = self._cursor.executemany(operation, seq_of_parameters)
 
         return self
 
     def execute_map(
         self,
-        row_type: Type[turu.core.cursor.NewRowType],
+        row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
         parameters: Optional[Parameters] = None,
         /,
-    ) -> "_RecordCursor[turu.core.cursor.NewRowType, Parameters]":
+    ) -> "_RecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
         self._cursor = cast(
             turu.core.cursor.Cursor,
             self._cursor.execute_map(row_type, operation, parameters),
@@ -78,11 +80,11 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
 
     def executemany_map(
         self,
-        row_type: Type[turu.core.cursor.NewRowType],
+        row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
         seq_of_parameters: Sequence[Parameters],
         /,
-    ) -> "_RecordCursor[turu.core.cursor.NewRowType, Parameters]":
+    ) -> "_RecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
         self._cursor = cast(
             turu.core.cursor.Cursor,
             self._cursor.executemany_map(row_type, operation, seq_of_parameters),
@@ -90,14 +92,16 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
 
         return cast(_RecordCursor, self)
 
-    def fetchone(self) -> Optional[turu.core.cursor.RowType]:
+    def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
         row = self._cursor.fetchone()
         if row is not None:
             self._recorder.write_row(row)
 
         return row
 
-    def fetchmany(self, size: Optional[int] = None) -> List[turu.core.cursor.RowType]:
+    def fetchmany(
+        self, size: Optional[int] = None
+    ) -> List[turu.core.cursor.GenericRowType]:
         rows = self._cursor.fetchmany(size)
 
         for row in rows:
@@ -105,7 +109,7 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
 
         return rows
 
-    def fetchall(self) -> List[turu.core.cursor.RowType]:
+    def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
         rows = self._cursor.fetchall()
 
         for row in rows:
@@ -113,10 +117,10 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
 
         return rows
 
-    def __iter__(self) -> "_RecordCursor[turu.core.cursor.RowType, Parameters]":
+    def __iter__(self) -> "_RecordCursor[turu.core.cursor.GenericRowType, Parameters]":
         return self
 
-    def __next__(self) -> turu.core.cursor.RowType:
+    def __next__(self) -> turu.core.cursor.GenericRowType:
         row = next(self._cursor)
 
         self._recorder.write_row(row)

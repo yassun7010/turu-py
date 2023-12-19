@@ -9,16 +9,16 @@ if TYPE_CHECKING:
 
 
 class Cursor(
-    turu.core.cursor.Cursor[turu.core.cursor.RowType, "_Parameters"],
+    turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, "_Parameters"],
 ):
     def __init__(
         self,
         raw_cursor: sqlite3.Cursor,
         *,
-        row_type: Optional[Type[turu.core.cursor.RowType]] = None,
+        row_type: Optional[Type[turu.core.cursor.GenericRowType]] = None,
     ):
         self._raw_cursor = raw_cursor
-        self._row_type: Optional[Type[turu.core.cursor.RowType]] = row_type
+        self._row_type: Optional[Type[turu.core.cursor.GenericRowType]] = row_type
 
     @property
     def rowcount(self) -> int:
@@ -57,31 +57,31 @@ class Cursor(
     @override
     def execute_map(
         self,
-        row_type: Type[turu.core.cursor.NewRowType],
+        row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
         parameters: "Optional[_Parameters]" = None,
         /,
-    ) -> "Cursor[turu.core.cursor.NewRowType]":
+    ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
         self._raw_cursor.execute(operation, parameters or ())
-        self._row_type = cast(turu.core.cursor.RowType, row_type)
+        self._row_type = cast(turu.core.cursor.GenericRowType, row_type)
 
         return cast(Cursor, self)
 
     @override
     def executemany_map(
         self,
-        row_type: Type[turu.core.cursor.NewRowType],
+        row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
         seq_of_parameters: "Sequence[_Parameters]",
         /,
-    ) -> "Cursor[turu.core.cursor.NewRowType]":
+    ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
-        self._row_type = cast(turu.core.cursor.RowType, row_type)
+        self._row_type = cast(turu.core.cursor.GenericRowType, row_type)
 
         return cast(Cursor, self)
 
     @override
-    def fetchone(self) -> Optional[turu.core.cursor.RowType]:
+    def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
         row = self._raw_cursor.fetchone()
         if row is None:
             return None
@@ -93,7 +93,9 @@ class Cursor(
             return row
 
     @override
-    def fetchmany(self, size: Optional[int] = None) -> List[turu.core.cursor.RowType]:
+    def fetchmany(
+        self, size: Optional[int] = None
+    ) -> List[turu.core.cursor.GenericRowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in (
@@ -102,14 +104,14 @@ class Cursor(
         ]
 
     @override
-    def fetchall(self) -> List[turu.core.cursor.RowType]:
+    def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in self._raw_cursor.fetchall()
         ]
 
     @override
-    def __next__(self) -> turu.core.cursor.RowType:
+    def __next__(self) -> turu.core.cursor.GenericRowType:
         next_row = next(self._raw_cursor)
         if self._row_type is not None and next_row is not None:
             return turu.core.cursor.map_row(self._row_type, next_row)
@@ -122,8 +124,8 @@ try:
     import turu.mock
 
     class MockCursor(  # type: ignore
-        turu.mock.MockCursor[turu.core.cursor.RowType, "_Parameters"],
-        Cursor[turu.core.cursor.RowType],
+        turu.mock.MockCursor[turu.core.cursor.GenericRowType, "_Parameters"],
+        Cursor[turu.core.cursor.GenericRowType],
     ):
         pass
 

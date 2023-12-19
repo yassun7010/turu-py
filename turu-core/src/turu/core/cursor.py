@@ -18,11 +18,12 @@ from turu.core.protocols.cursor import CursorProtocol, Parameters
 from turu.core.protocols.dataclass import Dataclass
 from typing_extensions import Self, override
 
-RowType = TypeVar("RowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
-NewRowType = TypeVar("NewRowType", bound=Union[Tuple[Any], Dataclass, PydanticModel])
+RowType = Union[Tuple[Any], Dataclass, PydanticModel]
+GenericRowType = TypeVar("GenericRowType", bound=RowType)
+GenericNewRowType = TypeVar("GenericNewRowType", bound=RowType)
 
 
-class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
+class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     @property
     @abstractmethod
     def rowcount(self) -> int:
@@ -56,32 +57,32 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
 
     def execute_map(
         self,
-        row_type: Type[NewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         parameters: Optional[Parameters] = None,
         /,
-    ) -> "Cursor[NewRowType, Parameters]":
+    ) -> "Cursor[GenericNewRowType, Parameters]":
         ...
 
     def executemany_map(
         self,
-        row_type: Type[NewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: Sequence[Parameters],
         /,
-    ) -> "Cursor[NewRowType, Parameters]":
+    ) -> "Cursor[GenericNewRowType, Parameters]":
         ...
 
     @override
-    def fetchone(self) -> Optional[RowType]:
+    def fetchone(self) -> Optional[GenericRowType]:
         ...
 
     @override
-    def fetchmany(self, size: Optional[int] = None) -> List[RowType]:
+    def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
         ...
 
     @override
-    def fetchall(self) -> List[RowType]:
+    def fetchall(self) -> List[GenericRowType]:
         ...
 
     @override
@@ -89,11 +90,11 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
         return self
 
     @override
-    def __next__(self) -> RowType:
+    def __next__(self) -> GenericRowType:
         ...
 
 
-def map_row(row_type: Optional[Type[RowType]], row: Any) -> RowType:
+def map_row(row_type: Optional[Type[GenericRowType]], row: Any) -> GenericRowType:
     if row_type is None:
         return row
 

@@ -90,14 +90,16 @@ class TestTuruMock:
         assert list(cursor.fetchall()) == expected
         assert cursor.fetchall() == []
 
-    @pytest.mark.parametrize("rowtype", [RowNamedTuple, RowDataclass, RowPydantic])
+    @pytest.mark.parametrize(
+        "GenericRowType", [RowNamedTuple, RowDataclass, RowPydantic]
+    )
     def test_execute_map_by_rowtype(
-        self, rowtype: Any, mock_connection: turu.mock.MockConnection
+        self, GenericRowType: Any, mock_connection: turu.mock.MockConnection
     ):
-        expected = [rowtype(id=1)]
-        mock_connection.inject_response(rowtype, expected)
+        expected = [GenericRowType(id=1)]
+        mock_connection.inject_response(GenericRowType, expected)
 
-        cursor = mock_connection.cursor().execute_map(rowtype, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(GenericRowType, "SELECT 1")
 
         assert list(cursor) == expected
 

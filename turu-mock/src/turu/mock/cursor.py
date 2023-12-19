@@ -2,9 +2,9 @@ from typing import Any, Iterator, List, Optional, Sequence, Type
 
 from turu.core.cursor import (
     Cursor,
-    NewRowType,
+    GenericNewRowType,
+    GenericRowType,
     Parameters,
-    RowType,
 )
 from turu.mock.exception import (
     TuruMockUnexpectedFetchError,
@@ -13,14 +13,14 @@ from turu.mock.store import TuruMockStore
 from typing_extensions import Self, override
 
 
-class MockCursor(Cursor[RowType, Parameters]):
+class MockCursor(Cursor[GenericRowType, Parameters]):
     def __init__(
         self,
         store: TuruMockStore,
         *,
         row_count: Optional[int] = None,
         rows: Optional[Iterator] = None,
-        row_type: Optional[Type[RowType]] = None,
+        row_type: Optional[Type[GenericRowType]] = None,
     ) -> None:
         self._turu_mock_store = store
         self._rowcount = row_count
@@ -55,25 +55,25 @@ class MockCursor(Cursor[RowType, Parameters]):
     @override
     def execute_map(
         self,
-        row_type: Type[NewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         parameters: Optional[Parameters] = None,
         /,
-    ) -> "MockCursor[NewRowType, Parameters]":
+    ) -> "MockCursor[GenericNewRowType, Parameters]":
         return self._make_new_cursor(row_type)
 
     @override
     def executemany_map(
         self,
-        row_type: Type[NewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: Sequence[Parameters],
         /,
-    ) -> "MockCursor[NewRowType, Parameters]":
+    ) -> "MockCursor[GenericNewRowType, Parameters]":
         return self._make_new_cursor(row_type)
 
     @override
-    def fetchone(self) -> Optional[RowType]:
+    def fetchone(self) -> Optional[GenericRowType]:
         if self._turu_mock_rows is None:
             return None
 
@@ -84,7 +84,7 @@ class MockCursor(Cursor[RowType, Parameters]):
             return None
 
     @override
-    def fetchmany(self, size: Optional[int] = None) -> List[RowType]:
+    def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
@@ -94,7 +94,7 @@ class MockCursor(Cursor[RowType, Parameters]):
         ]
 
     @override
-    def fetchall(self) -> List[RowType]:
+    def fetchall(self) -> List[GenericRowType]:
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
@@ -107,7 +107,7 @@ class MockCursor(Cursor[RowType, Parameters]):
         return self
 
     @override
-    def __next__(self) -> RowType:
+    def __next__(self) -> GenericRowType:
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
