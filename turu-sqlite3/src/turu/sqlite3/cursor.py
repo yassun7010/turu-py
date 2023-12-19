@@ -2,6 +2,7 @@ import sqlite3
 from typing import TYPE_CHECKING, Any, List, Optional, Sequence, Type, cast
 
 import turu.core.cursor
+import turu.core.mock
 from typing_extensions import override
 
 if TYPE_CHECKING:
@@ -120,14 +121,8 @@ class Cursor(
             return next_row
 
 
-try:
-    import turu.mock
-
-    class MockCursor(  # type: ignore
-        turu.mock.MockCursor[turu.core.cursor.GenericRowType, "_Parameters"],
-        Cursor[turu.core.cursor.GenericRowType],
-    ):
-        pass
-
-except ImportError:
+class MockCursor(  # type: ignore
+    turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, "_Parameters"],
+    Cursor[turu.core.cursor.GenericRowType],
+):
     pass

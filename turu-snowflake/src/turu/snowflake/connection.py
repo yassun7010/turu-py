@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Optional
 
+import turu.core.mock
+import turu.snowflake.cursor
 from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import Never
 
@@ -26,19 +28,12 @@ class Connection(ConnectionProtocol):
         return Cursor(self._raw_connection.cursor())
 
 
-try:
-    import turu.mock  # type: ignore
-    import turu.snowflake.cursor
+class MockConnection(Connection, turu.core.mock.MockConnection):
+    def __init__(self, **kwargs):
+        turu.core.mock.MockConnection.__init__(self)
 
-    class MockConnection(Connection, turu.mock.MockConnection):
-        def __init__(self, **kwargs):
-            turu.mock.MockConnection.__init__(self)
-
-        def cursor(self) -> "turu.snowflake.cursor.MockCursor[Never]":
-            return turu.snowflake.cursor.MockCursor(self._turu_mock_store)
-
-except ImportError:
-    pass
+    def cursor(self) -> "turu.snowflake.cursor.MockCursor[Never]":
+        return turu.snowflake.cursor.MockCursor(self._turu_mock_store)
 
 
 def connect(

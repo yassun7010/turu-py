@@ -2,16 +2,12 @@ from dataclasses import dataclass
 from typing import Any, NamedTuple
 
 import pytest
-import turu.mock
+import turu.core.mock
 from pydantic import BaseModel
-from turu.mock.exception import (
+from turu.core.mock.exception import (
     TuruMockStoreDataNotFoundError,
     TuruMockUnexpectedFetchError,
 )
-
-
-def test_version():
-    assert turu.mock.__version__
 
 
 class RowNamedTuple(NamedTuple):
@@ -28,23 +24,27 @@ class RowPydantic(BaseModel):
 
 
 class TestTuruMock:
-    def test_execute_fetch(self, mock_connection: turu.mock.MockConnection):
+    def test_execute_fetch(self, mock_connection: turu.core.mock.MockConnection):
         mock_connection.inject_response(None, [(1,)])
         cursor = mock_connection.cursor().execute("select 1")
 
         assert cursor.fetchall() == [(1,)]
 
-    def test_execute_without_injection(self, mock_connection: turu.mock.MockConnection):
+    def test_execute_without_injection(
+        self, mock_connection: turu.core.mock.MockConnection
+    ):
         with pytest.raises(TuruMockStoreDataNotFoundError):
             mock_connection.cursor().execute("select 1")
 
-    def test_execute_fetch_with_none(self, mock_connection: turu.mock.MockConnection):
+    def test_execute_fetch_with_none(
+        self, mock_connection: turu.core.mock.MockConnection
+    ):
         mock_connection.inject_response(None)
         cursor = mock_connection.cursor().execute("select 1")
         with pytest.raises(TuruMockUnexpectedFetchError):
             cursor.fetchall()
 
-    def test_execute(self, mock_connection: turu.mock.MockConnection):
+    def test_execute(self, mock_connection: turu.core.mock.MockConnection):
         mock_connection.inject_response(None, [(1,)])
         cursor = mock_connection.cursor().execute("select 1")
 
@@ -53,7 +53,7 @@ class TestTuruMock:
 
     @pytest.mark.parametrize("rowsize", range(5))
     def test_mock_execute_map_fetchone(
-        self, mock_connection: turu.mock.MockConnection, rowsize: int
+        self, mock_connection: turu.core.mock.MockConnection, rowsize: int
     ):
         expected = [RowPydantic(id=i) for i in range(rowsize)]
         mock_connection.inject_response(RowPydantic, expected)
@@ -67,7 +67,7 @@ class TestTuruMock:
     @pytest.mark.parametrize("rowsize", range(5))
     def test_mock_execute_map_fetchmany(
         self,
-        mock_connection: turu.mock.MockConnection,
+        mock_connection: turu.core.mock.MockConnection,
         rowsize: int,
     ):
         expected = [RowPydantic(id=i) for i in range(rowsize)]
@@ -80,7 +80,7 @@ class TestTuruMock:
 
     @pytest.mark.parametrize("rowsize", range(5))
     def test_mock_execute_map_fetchall(
-        self, mock_connection: turu.mock.MockConnection, rowsize: int
+        self, mock_connection: turu.core.mock.MockConnection, rowsize: int
     ):
         expected = [RowPydantic(id=i) for i in range(rowsize)]
         mock_connection.inject_response(RowPydantic, expected)
@@ -94,7 +94,7 @@ class TestTuruMock:
         "GenericRowType", [RowNamedTuple, RowDataclass, RowPydantic]
     )
     def test_execute_map_by_rowtype(
-        self, GenericRowType: Any, mock_connection: turu.mock.MockConnection
+        self, GenericRowType: Any, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [GenericRowType(id=1)]
         mock_connection.inject_response(GenericRowType, expected)
@@ -105,7 +105,7 @@ class TestTuruMock:
 
     @pytest.mark.parametrize("execition_time", range(5))
     def test_execute_map_multi_call(
-        self, execition_time: int, mock_connection: turu.mock.MockConnection
+        self, execition_time: int, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [RowPydantic(id=i) for i in range(3)]
         for _ in range(execition_time):
@@ -119,7 +119,7 @@ class TestTuruMock:
 
     @pytest.mark.parametrize("execition_time", range(5))
     def test_execute_map_each_inject_and_execute(
-        self, execition_time: int, mock_connection: turu.mock.MockConnection
+        self, execition_time: int, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [RowPydantic(id=i) for i in range(3)]
         for _ in range(execition_time):
@@ -129,7 +129,7 @@ class TestTuruMock:
             assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
 
-    def test_multi_injection(self, mock_connection: turu.mock.MockConnection):
+    def test_multi_injection(self, mock_connection: turu.core.mock.MockConnection):
         expected = [RowPydantic(id=i) for i in range(3)]
         (
             mock_connection.chain()
@@ -144,7 +144,7 @@ class TestTuruMock:
             assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
 
-    def test_cursor_iterator(self, mock_connection: turu.mock.MockConnection):
+    def test_cursor_iterator(self, mock_connection: turu.core.mock.MockConnection):
         expected = [RowPydantic(id=i) for i in range(3)]
         mock_connection.inject_response(RowPydantic, expected)
 

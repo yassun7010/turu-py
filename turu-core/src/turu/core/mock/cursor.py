@@ -6,10 +6,10 @@ from turu.core.cursor import (
     GenericRowType,
     Parameters,
 )
-from turu.mock.exception import (
+from turu.core.mock.exception import (
     TuruMockUnexpectedFetchError,
 )
-from turu.mock.store import TuruMockStore
+from turu.core.mock.store import TuruMockStore
 from typing_extensions import Self, override
 
 

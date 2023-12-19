@@ -5,23 +5,15 @@ from .cursor import Cursor
 
 __version__ = importlib.metadata.version("turu-snowflake")
 
-try:
-    import turu.mock  # type: ignore  # noqa: F401
+import turu.core.mock  # type: ignore  # noqa: F401
 
-    from .connection import MockConnection
-    from .cursor import MockCursor
+from .connection import MockConnection
+from .cursor import MockCursor
 
-    __all__ = [
-        "connect",
-        "Connection",
-        "Cursor",
-        "MockConnection",
-        "MockCursor",
-    ]
-
-except ImportError:
-    __all__ = [
-        "connect",
-        "Connection",
-        "Cursor",
-    ]
+__all__ = [
+    "connect",
+    "Connection",
+    "Cursor",
+    "MockConnection",
+    "MockCursor",
+]

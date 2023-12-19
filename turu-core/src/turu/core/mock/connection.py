@@ -12,8 +12,8 @@ from typing import (
 )
 
 from turu.core.cursor import GenericRowType, map_row
+from turu.core.mock.store import TuruMockStore
 from turu.core.protocols.connection import ConnectionProtocol
-from turu.mock.store import TuruMockStore
 from typing_extensions import Never, NotRequired, Self, Unpack
 
 from .cursor import MockCursor

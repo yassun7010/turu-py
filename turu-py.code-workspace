@@ -11,9 +11,6 @@
             "path": "turu-core",
         },
         {
-            "path": "turu-mock",
-        },
-        {
             "path": "turu-sqlite3",
         },
         {

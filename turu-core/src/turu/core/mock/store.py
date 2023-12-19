@@ -1,7 +1,7 @@
 from typing import Optional, Sequence, Type, Union, overload
 
 from turu.core.cursor import GenericRowType
-from turu.mock.exception import (
+from turu.core.mock.exception import (
     TuruMockResponseTypeMismatchError,
     TuruMockStoreDataNotFoundError,
 )

@@ -395,22 +395,6 @@ type = "directory"
 url = "../turu-core"
 
 [[package]]
-name = "turu-mock"
-version = "0.1.0"
-description = ""
-optional = true
-python-versions = "^3.8"
-files = []
-develop = true
-
-[package.dependencies]
-turu-core = {path = "../turu-core", develop = true}
-
-[package.source]
-type = "directory"
-url = "../turu-mock"
-
-[[package]]
 name = "typing-extensions"
 version = "4.9.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -421,10 +405,7 @@ files = [
     {file = "typing_extensions-4.9.0.tar.gz", hash = "sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"},
 ]
 
-[extras]
-mock = ["turu-mock"]
-
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "73c5de8f9b97f45e970a0749af216ee33a61ec367ff4bd0a9924642e7790fe3a"
+content-hash = "7884f5b9ef349b260f995aa1d5745b592402d0d033f48cd66acc1532a4977955"

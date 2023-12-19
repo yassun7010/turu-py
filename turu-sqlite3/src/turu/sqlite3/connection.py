@@ -2,6 +2,8 @@ import importlib.metadata
 import sqlite3
 from typing import Optional, Type, Union
 
+import turu.core.mock
+import turu.sqlite3.cursor
 from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import Never, NotRequired, TypedDict, Unpack
 
@@ -27,19 +29,12 @@ class Connection(ConnectionProtocol):
         return Cursor(self._raw_connection.cursor())
 
 
-try:
-    import turu.mock
-    import turu.sqlite3.cursor
+class MockConnection(Connection, turu.core.mock.MockConnection):
+    def __init__(self, **kwargs):
+        turu.core.mock.MockConnection.__init__(self)
 
-    class MockConnection(Connection, turu.mock.MockConnection):
-        def __init__(self, **kwargs):
-            turu.mock.MockConnection.__init__(self)
-
-        def cursor(self) -> "turu.sqlite3.cursor.MockCursor[Never]":
-            return turu.sqlite3.cursor.MockCursor(self._turu_mock_store)
-
-except ImportError:
-    pass
+    def cursor(self) -> "turu.sqlite3.cursor.MockCursor[Never]":
+        return turu.sqlite3.cursor.MockCursor(self._turu_mock_store)
 
 
 class _ConnectArgs(TypedDict):

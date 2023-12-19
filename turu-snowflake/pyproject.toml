@@ -6,9 +6,6 @@ authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 packages = [{ include = "turu", from = "src" }]
 
-[tool.poetry.extras]
-mock = ["turu-mock"]
-
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
 pyright = "^1.1.339"
@@ -26,13 +23,6 @@ snowflake-connector-python = "^3.6.0"
 path = "../turu-core"
 develop = true
 # version = "0.0.0"
-
-[tool.poetry.dependencies.turu-mock]
-# INFO: poetry-dynamic-versioning to replace this.
-path = "../turu-mock"
-develop = true
-# version = "0.0.0"
-optional = true
 
 [tool.poetry-dynamic-versioning]
 enable = false

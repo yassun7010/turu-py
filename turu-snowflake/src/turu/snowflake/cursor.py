@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Sequence, Type, cast
 
 import turu.core.cursor
+import turu.core.mock
 from typing_extensions import override
 
 import snowflake.connector
@@ -118,14 +119,8 @@ class Cursor(
             return next_row  # type: ignore[return-value]
 
 
-try:
-    import turu.mock  # type: ignore
-
-    class MockCursor(  # type: ignore
-        turu.mock.MockCursor[turu.core.cursor.GenericRowType, Any],  # type: ignore
-        Cursor[turu.core.cursor.GenericRowType],  # type: ignore
-    ):
-        pass
-
-except ImportError:
+class MockCursor(  # type: ignore
+    turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Any],  # type: ignore
+    Cursor[turu.core.cursor.GenericRowType],  # type: ignore
+):
     pass
