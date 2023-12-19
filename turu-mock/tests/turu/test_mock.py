@@ -120,3 +120,18 @@ class TestTuruMock:
 
             assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
+
+    def test_multi_injection(self, mock_connection: turu.mock.MockConnection):
+        expected = [RowPydantic(id=i) for i in range(3)]
+        (
+            mock_connection.chain()
+            .inject_response(RowPydantic, expected)
+            .inject_response(RowPydantic, expected)
+            .inject_response(RowPydantic, expected)
+            .inject_response(RowPydantic, expected)
+        )
+
+        cursor = mock_connection.cursor()
+        for _ in range(4):
+            assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
+            assert cursor.fetchone() is None
