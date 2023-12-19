@@ -135,3 +135,12 @@ class TestTuruMock:
         for _ in range(4):
             assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
+
+    def test_cursor_iterator(self, mock_connection: turu.mock.MockConnection):
+        expected = [RowPydantic(id=i) for i in range(3)]
+        mock_connection.inject_response(RowPydantic, expected)
+
+        for i, row in enumerate(
+            mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+        ):
+            assert row == expected[i]
