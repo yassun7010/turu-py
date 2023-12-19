@@ -11,7 +11,7 @@ from typing_extensions import NotRequired, TypedDict, Unpack
 
 
 class CsvRecorderOptions(TypedDict):
-    has_header: NotRequired[bool]
+    header: NotRequired[bool]
     rowsize: NotRequired[int]
 
 
@@ -23,8 +23,16 @@ class CsvRecorder(RecorderProtcol):
     ) -> None:
         self._file = Path(filename).open("w")
         self._writer = csv.writer(self._file)
+        self._options = options
+        self._first_row = True
 
     def write_row(self, row: turu.core.cursor.RowType) -> None:
+        if self._first_row:
+            if self._options.get("header"):
+                self._write_header(row)
+
+            self._first_row = False
+
         if is_dataclass(row):
             self._writer.writerow(row.__dict__.values())
             return
@@ -36,6 +44,18 @@ class CsvRecorder(RecorderProtcol):
         if USE_PYDANTIC:
             if isinstance(row, PydanticModel):
                 self._writer.writerow(row.model_dump().values())
+                return
+
+        raise TuruRowTypeNotSupportedError(type(row))
+
+    def _write_header(self, row: turu.core.cursor.RowType) -> None:
+        if is_dataclass(row):
+            self._writer.writerow(row.__dict__.keys())
+            return
+
+        if USE_PYDANTIC:
+            if isinstance(row, PydanticModel):
+                self._writer.writerow(row.model_dump().keys())
                 return
 
         raise TuruRowTypeNotSupportedError(type(row))
