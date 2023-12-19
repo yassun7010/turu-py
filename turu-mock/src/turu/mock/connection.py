@@ -28,6 +28,8 @@ class MockConnection(ConnectionProtocol):
         self._turu_mock_store = store or TuruMockStore()
 
     def chain(self) -> Self:
+        """this method is just for code formatting by black."""
+
         return self
 
     @overload
