@@ -13,17 +13,11 @@ from typing import (
 
 import turu.core.cursor
 from turu.core.protocols.cursor import Parameters
-from turu.core.recorders.csv_recorder import CSVRecorder
+from turu.core.recorders.csv_recorder import CsvRecorder, CsvRecorderOptions
 from turu.core.recorders.recorder_protcol import RecorderProtcol
-from typing_extensions import NotRequired, TypedDict, Unpack
+from typing_extensions import Unpack
 
 GenericCursor = TypeVar("GenericCursor", bound=turu.core.cursor.Cursor)
-
-
-class RecordCsvOptions(TypedDict):
-    has_header: NotRequired[bool]
-    enable: NotRequired[bool]
-    rowsize: NotRequired[int]
 
 
 class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]):
@@ -31,11 +25,12 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
         self,
         recorder: RecorderProtcol,
         cursor: turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters],
-        **options: Unpack[RecordCsvOptions],
+        *,
+        enable: bool,
     ):
         self._recorder = recorder
         self._cursor = cursor
-        self._options = options
+        self._enable = enable
 
     @property
     def rowcount(self) -> int:
@@ -133,11 +128,17 @@ class _RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters
 def record_as_csv(
     record_filepath: Union[str, Path],
     cursor: GenericCursor,
-    **options: Unpack[RecordCsvOptions],
+    *,
+    enable: bool = True,
+    **options: Unpack[CsvRecorderOptions],
 ) -> Generator[GenericCursor, None, None]:
     cursor = cast(
         GenericCursor,
-        _RecordCursor(CSVRecorder(record_filepath), cursor, **options),
+        _RecordCursor(
+            CsvRecorder(record_filepath, **options),
+            cursor,
+            enable=enable,
+        ),
     )
 
     try:

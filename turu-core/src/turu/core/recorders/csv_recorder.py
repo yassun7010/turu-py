@@ -7,10 +7,20 @@ import turu.core.cursor
 from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeNotSupportedError
 from turu.core.recorders.recorder_protcol import RecorderProtcol
+from typing_extensions import NotRequired, TypedDict, Unpack
 
 
-class CSVRecorder(RecorderProtcol):
-    def __init__(self, filename: Union[str, Path]) -> None:
+class CsvRecorderOptions(TypedDict):
+    has_header: NotRequired[bool]
+    rowsize: NotRequired[int]
+
+
+class CsvRecorder(RecorderProtcol):
+    def __init__(
+        self,
+        filename: Union[str, Path],
+        **options: Unpack[CsvRecorderOptions],
+    ) -> None:
         self._file = Path(filename).open("w")
         self._writer = csv.writer(self._file)
 
