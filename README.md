@@ -12,6 +12,7 @@ pip install turu[snowflake]
 
 ## Why Turu?
 SQL is a powerful language, but it's not very type safe, and recently many new SQL database engines have been created.
+In particular, cloud-based SQL database is difficult to test automatically in a local environment.
 
 Turu was developed to allow for the unified handling and development of many SQL databases.
 
