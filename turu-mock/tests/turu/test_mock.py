@@ -4,7 +4,10 @@ from typing import Any, NamedTuple
 import pytest
 import turu.mock
 from pydantic import BaseModel
-from turu.mock.exception import TuruMockUnexpectedFetchError
+from turu.mock.exception import (
+    TuruMockStoreDataNotFoundError,
+    TuruMockUnexpectedFetchError,
+)
 
 
 def test_version():
@@ -29,6 +32,10 @@ class TestTuruMock:
         mock_connection.inject_response(None, [(1,)])
         cursor = mock_connection.cursor().execute("select 1")
         assert cursor.fetchall() == [(1,)]
+
+    def test_execute_without_injection(self, mock_connection: turu.mock.MockConnection):
+        with pytest.raises(TuruMockStoreDataNotFoundError):
+            mock_connection.cursor().execute("select 1")
 
     def test_execute_fetch_with_none(self, mock_connection: turu.mock.MockConnection):
         mock_connection.inject_response(None)
