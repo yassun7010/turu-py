@@ -27,6 +27,9 @@ class MockConnection(ConnectionProtocol):
     def __init__(self, store: Optional[TuruMockStore] = None):
         self._turu_mock_store = store or TuruMockStore()
 
+    def chain(self) -> Self:
+        return self
+
     @overload
     def inject_response(
         self,
