@@ -53,6 +53,9 @@ class MockConnection(ConnectionProtocol):
         self._turu_mock_store.inject_response(row_type, response)
         return self
 
+    def close(self) -> None:
+        pass
+
     @abstractmethod
     def cursor(self) -> MockCursor:
         ...

@@ -13,6 +13,9 @@ class Connection(ConnectionProtocol):
     def __init__(self, raw_connection: snowflake.connector.SnowflakeConnection):
         self._raw_connection = raw_connection
 
+    def close(self) -> None:
+        self._raw_connection.close()
+
     def cursor(self) -> Cursor:
         return Cursor(self._raw_connection.cursor())
 
