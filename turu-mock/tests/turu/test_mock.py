@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 import pytest
 import turu.mock
@@ -80,10 +80,36 @@ class TestTuruMock:
 
     @pytest.mark.parametrize("rowtype", [RowNamedTuple, RowDataclass, RowPydantic])
     def test_execute_map_by_rowtype(
-        self, rowtype: type, mock_connection: turu.mock.MockConnection
+        self, rowtype: Any, mock_connection: turu.mock.MockConnection
     ):
         expected = [rowtype(id=1)]
         mock_connection.inject_response(rowtype, expected)
 
         cursor = mock_connection.cursor().execute_map(rowtype, "SELECT 1")
         assert list(cursor) == expected
+
+    @pytest.mark.parametrize("execition_time", range(5))
+    def test_execute_map_multi_call(
+        self, execition_time: int, mock_connection: turu.mock.MockConnection
+    ):
+        expected = [RowPydantic(id=i) for i in range(3)]
+        for _ in range(execition_time):
+            mock_connection.inject_response(RowPydantic, expected)
+
+        cursor = mock_connection.cursor()
+        for _ in range(execition_time):
+            assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
+
+        assert cursor.fetchone() is None
+
+    @pytest.mark.parametrize("execition_time", range(5))
+    def test_execute_map_each_inject_and_execute(
+        self, execition_time: int, mock_connection: turu.mock.MockConnection
+    ):
+        expected = [RowPydantic(id=i) for i in range(3)]
+        for _ in range(execition_time):
+            mock_connection.inject_response(RowPydantic, expected)
+            cursor = mock_connection.cursor()
+
+            assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
+            assert cursor.fetchone() is None

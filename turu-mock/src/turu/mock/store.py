@@ -9,7 +9,6 @@ from turu.mock.exception import (
 
 class TuruMockStore:
     def __init__(self):
-        self._cursor = 0
         self._data = []
 
     @overload
@@ -39,15 +38,15 @@ class TuruMockStore:
         self,
         row_type: Optional[Type],
     ) -> list:
-        if len(self._data[self._cursor :]) == 0:
+        if len(self._data) == 0:
             raise TuruMockStoreDataNotFoundError()
-        response = self._data[self._cursor]
-        self._cursor += 1
 
-        if response[0] is not row_type:
-            raise TuruMockResponseTypeMismatchError(row_type, response[0])
+        _row_type, _response = self._data.pop()
 
-        if isinstance(response[1], Exception):
-            raise response[1]
+        if _row_type is not row_type:
+            raise TuruMockResponseTypeMismatchError(row_type, _row_type)
 
-        return response[1]
+        if isinstance(_response, Exception):
+            raise _response
+
+        return _response
