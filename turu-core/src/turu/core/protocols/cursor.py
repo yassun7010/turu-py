@@ -17,6 +17,14 @@ class CursorProtocol(Generic[Parameters], Protocol):
         """
         ...
 
+    @property
+    def arraysize(self) -> int:
+        ...
+
+    @arraysize.setter
+    def arraysize(self, size: int) -> None:
+        ...
+
     def close(self) -> None:
         ...
 
@@ -31,7 +39,7 @@ class CursorProtocol(Generic[Parameters], Protocol):
     def fetchone(self) -> Optional[Any]:
         ...
 
-    def fetchmany(self, size: int = -1) -> List[Any]:
+    def fetchmany(self, size: Optional[int] = None) -> List[Any]:
         ...
 
     def fetchall(self) -> List[Any]:

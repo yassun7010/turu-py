@@ -28,6 +28,16 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
     def rowcount(self) -> int:
         ...
 
+    @property
+    @abstractmethod
+    def arraysize(self) -> int:
+        ...
+
+    @arraysize.setter
+    @abstractmethod
+    def arraysize(self, size: int) -> None:
+        ...
+
     @override
     def close(self) -> None:
         pass
@@ -63,7 +73,7 @@ class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
         ...
 
     @override
-    def fetchmany(self, size: int = 1) -> List[RowType]:
+    def fetchmany(self, size: Optional[int] = None) -> List[RowType]:
         ...
 
     @override

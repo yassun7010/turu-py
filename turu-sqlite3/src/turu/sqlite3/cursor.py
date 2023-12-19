@@ -25,6 +25,14 @@ class Cursor(
     def rowcount(self) -> int:
         return self._raw_cursor.rowcount
 
+    @property
+    def arraysize(self) -> int:
+        return self._raw_cursor.arraysize
+
+    @arraysize.setter
+    def arraysize(self, size: int) -> None:
+        self._raw_cursor.arraysize = size
+
     @override
     def close(self) -> None:
         self._raw_cursor.close()
@@ -80,13 +88,11 @@ class Cursor(
             return row
 
     @override
-    def fetchmany(self, size: int = 1) -> List[turu.core.cursor.RowType]:
+    def fetchmany(self, size: Optional[int] = None) -> List[turu.core.cursor.RowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in (
-                self._raw_cursor.fetchmany(size)
-                if size is not None
-                else self._raw_cursor.fetchmany()
+                self._raw_cursor.fetchmany(size if size is not None else self.arraysize)
             )
         ]
 

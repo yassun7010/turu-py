@@ -26,10 +26,19 @@ class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
         self._rowcount = row_count
         self._turu_mock_rows = rows
         self._row_type = row_type
+        self._arraysize = 1
 
     @property
     def rowcount(self) -> int:
         return self._rowcount or -1
+
+    @property
+    def arraysize(self) -> int:
+        return self._arraysize
+
+    @arraysize.setter
+    def arraysize(self, size: int) -> None:
+        self._arraysize = size
 
     @override
     def execute(
@@ -73,11 +82,14 @@ class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
             return None
 
     @override
-    def fetchmany(self, size: int = 1) -> List[RowType]:
+    def fetchmany(self, size: Optional[int] = None) -> List[RowType]:
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return [next(self._turu_mock_rows) for _ in range(size or self.rowcount)]
+        return [
+            next(self._turu_mock_rows)
+            for _ in range(size if size is not None else self.arraysize)
+        ]
 
     @override
     def fetchall(self) -> List[RowType]:
