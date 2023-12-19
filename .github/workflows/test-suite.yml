@@ -41,7 +41,7 @@ jobs:
           poetry --version
       - name: Poetry Install Dependencies
         run: |
-          poetry install --no-interaction
+          poetry install --no-interaction --all-extras
       - name: Lint
         run: |
           poetry run task format --diff
