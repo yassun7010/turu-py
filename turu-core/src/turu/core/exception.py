@@ -17,7 +17,7 @@ class TuruError(TuruException):
         return self.message
 
 
-class TuruRowTypeError(TuruError):
+class TuruRowTypeMismatchError(TuruError):
     """Raised when a row is not of the expected type."""
 
     def __init__(self, expected: type, actual: type) -> None:
@@ -27,6 +27,17 @@ class TuruRowTypeError(TuruError):
     @property
     def message(self) -> str:
         return f"Unsupported row type: Expected {self.expected.__name__}, got {self.actual.__name__}."
+
+
+class TuruRowTypeNotSupportedError(TuruError):
+    """Raised when a row type is not supported."""
+
+    def __init__(self, row_type: type) -> None:
+        self.row_type = row_type
+
+    @property
+    def message(self) -> str:
+        return f"Unsupported row type: {self.row_type.__name__}."
 
 
 class TuruUnexpectedFetchError(TuruError):

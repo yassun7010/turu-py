@@ -13,7 +13,7 @@ from typing import (
 )
 
 from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
-from turu.core.exception import TuruRowTypeError
+from turu.core.exception import TuruRowTypeMismatchError
 from turu.core.protocols.cursor import CursorProtocol, Parameters
 from turu.core.protocols.dataclass import Dataclass
 from typing_extensions import Self, override
@@ -97,9 +97,6 @@ def map_row(row_type: Optional[Type[RowType]], row: Any) -> RowType:
     if row_type is None:
         return row
 
-    if issubclass(row_type, tuple):
-        return row_type._make(row)  # type: ignore
-
     if is_dataclass(row_type):
         return row_type(
             **{
@@ -108,10 +105,13 @@ def map_row(row_type: Optional[Type[RowType]], row: Any) -> RowType:
             }
         )  # type: ignore
 
+    if issubclass(row_type, tuple):
+        return row_type._make(row)  # type: ignore
+
     if USE_PYDANTIC:
         if issubclass(row_type, PydanticModel):
             return row_type(
                 **{key: data for key, data in zip(row_type.model_fields.keys(), row)}
             )
 
-    raise TuruRowTypeError(row_type, row.__class__)
+    raise TuruRowTypeMismatchError(row_type, row.__class__)
