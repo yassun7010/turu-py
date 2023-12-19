@@ -38,7 +38,7 @@ class Cursor(
 
     @override
     def execute(
-        self, operation: str, parameters: "Optional[Any]" = None
+        self, operation: str, parameters: Optional["Any"] = None, /
     ) -> "Cursor[Any, Parameters]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = None
@@ -47,9 +47,7 @@ class Cursor(
 
     @override
     def executemany(
-        self,
-        operation: str,
-        seq_of_parameters: "Sequence[Any]",
+        self, operation: str, seq_of_parameters: "Sequence[Any]", /
     ) -> "Cursor[Any, Parameters]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = None
@@ -62,6 +60,7 @@ class Cursor(
         row_type: Type[turu.core.cursor.NewRowType],
         operation: str,
         parameters: "Optional[Any]" = None,
+        /,
     ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = cast(turu.core.cursor.RowType, row_type)
@@ -74,6 +73,7 @@ class Cursor(
         row_type: Type[turu.core.cursor.NewRowType],
         operation: str,
         seq_of_parameters: "Sequence[Parameters]",
+        /,
     ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = cast(turu.core.cursor.RowType, row_type)

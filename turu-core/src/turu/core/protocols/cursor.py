@@ -28,7 +28,9 @@ class CursorProtocol(Generic[Parameters], Protocol):
     def close(self) -> None:
         ...
 
-    def execute(self, operation: str, parameters: Parameters = ..., /) -> Self:
+    def execute(
+        self, operation: str, parameters: Optional[Parameters] = None, /
+    ) -> Self:
         ...
 
     def executemany(

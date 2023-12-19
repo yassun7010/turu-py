@@ -42,7 +42,7 @@ class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
 
     @override
     def execute(
-        self, operation: str, parameters: Optional[Parameters] = None
+        self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> "MockCursor[Any, Parameters]":
         return self._make_new_cursor(None)
 
@@ -58,6 +58,7 @@ class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
         row_type: Type[NewRowType],
         operation: str,
         parameters: Optional[Parameters] = None,
+        /,
     ) -> "MockCursor[NewRowType, Parameters]":
         return self._make_new_cursor(row_type)
 
@@ -67,6 +68,7 @@ class MockCursor(Generic[RowType, Parameters], Cursor[RowType, Parameters]):
         row_type: Type[NewRowType],
         operation: str,
         seq_of_parameters: Sequence[Parameters],
+        /,
     ) -> "MockCursor[NewRowType, Parameters]":
         return self._make_new_cursor(row_type)
 
