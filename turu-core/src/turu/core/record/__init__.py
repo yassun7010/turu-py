@@ -13,8 +13,8 @@ from typing import (
 
 import turu.core.cursor
 from turu.core.protocols.cursor import Parameters
-from turu.core.recorders.csv_recorder import CsvRecorder, CsvRecorderOptions
-from turu.core.recorders.recorder_protcol import RecorderProtcol
+from turu.core.record.csv_recorder import CsvRecorder, CsvRecorderOptions
+from turu.core.record.recorder_protcol import RecorderProtcol
 from typing_extensions import Unpack
 
 GenericCursor = TypeVar("GenericCursor", bound=turu.core.cursor.Cursor)

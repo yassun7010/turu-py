@@ -1,6 +1,6 @@
 import turu.mock
 from pydantic import BaseModel
-from turu.core.recorders import record_as_csv
+from turu.core.record import record_as_csv
 
 
 class RowPydantic(BaseModel):
