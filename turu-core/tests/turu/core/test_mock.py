@@ -9,6 +9,8 @@ from turu.core.mock.exception import (
     TuruMockUnexpectedFetchError,
 )
 
+from tests.data import TEST_DATA_DIR
+
 
 class RowNamedTuple(NamedTuple):
     id: int
@@ -152,3 +154,22 @@ class TestTuruMock:
             mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
         ):
             assert row == expected[i]
+
+    def test_inject_response_from_csv(
+        self, mock_connection: turu.core.mock.MockConnection
+    ):
+        class Row(BaseModel):
+            id: int
+            name: str
+
+        mock_connection.inject_response_from_csv(
+            Row, TEST_DATA_DIR / "inject_response_from_csv.csv"
+        )
+
+        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
+
+        assert cursor.fetchall() == [
+            Row(id=0, name="name0"),
+            Row(id=1, name="name1"),
+            Row(id=2, name="name2"),
+        ]
