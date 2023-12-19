@@ -1,12 +1,26 @@
+import csv
+import pathlib
 from abc import abstractmethod
-from typing import Any, Optional, Sequence, Type, overload
+from typing import (
+    Any,
+    Optional,
+    Sequence,
+    Type,
+    TypedDict,
+    Union,
+    overload,
+)
 
-from turu.core.cursor import RowType
+from turu.core.cursor import RowType, map_row
 from turu.core.protocols.connection import ConnectionProtocol
 from turu.mock.store import TuruMockStore
-from typing_extensions import Self
+from typing_extensions import NotRequired, Self, Unpack
 
 from .cursor import MockCursor
+
+
+class CSVOptions(TypedDict):
+    has_header: NotRequired[bool]
 
 
 class MockConnection(ConnectionProtocol):
@@ -17,15 +31,7 @@ class MockConnection(ConnectionProtocol):
     def inject_response(
         self,
         row_type: None,
-        response: None = None,
-    ) -> Self:
-        ...
-
-    @overload
-    def inject_response(
-        self,
-        row_type: None,
-        response: Sequence[Any],
+        response: Union[Optional[Sequence[Any]], Exception] = None,
     ) -> Self:
         ...
 
@@ -33,15 +39,7 @@ class MockConnection(ConnectionProtocol):
     def inject_response(
         self,
         row_type: Type[RowType],
-        response: Sequence[RowType],
-    ) -> Self:
-        ...
-
-    @overload
-    def inject_response(
-        self,
-        row_type: Type[RowType],
-        response: Exception,
+        response: Union[Sequence[RowType], Exception],
     ) -> Self:
         ...
 
@@ -51,6 +49,45 @@ class MockConnection(ConnectionProtocol):
         response=None,
     ):
         self._turu_mock_store.inject_response(row_type, response)
+        return self
+
+    @overload
+    def inject_response_from_csv(
+        self,
+        row_type: None,
+        filepath: Union[str, pathlib.Path, Exception],
+        **options: Unpack[CSVOptions],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response_from_csv(
+        self,
+        row_type: Type[RowType],
+        filepath: Union[str, pathlib.Path, Exception],
+        **options: Unpack[CSVOptions],
+    ) -> Self:
+        ...
+
+    def inject_response_from_csv(
+        self,
+        row_type: Optional[Type[RowType]],
+        filepath: Union[str, pathlib.Path, Exception],
+        **options: Unpack[CSVOptions],
+    ):
+        if isinstance(filepath, Exception):
+            response = filepath
+        else:
+            with open(filepath, "r") as file:
+                reader = csv.reader(file)
+
+                if options.get("has_header"):
+                    next(reader)
+
+                response = [map_row(row_type, row) for row in reader]
+
+        self.inject_response(row_type, response)
+
         return self
 
     def close(self) -> None:

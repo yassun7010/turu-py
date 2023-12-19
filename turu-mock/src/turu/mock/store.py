@@ -16,7 +16,7 @@ class TuruMockStore:
     def inject_response(
         self,
         row_type: None,
-        response: None = None,
+        response: Union[Optional[Sequence[RowType]], Exception] = None,
     ):
         ...
 
