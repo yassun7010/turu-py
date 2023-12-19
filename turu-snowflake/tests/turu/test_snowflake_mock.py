@@ -28,7 +28,7 @@ class TestTuruSnowflakeConnection:
         self, mock_connection: turu.snowflake.MockConnection
     ):
         expected = [Row(1), Row(2)]
-        mock_connection.inject_response(Row, expected)
+        (mock_connection.inject_response(Row, expected).inject_response(Row, expected))
 
         cursor = mock_connection.cursor().execute_map(
             Row, "select 1 union all select 2"
