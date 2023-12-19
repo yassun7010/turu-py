@@ -15,10 +15,10 @@ class Cursor(
         self,
         raw_cursor: snowflake.connector.cursor.SnowflakeCursor,
         *,
-        row_type: Any = None,
+        row_type: Optional[Type[turu.core.cursor.RowType]] = None,
     ) -> None:
         self._raw_cursor = raw_cursor
-        self._row_type = row_type
+        self._row_type: Optional[Type[turu.core.cursor.RowType]] = row_type
 
     @property
     def rowcount(self) -> int:
@@ -40,12 +40,10 @@ class Cursor(
     def execute(
         self, operation: str, parameters: "Optional[Any]" = None
     ) -> "Cursor[Any, Parameters]":
-        return Cursor(
-            cast(
-                snowflake.connector.cursor.SnowflakeCursor,
-                self._raw_cursor.execute(operation, parameters),
-            )
-        )
+        self._raw_cursor.execute(operation, parameters)
+        self._row_type = None
+
+        return cast(Cursor, self)
 
     @override
     def executemany(
@@ -53,7 +51,10 @@ class Cursor(
         operation: str,
         seq_of_parameters: "Sequence[Any]",
     ) -> "Cursor[Any, Parameters]":
-        return Cursor(self._raw_cursor.executemany(operation, seq_of_parameters))
+        self._raw_cursor.executemany(operation, seq_of_parameters)
+        self._row_type = None
+
+        return cast(Cursor, self)
 
     @override
     def execute_map(
@@ -62,13 +63,10 @@ class Cursor(
         operation: str,
         parameters: "Optional[Any]" = None,
     ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
-        return Cursor(
-            cast(
-                snowflake.connector.cursor.SnowflakeCursor,
-                self._raw_cursor.execute(operation, parameters),
-            ),
-            row_type=row_type,
-        )
+        self._raw_cursor.execute(operation, parameters)
+        self._row_type = cast(turu.core.cursor.RowType, row_type)
+
+        return cast(Cursor, self)
 
     @override
     def executemany_map(
@@ -77,13 +75,10 @@ class Cursor(
         operation: str,
         seq_of_parameters: "Sequence[Parameters]",
     ) -> "Cursor[turu.core.cursor.NewRowType, Parameters]":
-        return Cursor(
-            cast(
-                snowflake.connector.cursor.SnowflakeCursor,
-                self._raw_cursor.executemany(operation, seq_of_parameters),
-            ),
-            row_type=row_type,
-        )
+        self._raw_cursor.executemany(operation, seq_of_parameters)
+        self._row_type = cast(turu.core.cursor.RowType, row_type)
+
+        return cast(Cursor, self)
 
     @override
     def fetchone(self) -> Optional[turu.core.cursor.RowType]:
