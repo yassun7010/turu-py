@@ -6,6 +6,20 @@ Parameters = TypeVar("Parameters", contravariant=True)
 
 
 class CursorProtocol(Generic[Parameters], Protocol):
+    @property
+    def rowcount(self) -> int:
+        """
+        the number of rows that the last .execute*() produced (for DQL statements like )
+        or affected (for DML statements like or ).
+
+        The attribute is -1 in case no .execute*() has been performed
+        on the cursor or the rowcount of the last operation is cannot be determined by the interface.
+        """
+        ...
+
+    def close(self) -> None:
+        ...
+
     def execute(self, operation: str, parameters: Parameters = ..., /) -> Self:
         ...
 

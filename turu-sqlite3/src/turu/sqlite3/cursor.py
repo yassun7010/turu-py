@@ -21,6 +21,14 @@ class Cursor(
         self._raw_cursor = raw_cursor
         self._row_type = row_type
 
+    @property
+    def rowcount(self) -> int:
+        return self._raw_cursor.rowcount
+
+    @override
+    def close(self) -> None:
+        self._raw_cursor.close()
+
     @override
     def execute(
         self, operation: str, parameters: "Optional[_Parameters]" = None

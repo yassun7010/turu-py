@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from dataclasses import is_dataclass
 from typing import (
     Any,
@@ -22,6 +23,15 @@ NewRowType = TypeVar("NewRowType", bound=Union[Tuple[Any], Dataclass, PydanticMo
 
 
 class Cursor(Generic[RowType, Parameters], CursorProtocol[Parameters]):
+    @property
+    @abstractmethod
+    def rowcount(self) -> int:
+        ...
+
+    @override
+    def close(self) -> None:
+        pass
+
     @override
     def execute(self, operation: str, parameters: Parameters = ..., /) -> Self:
         ...

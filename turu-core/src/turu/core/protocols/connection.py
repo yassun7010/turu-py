@@ -13,5 +13,5 @@ class ConnectionProtocol(Protocol):
     def rollback(self) -> None:
         ...
 
-    def cursor(self) -> "CursorProtocol":
+    def cursor(self) -> CursorProtocol:
         ...
