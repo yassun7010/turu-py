@@ -27,12 +27,9 @@ class _RecordCursor(
         self,
         recorder: RecorderProtcol,
         cursor: turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameters],
-        *,
-        enable: bool,
     ):
         self._recorder = recorder
         self._cursor = cursor
-        self._enable = enable
 
     @property
     def rowcount(self) -> int:
@@ -136,14 +133,14 @@ def record_as_csv(
     enable: bool = True,
     **options: Unpack[CsvRecorderOptions],
 ) -> Generator[GenericCursor, None, None]:
-    cursor = cast(
-        GenericCursor,
-        _RecordCursor(
-            CsvRecorder(record_filepath, **options),
-            cursor,
-            enable=enable,
-        ),
-    )
+    if enable:
+        cursor = cast(
+            GenericCursor,
+            _RecordCursor(
+                CsvRecorder(record_filepath, **options),
+                cursor,
+            ),
+        )
 
     try:
         yield cursor
