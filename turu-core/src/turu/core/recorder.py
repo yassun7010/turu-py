@@ -112,4 +112,10 @@ def record(
     cursor: GenericCursor,
     **options: Unpack[RecordOptions],
 ) -> Generator[GenericCursor, None, None]:
-    yield cast(GenericCursor, RecordCursor(record_filepath, cursor, **options))
+    cursor = cast(GenericCursor, RecordCursor(record_filepath, cursor, **options))
+
+    try:
+        yield cursor
+
+    finally:
+        cursor.close()
