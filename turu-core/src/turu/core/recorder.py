@@ -14,7 +14,7 @@ from typing import (
 import turu.core.cursor
 from turu.core.exception import TuruUnexpectedFetchError
 from turu.core.protocols.cursor import Parameters
-from typing_extensions import NotRequired, TypedDict, Unpack
+from typing_extensions import NotRequired, TypedDict, Unpack, deprecated
 
 GenericCursor = TypeVar("GenericCursor", bound=turu.core.cursor.Cursor)
 
@@ -84,18 +84,23 @@ class RecordCursor(turu.core.cursor.Cursor[turu.core.cursor.RowType, Parameters]
     ) -> "turu.core.cursor.Cursor[turu.core.cursor.NewRowType, Parameters]":
         return self._cursor.executemany_map(row_type, operation, seq_of_parameters)
 
+    @deprecated("Use execute_*() first.")
     def fetchone(self) -> Optional[turu.core.cursor.RowType]:
         raise TuruUnexpectedFetchError()
 
+    @deprecated("Use execute_*() first.")
     def fetchmany(self, size: Optional[int] = None) -> List[turu.core.cursor.RowType]:
         raise TuruUnexpectedFetchError()
 
+    @deprecated("Use execute_*() first.")
     def fetchall(self) -> List[turu.core.cursor.RowType]:
         raise TuruUnexpectedFetchError()
 
+    @deprecated("Use execute_*() first.")
     def __iter__(self) -> "RecordCursor[turu.core.cursor.RowType, Parameters]":
         raise TuruUnexpectedFetchError()
 
+    @deprecated("Use execute_*() first.")
     def __next__(self) -> turu.core.cursor.RowType:
         raise TuruUnexpectedFetchError()
 
