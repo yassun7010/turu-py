@@ -28,7 +28,7 @@ class CsvRecorder(RecorderProtcol):
 
     def write_row(self, row: turu.core.cursor.RowType) -> None:
         if self._writed_rowsize == 0:
-            if self._options.get("header"):
+            if self._options.get("header", True):
                 self._write_header(row)
 
         if (rowsize := self._options.get("rowsize")) is not None:
