@@ -45,7 +45,7 @@ enable = false
 path = "."
 files = ["pyproject.toml"]
 patterns = [
-    "path = \"\\.\\./tipsql-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
+    "path = \"\\.\\./turu-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
 ]
 
 [tool.taskipy.tasks]

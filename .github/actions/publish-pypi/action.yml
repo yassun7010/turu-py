@@ -1,0 +1,30 @@
+name: publish pypi
+description: "Publish to PyPI"
+
+inputs:
+  working-directory:
+    description: "working-directory of package-lock.json"
+    required: true
+  pypi-token:
+    description: "PyPI token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v3
+    - uses: snok/install-poetry@v1
+    - name: Check Poetry Version
+      shell: bash
+      run: poetry --version
+    - name: Install Poetry Dynamic Versioning
+      shell: bash
+      run: poetry self add "poetry-dynamic-versioning[plugin]"
+    - name: Poetry Publish
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        poetry dynamic-versioning enable
+        poetry dynamic-versioning
+        poetry config pypi-token.pypi ${{ inputs.pypi-token }}
+        poetry publish --build

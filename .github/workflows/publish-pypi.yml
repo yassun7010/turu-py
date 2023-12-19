@@ -1,0 +1,50 @@
+name: publish pypi
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  publish-turu-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/publish-pypi
+        with:
+          working-directory: turu-core
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
+
+  publish-turu-sqlite3:
+    runs-on: ubuntu-latest
+    needs: publish-turu-core
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/publish-pypi
+        with:
+          working-directory: turu-sqlite3
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
+
+  publish-turu-snowflake:
+    runs-on: ubuntu-latest
+    needs: publish-turu-core
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/publish-pypi
+        with:
+          working-directory: turu-snowflake
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
+
+  publish-turu:
+    runs-on: ubuntu-latest
+    needs:
+      - publish-turu-core
+      - publish-turu-sqlite3
+      - publish-turu-snowflake
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/publish-pypi
+        with:
+          working-directory: turu
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
