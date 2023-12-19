@@ -20,7 +20,7 @@ from .cursor import MockCursor
 
 
 class CSVOptions(TypedDict):
-    has_header: NotRequired[bool]
+    header: NotRequired[bool]
 
 
 class MockConnection(ConnectionProtocol):
@@ -86,7 +86,7 @@ class MockConnection(ConnectionProtocol):
             with open(filepath, "r") as file:
                 reader = csv.reader(file)
 
-                if options.get("has_header"):
+                if options.get("header", True):
                     next(reader)
 
                 response = [map_row(row_type, row) for row in reader]
