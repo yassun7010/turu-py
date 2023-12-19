@@ -56,6 +56,12 @@ class MockConnection(ConnectionProtocol):
     def close(self) -> None:
         pass
 
+    def commit(self) -> None:
+        pass
+
+    def rollback(self) -> None:
+        pass
+
     @abstractmethod
     def cursor(self) -> MockCursor:
         ...

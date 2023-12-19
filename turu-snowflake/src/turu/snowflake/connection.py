@@ -16,6 +16,12 @@ class Connection(ConnectionProtocol):
     def close(self) -> None:
         self._raw_connection.close()
 
+    def commit(self) -> None:
+        self._raw_connection.commit()
+
+    def rollback(self) -> None:
+        self._raw_connection.rollback()
+
     def cursor(self) -> Cursor:
         return Cursor(self._raw_connection.cursor())
 
