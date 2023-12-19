@@ -14,7 +14,7 @@ from typing import (
 from turu.core.cursor import RowType, map_row
 from turu.core.protocols.connection import ConnectionProtocol
 from turu.mock.store import TuruMockStore
-from typing_extensions import NotRequired, Self, Unpack
+from typing_extensions import Never, NotRequired, Self, Unpack
 
 from .cursor import MockCursor
 
@@ -105,5 +105,5 @@ class MockConnection(ConnectionProtocol):
         pass
 
     @abstractmethod
-    def cursor(self) -> MockCursor:
+    def cursor(self) -> MockCursor[Never, Any]:
         ...
