@@ -14,9 +14,9 @@ class PydanticRow(BaseModel):
 
 
 @pytest.mark.skipif(
-    condition="REAL_BIGQUERY_TEST" not in os.environ
-    or os.environ["REAL_BIGQUERY_TEST"].lower() != "true",
-    reason="REAL_BIGQUERY_TEST is not set to true",
+    condition="USE_REAL_CONNECTION" not in os.environ
+    or os.environ["USE_REAL_CONNECTION"].lower() != "true",
+    reason="USE_REAL_CONNECTION is not set to true",
 )
 class TestBigquery:
     def test_execute_fetchone(self, connection: turu.bigquery.Connection):

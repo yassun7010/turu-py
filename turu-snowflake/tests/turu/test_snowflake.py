@@ -15,9 +15,9 @@ class Row(NamedTuple):
 
 
 @pytest.mark.skipif(
-    condition="REAL_SNOWFLAKE_TEST" not in os.environ
-    or os.environ["REAL_SNOWFLAKE_TEST"].lower() != "true",
-    reason="REAL_SNOWFLAKE_TEST is not set to true",
+    condition="USE_REAL_CONNECTION" not in os.environ
+    or os.environ["USE_REAL_CONNECTION"].lower() != "true",
+    reason="USE_REAL_CONNECTION is not set to true",
 )
 class TestTuruSnowflakeConnection:
     def test_execute(self, connection: turu.snowflake.Connection):
