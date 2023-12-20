@@ -3,10 +3,13 @@ from typing import Any, List, Mapping, Optional, Sequence, Type, Union, cast
 import google.cloud.bigquery
 import google.cloud.bigquery.dbapi
 import turu.core.cursor
+import turu.core.mock
 from typing_extensions import Never, deprecated, override
 
+Parameter = Union[Mapping[str, Any], Sequence[Any]]
 
-class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Any]):
+
+class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]):
     def __init__(
         self,
         cursor: google.cloud.bigquery.dbapi.Cursor,
@@ -38,7 +41,7 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Any]):
     def execute(
         self,
         operation: str,
-        parameters: Optional[Union[Mapping[str, Any], Sequence[Any]]] = None,
+        parameters: Optional[Parameter] = None,
         /,
     ) -> "Cursor[Any]":
         self._raw_cursor.execute(operation, parameters)
@@ -63,7 +66,7 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Any]):
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
-        parameters: "Optional[Union[Mapping[str, Any], Sequence[Any]]]" = None,
+        parameters: "Optional[Parameter]" = None,
         /,
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
         self._raw_cursor.execute(operation, parameters)
@@ -122,3 +125,10 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Any]):
 
         else:
             return next_row  # type: ignore[return-value]
+
+
+class MockCursor(  # type: ignore
+    turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Parameter],
+    Cursor[turu.core.cursor.GenericRowType],
+):
+    pass

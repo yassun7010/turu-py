@@ -6,7 +6,9 @@ import google.auth.credentials
 import google.cloud.bigquery
 import google.cloud.bigquery.dbapi
 import google.cloud.bigquery.job
+import turu.bigquery.cursor
 import turu.core.connection
+import turu.core.mock
 from turu.bigquery.cursor import Cursor
 from typing_extensions import Never, deprecated
 
@@ -27,6 +29,14 @@ class Connection(turu.core.connection.Connection):
 
     def cursor(self) -> Cursor[Never]:
         return Cursor(self._raw_connection.cursor())
+
+
+class MockConnection(Connection, turu.core.mock.MockConnection):
+    def __init__(self, **kwargs):
+        turu.core.mock.MockConnection.__init__(self)
+
+    def cursor(self) -> "turu.bigquery.cursor.MockCursor[Never]":
+        return turu.bigquery.cursor.MockCursor(self._turu_mock_store)
 
 
 def connect(
