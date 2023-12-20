@@ -40,7 +40,9 @@ class Row(BaseModel):
     id: int
     name: str
 
-with turu.sqlite3.connect("test.db").cursor().execute_map(Row, "select 1, 'a'") as cursor:
+connection = turu.sqlite3.connect("test.db")
+
+with connection.execute_map(Row, "select 1, 'a'") as cursor:
     assert cursor.fetchone() == Row(id=1, name="a")
 ```
 
@@ -57,9 +59,9 @@ class Row(BaseModel):
     id: int
     name: str
 
-with record_as_csv("test.csv", turu.sqlite3.connect("test.db").cursor()) as cursor:
-    cursor.execute_map(Row, "select 1, 'a'")
+connection = turu.sqlite3.connect("test.db")
 
+with record_as_csv("test.csv", connection.execute_map(Row, "select 1, 'a'")) as cursor:
     assert cursor.fetchone() == Row(id=1, name="a")
 ```
 

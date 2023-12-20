@@ -179,6 +179,6 @@ class TestTuruMock:
 
         mock_connection.inject_response(RowPydantic, expected)
 
-        with mock_connection.cursor().execute_map(RowPydantic, "SELECT 1") as cursor:
+        with mock_connection.execute_map(RowPydantic, "SELECT 1") as cursor:
             assert cursor.fetchall() == expected
             assert cursor.fetchone() is None

@@ -11,9 +11,9 @@ from typing import (
     overload,
 )
 
+import turu.core.connection
 from turu.core.cursor import GenericRowType, map_row
 from turu.core.mock.store import TuruMockStore
-from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import Never, NotRequired, Self, Unpack
 
 from .cursor import MockCursor
@@ -23,7 +23,7 @@ class CSVOptions(TypedDict):
     header: NotRequired[bool]
 
 
-class MockConnection(ConnectionProtocol):
+class MockConnection(turu.core.connection.Connection):
     def __init__(self, store: Optional[TuruMockStore] = None):
         self._turu_mock_store = store or TuruMockStore()
 

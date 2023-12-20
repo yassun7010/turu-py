@@ -22,10 +22,8 @@ class TestRecord:
         with pytest.raises(TuruRowTypeNotSupportedError):
             with record_as_csv(
                 TEST_RECORD_DIR / "test_record_as_csv_execute_tuple.csv",
-                mock_connection.cursor(),
+                mock_connection.execute("select 1, 'taro"),
             ) as cursor:
-                cursor = cursor.execute("select 1, 'taro")
-
                 assert cursor.fetchall() == expected
 
     def test_record_as_csv_execute_tuple_without_header(
@@ -36,11 +34,9 @@ class TestRecord:
 
         with record_as_csv(
             TEST_RECORD_DIR / "test_record_as_csv_execute_tuple_without_header.csv",
-            mock_connection.cursor(),
+            mock_connection.execute("select 1, 'taro"),
             header=False,
         ) as cursor:
-            cursor = cursor.execute("select 1, 'taro")
-
             assert cursor.fetchall() == expected
 
     def test_record_as_csv_execute_map(
@@ -51,10 +47,8 @@ class TestRecord:
 
         with record_as_csv(
             TEST_RECORD_DIR / "test_record_as_csv_execute_map.csv",
-            mock_connection.cursor(),
+            mock_connection.execute_map(RowPydantic, "select 1, 'name"),
         ) as cursor:
-            cursor = cursor.execute_map(RowPydantic, "select 1, 'name")
-
             assert cursor.fetchall() == expected
 
     def test_record_as_csv_execute_map_without_header_options(
@@ -66,11 +60,9 @@ class TestRecord:
         with record_as_csv(
             TEST_RECORD_DIR
             / "test_record_as_csv_execute_map_without_header_options.csv",
-            mock_connection.cursor(),
+            mock_connection.execute_map(RowPydantic, "select 1, 'name"),
             header=False,
         ) as cursor:
-            cursor = cursor.execute_map(RowPydantic, "select 1, 'name")
-
             assert cursor.fetchall() == expected
 
     def test_record_as_csv_execute_map_with_rowsize_options(
@@ -81,11 +73,9 @@ class TestRecord:
 
         with record_as_csv(
             TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_rowsize_options.csv",
-            mock_connection.cursor(),
+            mock_connection.execute_map(RowPydantic, "select 1, 'name"),
             rowsize=3,
         ) as cursor:
-            cursor = cursor.execute_map(RowPydantic, "select 1, 'name")
-
             assert cursor.fetchall() == expected
 
     def test_record_as_csv_execute_map_with_disable_options(
@@ -96,9 +86,7 @@ class TestRecord:
 
         with record_as_csv(
             TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_disable_options.csv",
-            mock_connection.cursor(),
+            mock_connection.execute_map(RowPydantic, "select 1, 'name"),
             disable=True,
         ) as cursor:
-            cursor = cursor.execute_map(RowPydantic, "select 1, 'name")
-
             assert cursor.fetchall() == expected

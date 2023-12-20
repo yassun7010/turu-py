@@ -2,9 +2,9 @@ import importlib.metadata
 import sqlite3
 from typing import Optional, Type, Union
 
+import turu.core.connection
 import turu.core.mock
 import turu.sqlite3.cursor
-from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import Never, NotRequired, TypedDict, Unpack
 
 from .cursor import Cursor
@@ -12,7 +12,7 @@ from .cursor import Cursor
 __version__ = importlib.metadata.version("turu-sqlite3")
 
 
-class Connection(ConnectionProtocol):
+class Connection(turu.core.connection.Connection):
     def __init__(self, raw_connection: sqlite3.Connection):
         self._raw_connection = raw_connection
 

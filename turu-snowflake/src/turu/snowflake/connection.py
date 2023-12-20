@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Optional
 
+import turu.core.connection
 import turu.core.mock
 import turu.snowflake.cursor
-from turu.core.protocols.connection import ConnectionProtocol
 from typing_extensions import Never
 
 import snowflake.connector
@@ -11,7 +11,7 @@ import snowflake.connector
 from .cursor import Cursor
 
 
-class Connection(ConnectionProtocol):
+class Connection(turu.core.connection.Connection):
     def __init__(self, raw_connection: snowflake.connector.SnowflakeConnection):
         self._raw_connection = raw_connection
 
