@@ -15,7 +15,10 @@
         },
         {
             "path": "turu-snowflake",
-        }
+        },
+        {
+            "path": "turu-bigquery",
+        },
     ],
     "settings": {
         "files.trimTrailingWhitespace": true,

@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "turu-sqlite3"
+name = "turu-bigquery"
 version = "0.1.0"
-description = "sqlite3 adapter for turu"
+description = "bigquery adapter for turu"
 authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 packages = [{ include = "turu", from = "src" }]
