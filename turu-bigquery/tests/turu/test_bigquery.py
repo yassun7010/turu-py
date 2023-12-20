@@ -14,5 +14,11 @@ def test_version():
     reason="REAL_BIGQUERY_TEST is not set to true",
 )
 class TestBigquery:
-    def test_execute(self, connection: turu.bigquery.Connection):
+    def test_execute_fetchone(self, connection: turu.bigquery.Connection):
         assert connection.execute("select 1").fetchone() == (1,)
+
+    def test_execute_fetchall(self, connection: turu.bigquery.Connection):
+        assert connection.execute("select 1 union all select 2").fetchall() == [
+            (1,),
+            (2,),
+        ]

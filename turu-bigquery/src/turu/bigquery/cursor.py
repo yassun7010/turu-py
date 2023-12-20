@@ -94,17 +94,17 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
             return None
 
         elif self._row_type is not None:
-            return turu.core.cursor.map_row(self._row_type, row)
+            return _map_row(self._row_type, row)
 
         else:
-            return row  # type: ignore[return-value]
+            return tuple(row)  # type: ignore[return-value]
 
     @override
     def fetchmany(
         self, size: Optional[int] = None
     ) -> List[turu.core.cursor.GenericRowType]:
         return [
-            turu.core.cursor.map_row(self._row_type, row)
+            _map_row(self._row_type, row)
             for row in self._raw_cursor.fetchmany(
                 size if size is not None else self.arraysize
             )
@@ -112,16 +112,13 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
 
     @override
     def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
-        return [
-            turu.core.cursor.map_row(self._row_type, row)
-            for row in self._raw_cursor.fetchall()
-        ]
+        return [_map_row(self._row_type, row) for row in self._raw_cursor.fetchall()]
 
     @override
     def __next__(self) -> turu.core.cursor.GenericRowType:
         next_row = self._raw_cursor.fetchone()
         if self._row_type is not None and next_row is not None:
-            return turu.core.cursor.map_row(self._row_type, next_row)
+            return _map_row(self._row_type, next_row)
 
         else:
             return next_row  # type: ignore[return-value]
@@ -132,3 +129,13 @@ class MockCursor(  # type: ignore
     Cursor[turu.core.cursor.GenericRowType],
 ):
     pass
+
+
+def _map_row(
+    row_type: Optional[Type[turu.core.cursor.GenericNewRowType]],
+    row: Any,
+) -> turu.core.cursor.GenericNewRowType:
+    if row_type is None:
+        return tuple(row)  # type: ignore[return-value]
+    else:
+        return turu.core.cursor.map_row(row_type, row)
