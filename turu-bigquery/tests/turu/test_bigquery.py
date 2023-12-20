@@ -17,6 +17,11 @@ class TestBigquery:
     def test_execute_fetchone(self, connection: turu.bigquery.Connection):
         assert connection.execute("select 1").fetchone() == (1,)
 
+    def test_execute_fetchmany(self, connection: turu.bigquery.Connection):
+        assert connection.execute("select 1 union all select 2").fetchmany() == [
+            (1,),
+        ]
+
     def test_execute_fetchall(self, connection: turu.bigquery.Connection):
         assert connection.execute("select 1 union all select 2").fetchall() == [
             (1,),

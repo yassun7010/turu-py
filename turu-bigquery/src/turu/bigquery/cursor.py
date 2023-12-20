@@ -4,7 +4,7 @@ import google.cloud.bigquery
 import google.cloud.bigquery.dbapi
 import turu.core.cursor
 import turu.core.mock
-from typing_extensions import Never, deprecated, override
+from typing_extensions import deprecated, override
 
 Parameter = Union[Mapping[str, Any], Sequence[Any]]
 
@@ -24,9 +24,8 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
         return self._raw_cursor.rowcount
 
     @property
-    @deprecated("arraysize is not supported in BigQuery")
-    def arraysize(self) -> Never:
-        raise NotImplementedError()
+    def arraysize(self) -> int:
+        return self._raw_cursor.arraysize or -1
 
     @arraysize.setter
     @deprecated("arraysize is not supported in BigQuery")
