@@ -17,7 +17,7 @@ class Row(NamedTuple):
 @pytest.mark.skipif(
     condition="USE_REAL_CONNECTION" not in os.environ
     or os.environ["USE_REAL_CONNECTION"].lower() != "true",
-    reason="USE_REAL_CONNECTION is not set to true",
+    reason="USE_REAL_CONNECTION flag is not set.",
 )
 class TestTuruSnowflakeConnection:
     def test_execute(self, connection: turu.snowflake.Connection):
