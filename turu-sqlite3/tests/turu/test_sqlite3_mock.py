@@ -57,7 +57,7 @@ class TestMock:
         mock_connection.inject_response(Row, expected)
 
         with mock_connection.execute_map(Row, "SELECT 1") as cursor:
-            assert list(cursor.fetchmany(rowsize)) == expected
+            assert cursor.fetchmany(rowsize) == expected
             assert cursor.fetchone() is None
 
     @pytest.mark.parametrize("rowsize", range(5))
@@ -68,5 +68,5 @@ class TestMock:
         mock_connection.inject_response(Row, expected)
 
         with mock_connection.execute_map(Row, "SELECT 1") as cursor:
-            assert list(cursor.fetchall()) == expected
+            assert cursor.fetchall() == expected
             assert cursor.fetchall() == []
