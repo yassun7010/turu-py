@@ -60,8 +60,9 @@ ci = "task format && task lint && task typecheck && task test"
 
 [tool.pytest.ini_options]
 filterwarnings = [
-    "ignore::DeprecationWarning",
+    "ignore::DeprecationWarning:tests",
     "ignore::UserWarning:google.cloud.bigquery",
+    "ignore::DeprecationWarning:google.cloud.bigquery",
 ]
 
 [build-system]
