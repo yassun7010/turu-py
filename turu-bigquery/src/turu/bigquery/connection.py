@@ -9,7 +9,6 @@ import google.cloud.bigquery.job
 import turu.bigquery.cursor
 import turu.core.connection
 import turu.core.mock
-from turu.bigquery.cursor import Cursor
 from typing_extensions import Never, deprecated
 
 
@@ -27,8 +26,8 @@ class Connection(turu.core.connection.Connection):
     def rollback(self) -> None:
         raise NotImplementedError()
 
-    def cursor(self) -> Cursor[Never]:
-        return Cursor(self._raw_connection.cursor())
+    def cursor(self) -> turu.bigquery.cursor.Cursor[Never]:
+        return turu.bigquery.cursor.Cursor(self._raw_connection.cursor())
 
 
 class MockConnection(Connection, turu.core.mock.MockConnection):
