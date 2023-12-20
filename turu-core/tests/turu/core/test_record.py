@@ -65,16 +65,16 @@ class TestRecord:
         ) as cursor:
             assert cursor.fetchall() == expected
 
-    def test_record_as_csv_execute_map_with_rowsize_options(
+    def test_record_as_csv_execute_map_with_limit_options(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
         mock_connection.inject_response(RowPydantic, expected)
 
         with record_as_csv(
-            TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_rowsize_options.csv",
+            TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_limit_options.csv",
             mock_connection.execute_map(RowPydantic, "select 1, 'name"),
-            rowsize=3,
+            limit=3,
         ) as cursor:
             assert cursor.fetchall() == expected
 

@@ -12,7 +12,7 @@ from typing_extensions import NotRequired, TypedDict, Unpack
 
 class CsvRecorderOptions(TypedDict):
     header: NotRequired[bool]
-    rowsize: NotRequired[int]
+    limit: NotRequired[int]
 
 
 class CsvRecorder(RecorderProtcol):
@@ -31,8 +31,8 @@ class CsvRecorder(RecorderProtcol):
             if self._options.get("header", True):
                 self._write_header(row)
 
-        if (rowsize := self._options.get("rowsize")) is not None:
-            if self._writed_rowsize >= rowsize:
+        if (limit := self._options.get("limit")) is not None:
+            if self._writed_rowsize >= limit:
                 return
 
         self._writed_rowsize += 1
