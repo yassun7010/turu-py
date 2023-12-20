@@ -1,2 +1,6 @@
 __pycache__
 .env
+.coverage
+coverage.xml
+htmlcov
+.DS_Store

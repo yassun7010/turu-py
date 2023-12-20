@@ -116,11 +116,15 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
     @override
     def __next__(self) -> turu.core.cursor.GenericRowType:
         next_row = self._raw_cursor.fetchone()
-        if self._row_type is not None and next_row is not None:
+
+        if next_row is None:
+            raise StopIteration()
+
+        if self._row_type is not None:
             return _map_row(self._row_type, next_row)
 
         else:
-            return next_row  # type: ignore[return-value]
+            return tuple(next_row)  # type: ignore[return-value]
 
 
 class MockCursor(  # type: ignore

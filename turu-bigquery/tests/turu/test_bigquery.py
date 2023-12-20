@@ -38,6 +38,9 @@ class TestBigquery:
             (2,),
         ]
 
+    def test_execute_iter(self, connection: turu.bigquery.Connection):
+        assert list(connection.execute("select 1 union all select 2")) == [(1,), (2,)]
+
     def test_execute_map_fetchone(self, connection: turu.bigquery.Connection):
         with connection.execute_map(PydanticRow, "select 1") as cursor:
             assert cursor.fetchone() == PydanticRow(id=1)
@@ -58,6 +61,12 @@ class TestBigquery:
             assert cursor.fetchall() == [PydanticRow(id=1), PydanticRow(id=2)]
             assert cursor.fetchone() is None
 
+    def test_execute_map_iter(self, connection: turu.bigquery.Connection):
+        with connection.execute_map(
+            PydanticRow, "select 1 union all select 2"
+        ) as cursor:
+            assert list(cursor) == [PydanticRow(id=1), PydanticRow(id=2)]
+
     def test_executemany_fetchall(self, connection: turu.bigquery.Connection):
         cursor = connection.executemany("select 1 union all select 2", [None])
         assert cursor.fetchall() == [(1,), (2,)]
@@ -68,3 +77,30 @@ class TestBigquery:
         ) as cursor:
             assert cursor.fetchall() == [PydanticRow(id=1), PydanticRow(id=2)]
             assert cursor.fetchone() is None
+
+    def test_executemany_map_with_statement(self, connection: turu.bigquery.Connection):
+        with connection.executemany_map(
+            PydanticRow, "select 1 union all select 2", [None]
+        ) as cursor:
+            assert cursor.fetchall() == [PydanticRow(id=1), PydanticRow(id=2)]
+            assert cursor.fetchone() is None
+
+    def test_connection_close(self, connection: turu.bigquery.Connection):
+        connection.close()
+
+    def test_commit(self, connection: turu.bigquery.Connection):
+        connection.commit()
+
+    def test_rollback(self, connection: turu.bigquery.Connection):
+        with pytest.raises(NotImplementedError):
+            connection.rollback()
+
+    def test_cursor_arraysize(self, connection: turu.bigquery.Connection):
+        with pytest.raises(NotImplementedError):
+            connection.cursor().arraysize = 2
+
+    def test_cursor_rowcount(self, connection: turu.bigquery.Connection):
+        assert connection.cursor().rowcount == -1
+
+    def test_cursor_close(self, connection: turu.bigquery.Connection):
+        connection.cursor().close()
