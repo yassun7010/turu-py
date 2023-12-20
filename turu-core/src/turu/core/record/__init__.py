@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import (
     Generator,
     List,
+    Literal,
     Optional,
     Sequence,
     Type,
@@ -130,10 +131,13 @@ def record_as_csv(
     record_filepath: Union[str, Path],
     cursor: GenericCursor,
     *,
-    disable: bool = False,
+    disable: Union[Literal["true", "false"], bool, None] = None,
     **options: Unpack[CsvRecorderOptions],
 ) -> Generator[GenericCursor, None, None]:
-    if disable is not True:
+    if isinstance(disable, str):
+        disable = disable.lower() == "true"
+
+    if not disable:
         cursor = cast(
             GenericCursor,
             _RecordCursor(
