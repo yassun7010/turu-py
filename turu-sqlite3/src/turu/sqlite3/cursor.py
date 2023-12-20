@@ -14,11 +14,11 @@ class Cursor(
 ):
     def __init__(
         self,
-        raw_cursor: sqlite3.Cursor,
+        cursor: sqlite3.Cursor,
         *,
         row_type: Optional[Type[turu.core.cursor.GenericRowType]] = None,
     ):
-        self._raw_cursor = raw_cursor
+        self._raw_cursor = cursor
         self._row_type: Optional[Type[turu.core.cursor.GenericRowType]] = row_type
 
     @property

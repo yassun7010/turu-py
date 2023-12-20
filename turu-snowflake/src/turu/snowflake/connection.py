@@ -12,8 +12,8 @@ from .cursor import Cursor
 
 
 class Connection(turu.core.connection.Connection):
-    def __init__(self, raw_connection: snowflake.connector.SnowflakeConnection):
-        self._raw_connection = raw_connection
+    def __init__(self, connection: snowflake.connector.SnowflakeConnection):
+        self._raw_connection = connection
 
     def close(self) -> None:
         self._raw_connection.close()

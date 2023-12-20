@@ -13,8 +13,8 @@ __version__ = importlib.metadata.version("turu-sqlite3")
 
 
 class Connection(turu.core.connection.Connection):
-    def __init__(self, raw_connection: sqlite3.Connection):
-        self._raw_connection = raw_connection
+    def __init__(self, connection: sqlite3.Connection):
+        self._raw_connection = connection
 
     def close(self) -> None:
         self._raw_connection.close()

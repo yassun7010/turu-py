@@ -12,11 +12,11 @@ class Cursor(
 ):
     def __init__(
         self,
-        raw_cursor: snowflake.connector.cursor.SnowflakeCursor,
+        cursor: snowflake.connector.cursor.SnowflakeCursor,
         *,
         row_type: Optional[Type[turu.core.cursor.GenericRowType]] = None,
     ) -> None:
-        self._raw_cursor = raw_cursor
+        self._raw_cursor = cursor
         self._row_type: Optional[Type[turu.core.cursor.GenericRowType]] = row_type
 
     @property
@@ -37,7 +37,7 @@ class Cursor(
 
     @override
     def execute(
-        self, operation: str, parameters: Optional["Any"] = None, /
+        self, operation: str, parameters: Optional[Any] = None, /
     ) -> "Cursor[Any]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = None
@@ -46,7 +46,7 @@ class Cursor(
 
     @override
     def executemany(
-        self, operation: str, seq_of_parameters: "Sequence[Any]", /
+        self, operation: str, seq_of_parameters: Sequence[Any], /
     ) -> "Cursor[Any]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = None
