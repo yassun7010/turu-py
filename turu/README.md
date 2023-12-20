@@ -1,4 +1,4 @@
-# Turu: Type Hinting Database API for Python
+# Turu: Simple Database API for Typed Python
 
 [![test](https://github.com/yassun7010/turu-py/actions/workflows/test-suite.yml/badge.svg)](https://github.com/yassun7010/turu-py/actions)
 [![pypi package](https://badge.fury.io/py/turu.svg)](https://pypi.org/project/turu)
