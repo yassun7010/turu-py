@@ -19,6 +19,8 @@ class Connection(turu.core.connection.Connection):
         self._raw_connection = connection
 
     def close(self) -> None:
+        """Close the connection and any cursors created from it."""
+
         self._raw_connection.close()
 
     def commit(self) -> None:
@@ -31,6 +33,8 @@ class Connection(turu.core.connection.Connection):
         raise NotImplementedError()
 
     def cursor(self) -> Cursor[Never]:
+        """Return a new cursor object."""
+
         return Cursor(self._raw_connection.cursor())
 
 
