@@ -95,9 +95,9 @@ class TestRecord:
         mock_connection.inject_response(RowPydantic, expected)
 
         with record_as_csv(
-            TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_enable_options.csv",
+            TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_disable_options.csv",
             mock_connection.cursor(),
-            enable=False,
+            disabled=True,
         ) as cursor:
             cursor = cursor.execute_map(RowPydantic, "select 1, 'name")
 
