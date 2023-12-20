@@ -93,6 +93,14 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     def __next__(self) -> GenericRowType:
         ...
 
+    @override
+    def __enter__(self):
+        return self
+
+    @override
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
 
 def map_row(row_type: Optional[Type[GenericRowType]], row: Any) -> GenericRowType:
     if row_type is None:

@@ -52,3 +52,9 @@ class CursorProtocol(Generic[Parameters], Protocol):
 
     def __next__(self) -> Any:
         ...
+
+    def __enter__(self) -> Self:
+        ...
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        ...

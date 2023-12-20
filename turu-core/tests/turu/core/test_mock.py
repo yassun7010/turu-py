@@ -173,3 +173,12 @@ class TestTuruMock:
             Row(id=1, name="name1"),
             Row(id=2, name="name2"),
         ]
+
+    def test_with_statement(self, mock_connection: turu.core.mock.MockConnection):
+        expected = [RowPydantic(id=i) for i in range(3)]
+
+        mock_connection.inject_response(RowPydantic, expected)
+
+        with mock_connection.cursor().execute_map(RowPydantic, "SELECT 1") as cursor:
+            assert cursor.fetchall() == expected
+            assert cursor.fetchone() is None

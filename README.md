@@ -40,9 +40,8 @@ class Row(BaseModel):
     id: int
     name: str
 
-cursor = turu.sqlite3.connect("test.db").cursor().execute_map(Row, "select 1, 'a'")
-
-assert cursor.fetchone() == Row(id=1, name="a")
+with turu.sqlite3.connect("test.db").cursor().execute_map(Row, "select 1, 'a'") as cursor:
+    assert cursor.fetchone() == Row(id=1, name="a")
 ```
 
 ### Recording Usage
@@ -91,7 +90,6 @@ connection = turu.sqlite3.MockConnection()
 )
 
 for expected in [expected1, expected2, expected3]:
-    cursor = connection.cursor().execute_map(Row, "select 1, 'a'")
-
-    assert cursor.fetchone() == expected
+    with connection.execute_map(Row, "select 1, 'a'") as cursor:
+        assert cursor.fetchone() == expected
 ```
