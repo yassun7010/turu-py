@@ -15,8 +15,8 @@ from .cursor import Cursor, MockCursor
 
 
 class Connection(turu.core.connection.Connection):
-    def __init__(self, client: google.cloud.bigquery.Client):
-        self._raw_connection = google.cloud.bigquery.dbapi.connect(client)
+    def __init__(self, connection: google.cloud.bigquery.dbapi.Connection):
+        self._raw_connection = connection
 
     def close(self) -> None:
         self._raw_connection.close()
@@ -52,13 +52,15 @@ def connect(
     ] = None,
 ) -> Connection:
     return Connection(
-        google.cloud.bigquery.Client(
-            project=project,
-            credentials=credentials,
-            location=location,
-            default_query_job_config=default_query_job_config,
-            default_load_job_config=default_load_job_config,
-            client_info=client_info,
-            client_options=client_options,
+        google.cloud.bigquery.dbapi.connect(
+            google.cloud.bigquery.Client(
+                project=project,
+                credentials=credentials,
+                location=location,
+                default_query_job_config=default_query_job_config,
+                default_load_job_config=default_load_job_config,
+                client_info=client_info,
+                client_options=client_options,
+            )
         )
     )
