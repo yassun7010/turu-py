@@ -31,6 +31,7 @@ pydantic = "^2.5.2"
 [tool.poetry.dependencies]
 python = "^3.8"
 typing-extensions = "^4.8.0"
+google-cloud-bigquery = "^3.14.1"
 
 [tool.poetry.dependencies.turu-core]
 # INFO: poetry-dynamic-versioning to replace this.
