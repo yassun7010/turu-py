@@ -69,7 +69,6 @@ with record_as_csv("test.csv", connection.execute_map(Row, "select 1, 'a'")) as 
 
 ```python
 import turu.sqlite3
-import turu.core.mock
 
 from pydantic import BaseModel
 
@@ -93,5 +92,5 @@ connection = turu.sqlite3.MockConnection()
 
 for expected in [expected1, expected2, expected3]:
     with connection.execute_map(Row, "select 1, 'a'") as cursor:
-        assert cursor.fetchone() == expected
+        assert cursor.fetchall() == expected
 ```
