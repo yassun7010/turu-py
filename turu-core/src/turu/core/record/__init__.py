@@ -130,10 +130,10 @@ def record_as_csv(
     record_filepath: Union[str, Path],
     cursor: GenericCursor,
     *,
-    disable: bool = True,
+    disable: bool = False,
     **options: Unpack[CsvRecorderOptions],
 ) -> Generator[GenericCursor, None, None]:
-    if disable:
+    if disable is not True:
         cursor = cast(
             GenericCursor,
             _RecordCursor(
