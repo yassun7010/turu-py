@@ -23,7 +23,7 @@ is provided to easily record query results and injection mock data.
 
 | Feature    | Supported |
 | ---------- | --------- |
-| SQLite     | Yes       |
+| SQLite3    | Yes       |
 | MySQL      | No        |
 | PostgreSQL | No        |
 | Snowflake  | Yes       |
