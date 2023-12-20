@@ -42,10 +42,10 @@ class TestMock:
         expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
-        for i in range(rowsize):
-            assert cursor.fetchone() == expected[i]
-        assert cursor.fetchone() is None
+        with mock_connection.execute_map(Row, "SELECT 1") as cursor:
+            for i in range(rowsize):
+                assert cursor.fetchone() == expected[i]
+            assert cursor.fetchone() is None
 
     @pytest.mark.parametrize("rowsize", range(5))
     def test_mock_execute_map_fetchmany(
@@ -56,9 +56,9 @@ class TestMock:
         expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
-        assert list(cursor.fetchmany(rowsize)) == expected
-        assert cursor.fetchone() is None
+        with mock_connection.execute_map(Row, "SELECT 1") as cursor:
+            assert list(cursor.fetchmany(rowsize)) == expected
+            assert cursor.fetchone() is None
 
     @pytest.mark.parametrize("rowsize", range(5))
     def test_mock_execute_map_fetchall(
@@ -67,6 +67,6 @@ class TestMock:
         expected = [Row(i) for i in range(rowsize)]
         mock_connection.inject_response(Row, expected)
 
-        cursor = mock_connection.cursor().execute_map(Row, "SELECT 1")
-        assert list(cursor.fetchall()) == expected
-        assert cursor.fetchall() == []
+        with mock_connection.execute_map(Row, "SELECT 1") as cursor:
+            assert list(cursor.fetchall()) == expected
+            assert cursor.fetchall() == []
