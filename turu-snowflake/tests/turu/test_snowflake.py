@@ -43,8 +43,7 @@ class TestTuruSnowflakeConnection:
         )
 
         assert cursor.fetchmany(2) == [Row(1), Row(2)]
-        assert cursor.fetchone() == Row(3)
-        assert cursor.fetchone() is None
+        assert cursor.fetchmany(2) == [Row(3)]
 
     def test_execute_map_fetchall(self, connection: turu.snowflake.Connection):
         cursor = connection.cursor().execute_map(Row, "select 1 union all select 2")

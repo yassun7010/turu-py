@@ -23,21 +23,20 @@ class TestBigquery:
         assert connection.execute("select 1").fetchone() == (1,)
 
     def test_execute_fetchmany(self, connection: turu.bigquery.Connection):
-        assert connection.execute("select 1 union all select 2").fetchmany() == [
-            (1,),
-        ]
+        cursor = connection.execute("select 1 union all select 2")
+        assert cursor.fetchmany() == [(1,)]
+        assert cursor.fetchmany() == [(2,)]
+
+    def test_execute_fetchmany_with_size(self, connection: turu.bigquery.Connection):
+        cursor = connection.execute("select 1 union all select 2 union all select 3")
+        assert cursor.fetchmany(2) == [(1,), (2,)]
+        assert cursor.fetchmany(2) == [(3,)]
 
     def test_execute_fetchall(self, connection: turu.bigquery.Connection):
         assert connection.execute("select 1 union all select 2").fetchall() == [
             (1,),
             (2,),
         ]
-
-    # def test_executemany(self, connection: turu.bigquery.Connection):
-    #     assert connection.executemany("select 1 union all select 2", []).fetchall() == [
-    #         (1,),
-    #         (2,),
-    #     ]
 
     def test_execute_map_fetchone(self, connection: turu.bigquery.Connection):
         with connection.execute_map(PydanticRow, "select 1") as cursor:
@@ -55,6 +54,17 @@ class TestBigquery:
     def test_execute_map_fetchall(self, connection: turu.bigquery.Connection):
         with connection.execute_map(
             PydanticRow, "select 1 union all select 2"
+        ) as cursor:
+            assert cursor.fetchall() == [PydanticRow(id=1), PydanticRow(id=2)]
+            assert cursor.fetchone() is None
+
+    def test_executemany_fetchall(self, connection: turu.bigquery.Connection):
+        cursor = connection.executemany("select 1 union all select 2", [None])
+        assert cursor.fetchall() == [(1,), (2,)]
+
+    def test_executemany_map_fetchall(self, connection: turu.bigquery.Connection):
+        with connection.executemany_map(
+            PydanticRow, "select 1 union all select 2", [None]
         ) as cursor:
             assert cursor.fetchall() == [PydanticRow(id=1), PydanticRow(id=2)]
             assert cursor.fetchone() is None
