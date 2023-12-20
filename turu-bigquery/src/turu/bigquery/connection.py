@@ -22,6 +22,8 @@ class Connection(turu.core.connection.Connection):
         self._raw_connection.close()
 
     def commit(self) -> None:
+        """No-op, but for consistency raise an error if connection is closed."""
+
         self._raw_connection.commit()
 
     @deprecated("rollback is not supported in BigQuery")
