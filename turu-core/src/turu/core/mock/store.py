@@ -44,7 +44,7 @@ class TuruMockStore:
         if len(self._data) == 0:
             raise TuruMockStoreDataNotFoundError(self._counter)
 
-        _row_type, _response = self._data.pop()
+        _row_type, _response = self._data.pop(0)
 
         if _row_type is not row_type:
             raise TuruMockResponseTypeMismatchError(row_type, _row_type, self._counter)

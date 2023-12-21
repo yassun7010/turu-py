@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from itertools import islice
 from typing import Any, NamedTuple
 
 import pytest
@@ -105,16 +106,29 @@ class TestTuruMock:
 
         assert list(cursor) == expected
 
-    @pytest.mark.parametrize("execition_time", range(5))
+    @pytest.mark.parametrize("execition_time", range(3, 10))
     def test_execute_map_multi_call(
         self, execition_time: int, mock_connection: turu.core.mock.MockConnection
     ):
-        expected = [RowPydantic(id=i) for i in range(3)]
-        for _ in range(execition_time):
+        def batched(iterable, n: int):
+            if n < 1:
+                raise ValueError("n must be at least one")
+            it = iter(iterable)
+            while batch := list(islice(it, n)):
+                yield batch
+
+        expected_array = list(
+            batched(
+                [RowPydantic(id=i) for i in range(3 * execition_time)],
+                execition_time,
+            )
+        )
+
+        for expected in expected_array:
             mock_connection.inject_response(RowPydantic, expected)
 
         cursor = mock_connection.cursor()
-        for _ in range(execition_time):
+        for expected in expected_array:
             assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
 
         assert cursor.fetchone() is None
