@@ -5,3 +5,4 @@ __pycache__
 coverage.xml
 htmlcov
 .DS_Store
+dist
