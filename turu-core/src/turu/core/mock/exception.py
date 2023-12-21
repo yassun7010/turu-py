@@ -8,33 +8,28 @@ class TuruMockError(TuruError):
 
 
 class TuruMockStoreDataNotFoundError(TuruMockError):
+    def __init__(self, counter: int) -> None:
+        self.counter = counter
+
     @property
     def message(self) -> str:
-        return "Mock data not found"
+        return f"Mock data not found. counter: {self.counter}"
 
 
 class TuruMockResponseTypeMismatchError(TuruMockError):
-    def __init__(self, expected: Optional[type], actual: Optional[type]) -> None:
+    def __init__(
+        self, expected: Optional[type], actual: Optional[type], counter: int
+    ) -> None:
         self.expected = expected
         self.actual = actual
+        self.counter = counter
 
     @property
     def message(self) -> str:
         expected_type = self.expected.__name__ if self.expected else None
         actual_type = self.actual.__name__ if self.actual else None
 
-        return (
-            f"Mock response type mismatch: Expected {expected_type}, got {actual_type}"
-        )
-
-
-class TuruMockFetchOneSizeError(TuruMockError):
-    def __init__(self, size: int) -> None:
-        self.size = size
-
-    @property
-    def message(self) -> str:
-        return f"Mock fetchone size mismatch: Expected 1, got {self.size}"
+        return f"Mock response type mismatch: Expected {expected_type}, got {actual_type}. counter: {self.counter}"
 
 
 class TuruMockUnexpectedFetchError(TuruMockError):

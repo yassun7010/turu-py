@@ -10,6 +10,7 @@ from turu.core.mock.exception import (
 class TuruMockStore:
     def __init__(self):
         self._data = []
+        self._counter = 0
 
     @overload
     def inject_response(
@@ -38,13 +39,15 @@ class TuruMockStore:
         self,
         row_type: Optional[Type],
     ) -> list:
+        self._counter += 1
+
         if len(self._data) == 0:
-            raise TuruMockStoreDataNotFoundError()
+            raise TuruMockStoreDataNotFoundError(self._counter)
 
         _row_type, _response = self._data.pop()
 
         if _row_type is not row_type:
-            raise TuruMockResponseTypeMismatchError(row_type, _row_type)
+            raise TuruMockResponseTypeMismatchError(row_type, _row_type, self._counter)
 
         if isinstance(_response, Exception):
             raise _response
