@@ -28,6 +28,7 @@ ruff = "^0.1.7"
 pytest = "^7.4.3"
 pydantic = "^2.5.2"
 pytest-xdist = "^3.5.0"
+pytest-cov = "^4.1.0"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -54,7 +55,7 @@ patterns = [
 format = "ruff format ."
 lint = "ruff check ."
 typecheck = "pyright src/** tests/**"
-test = "pytest -n auto"
+test = "pytest -n auto --cov=src --cov-report=term --cov-report=xml"
 ci = "task format && task lint && task typecheck && task test"
 
 [build-system]

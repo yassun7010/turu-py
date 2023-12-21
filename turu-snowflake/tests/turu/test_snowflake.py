@@ -23,6 +23,9 @@ class TestTuruSnowflakeConnection:
     def test_execute(self, connection: turu.snowflake.Connection):
         assert connection.execute("select 1").fetchall() == [(1,)]
 
+    def test_execute_fetchone(self, connection: turu.snowflake.Connection):
+        assert connection.execute("select 1").fetchone() == (1,)
+
     def test_execute_map_fetchone(self, connection: turu.snowflake.Connection):
         cursor = connection.cursor().execute_map(Row, "select 1")
 
@@ -61,7 +64,36 @@ class TestTuruSnowflakeConnection:
             next(cursor)
 
     def test_executemany_map(self, connection: turu.snowflake.Connection):
-        cursor = connection.cursor().executemany_map(Row, "select 1", [(), ()])
+        with connection.executemany_map(Row, "select 1", [(), ()]) as cursor:
+            assert cursor.fetchone() == Row(1)
+            assert cursor.fetchone() is None
 
-        assert cursor.fetchone() == Row(1)
-        assert cursor.fetchone() is None
+    def test_execute_iter(self, connection: turu.snowflake.Connection):
+        with connection.execute("select 1 union all select 2") as cursor:
+            assert list(cursor) == [(1,), (2,)]
+
+    def test_execute_map_iter(self, connection: turu.snowflake.Connection):
+        with connection.execute_map(Row, "select 1 union all select 2") as cursor:
+            assert list(cursor) == [Row(1), Row(2)]
+
+    def test_connection_close(self, connection: turu.snowflake.Connection):
+        connection.close()
+
+    def test_connection_commit(self, connection: turu.snowflake.Connection):
+        connection.commit()
+
+    def test_connection_rollback(self, connection: turu.snowflake.Connection):
+        connection.rollback()
+
+    def test_cursor_rowcount(self, connection: turu.snowflake.Connection):
+        cursor = connection.cursor()
+        assert cursor.rowcount == -1
+
+    def test_cursor_arraysize(self, connection: turu.snowflake.Connection):
+        cursor = connection.cursor()
+        assert cursor.arraysize == 1
+
+    def test_cursor_arraysize_setter(self, connection: turu.snowflake.Connection):
+        cursor = connection.cursor()
+        cursor.arraysize = 2
+        assert cursor.arraysize == 2
