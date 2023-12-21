@@ -1,12 +1,10 @@
-import sqlite3
-
 import pytest
 import turu.sqlite3
 
 
 @pytest.fixture
 def connection() -> turu.sqlite3.Connection:
-    return turu.sqlite3.Connection(sqlite3.connect("test.db"))
+    return turu.sqlite3.connect("test.db")
 
 
 @pytest.fixture
