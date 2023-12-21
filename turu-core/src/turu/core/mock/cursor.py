@@ -41,6 +41,10 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
         self._arraysize = size
 
     @override
+    def close(self) -> None:
+        pass
+
+    @override
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> "MockCursor[Tuple[Any], Parameters]":

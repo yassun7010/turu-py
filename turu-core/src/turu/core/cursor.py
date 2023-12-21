@@ -39,22 +39,23 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     def arraysize(self, size: int) -> None:
         ...
 
-    @override
+    @abstractmethod
     def close(self) -> None:
-        pass
+        ...
 
-    @override
+    @abstractmethod
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> "Cursor":
         ...
 
-    @override
+    @abstractmethod
     def executemany(
         self, operation: str, seq_of_parameters: Sequence[Parameters], /
     ) -> "Cursor":
         ...
 
+    @abstractmethod
     def execute_map(
         self,
         row_type: Type[GenericNewRowType],
@@ -64,6 +65,7 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     ) -> "Cursor[GenericNewRowType, Parameters]":
         ...
 
+    @abstractmethod
     def executemany_map(
         self,
         row_type: Type[GenericNewRowType],
@@ -73,15 +75,15 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     ) -> "Cursor[GenericNewRowType, Parameters]":
         ...
 
-    @override
+    @abstractmethod
     def fetchone(self) -> Optional[GenericRowType]:
         ...
 
-    @override
+    @abstractmethod
     def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
         ...
 
-    @override
+    @abstractmethod
     def fetchall(self) -> List[GenericRowType]:
         ...
 
@@ -89,7 +91,7 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     def __iter__(self) -> Self:
         return self
 
-    @override
+    @abstractmethod
     def __next__(self) -> GenericRowType:
         ...
 
