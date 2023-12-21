@@ -47,6 +47,13 @@ develop = true
 # version = "0.0.0"
 optional = true
 
+[tool.poetry.dependencies.turu-bigquery]
+# INFO: poetry-dynamic-versioning to replace this.
+path = "../turu-bigquery"
+develop = true
+# version = "0.0.0"
+optional = true
+
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
 taskipy = "^1.12.0"
