@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "turu"
 version = "0.1.0"
-description = ""
+description = "Simple Database API for Typed Python based PEP 249"
 authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 repository = "https://github.com/yassun7010/turu-py"
