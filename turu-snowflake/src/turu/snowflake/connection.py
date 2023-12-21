@@ -29,7 +29,7 @@ class Connection(turu.core.connection.Connection):
 
 
 class MockConnection(Connection, turu.core.mock.MockConnection):
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         turu.core.mock.MockConnection.__init__(self)
 
     def cursor(self) -> "turu.snowflake.cursor.MockCursor[Never]":
