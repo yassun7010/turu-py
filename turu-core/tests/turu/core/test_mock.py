@@ -131,6 +131,21 @@ class TestTuruMock:
             assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
 
+    def test_executemany(self, mock_connection: turu.core.mock.MockConnection):
+        mock_connection.inject_response(None, [(1,), (1,)])
+        with mock_connection.executemany("SELECT 1", [(), ()]) as cursor:
+            assert cursor.fetchall() == [(1,), (1,)]
+
+    def test_executemany_map(self, mock_connection: turu.core.mock.MockConnection):
+        expected = [RowPydantic(id=i) for i in range(3)]
+        mock_connection.inject_response(RowPydantic, expected)
+
+        with mock_connection.executemany_map(
+            RowPydantic, "SELECT 1", [(), ()]
+        ) as cursor:
+            assert cursor.fetchall() == expected
+            assert cursor.fetchone() is None
+
     def test_multi_injection(self, mock_connection: turu.core.mock.MockConnection):
         expected = [RowPydantic(id=i) for i in range(3)]
         (
@@ -182,3 +197,9 @@ class TestTuruMock:
         with mock_connection.execute_map(RowPydantic, "SELECT 1") as cursor:
             assert cursor.fetchall() == expected
             assert cursor.fetchone() is None
+
+    def test_inject_execption(self, mock_connection: turu.core.mock.MockConnection):
+        mock_connection.inject_response(RowPydantic, ValueError("test"))
+
+        with pytest.raises(ValueError):
+            mock_connection.execute_map(RowPydantic, "SELECT 1")
