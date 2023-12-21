@@ -3,13 +3,17 @@ from typing import Optional
 from turu.core.exception import TuruError
 
 
-class TuruMockStoreDataNotFoundError(TuruError):
+class TuruMockError(TuruError):
+    pass
+
+
+class TuruMockStoreDataNotFoundError(TuruMockError):
     @property
     def message(self) -> str:
         return "Mock data not found"
 
 
-class TuruMockResponseTypeMismatchError(TuruError):
+class TuruMockResponseTypeMismatchError(TuruMockError):
     def __init__(self, expected: Optional[type], actual: Optional[type]) -> None:
         self.expected = expected
         self.actual = actual
@@ -24,7 +28,7 @@ class TuruMockResponseTypeMismatchError(TuruError):
         )
 
 
-class TuruMockFetchOneSizeError(TuruError):
+class TuruMockFetchOneSizeError(TuruMockError):
     def __init__(self, size: int) -> None:
         self.size = size
 
@@ -33,7 +37,7 @@ class TuruMockFetchOneSizeError(TuruError):
         return f"Mock fetchone size mismatch: Expected 1, got {self.size}"
 
 
-class TuruMockUnexpectedFetchError(TuruError):
+class TuruMockUnexpectedFetchError(TuruMockError):
     @property
     def message(self) -> str:
         return "Mock fetch is unexpected. use execute_map() or executemany_map() to specify row type."
