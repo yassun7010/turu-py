@@ -10,7 +10,7 @@ class TuruMockStoreDataNotFoundError(TuruError):
 
 
 class TuruMockResponseTypeMismatchError(TuruError):
-    def __init__(self, expected: Optional[type], actual: type) -> None:
+    def __init__(self, expected: Optional[type], actual: Optional[type]) -> None:
         self.expected = expected
         self.actual = actual
 

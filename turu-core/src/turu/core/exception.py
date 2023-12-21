@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Optional
 
 
 class TuruException(Exception):
@@ -20,7 +21,7 @@ class TuruError(TuruException):
 class TuruRowTypeMismatchError(TuruError):
     """Raised when a row is not of the expected type."""
 
-    def __init__(self, expected: type, actual: type) -> None:
+    def __init__(self, expected: Optional[type], actual: Optional[type]) -> None:
         self.expected = expected
         self.actual = actual
 
@@ -35,12 +36,13 @@ class TuruRowTypeMismatchError(TuruError):
 class TuruRowTypeNotSupportedError(TuruError):
     """Raised when a row type is not supported."""
 
-    def __init__(self, row_type: type) -> None:
+    def __init__(self, row_type: Optional[type]) -> None:
         self.row_type = row_type
 
     @property
     def message(self) -> str:
-        return f"Unsupported row type: {self.row_type.__name__}."
+        row_type = self.row_type.__name__ if self.row_type else None
+        return f"Unsupported row type: {row_type}."
 
 
 class TuruUnexpectedFetchError(TuruError):
