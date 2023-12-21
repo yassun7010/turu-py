@@ -21,12 +21,13 @@ is provided to easily record query results and injection mock data.
 
 ## Supprted Database
 
-| Database   | Supported | Installation                 |
-| ---------- | --------- | ---------------------------- |
-| SQLite3    | Yes       | `pip install turu[sqlite3]`  |
-| MySQL      | No        |  -                           |
-| PostgreSQL | No        |  -                           |
-| Snowflake  | Yes       | `pip install turu[snowflake]`|
+| Database   | Supported | Installation                  |
+| ---------- | --------- | ----------------------------- |
+| SQLite3    | Yes       | `pip install turu[sqlite3]`   |
+| MySQL      | No        |  -                            |
+| PostgreSQL | No        |  -                            |
+| Snowflake  | Yes       | `pip install turu[snowflake]` |
+| BigQuery   | Yes       | `pip install turu[bigquery]`  |
 
 ## Usage
 
