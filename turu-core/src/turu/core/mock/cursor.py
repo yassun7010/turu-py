@@ -1,4 +1,4 @@
-from typing import Any, Iterator, List, Optional, Sequence, Type
+from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type
 
 from turu.core.cursor import (
     Cursor,
@@ -43,13 +43,13 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
     @override
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
-    ) -> "MockCursor[Any, Parameters]":
+    ) -> "MockCursor[Tuple[Any], Parameters]":
         return self._make_new_cursor(None)
 
     @override
     def executemany(
         self, operation: str, seq_of_parameters: Sequence[Parameters], /
-    ) -> "MockCursor[Any, Parameters]":
+    ) -> "MockCursor[Tuple[Any], Parameters]":
         return self._make_new_cursor(None)
 
     @override

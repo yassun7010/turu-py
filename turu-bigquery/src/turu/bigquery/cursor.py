@@ -1,4 +1,4 @@
-from typing import Any, List, Mapping, Optional, Sequence, Type, Union, cast
+from typing import Any, List, Mapping, Optional, Sequence, Tuple, Type, Union, cast
 
 import google.cloud.bigquery
 import google.cloud.bigquery.dbapi
@@ -42,11 +42,11 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
         operation: str,
         parameters: Optional[Parameter] = None,
         /,
-    ) -> "Cursor[Any]":
+    ) -> "Cursor[Tuple[Any]]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = None
 
-        return self
+        return cast(Cursor, self)
 
     @override
     def executemany(
@@ -54,11 +54,11 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
         operation: str,
         seq_of_parameters: Union[Sequence[Mapping[str, Any]], Sequence[Any]],
         /,
-    ) -> "Cursor[Any]":
+    ) -> "Cursor[Tuple[Any]]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = None
 
-        return self
+        return cast(Cursor, self)
 
     @override
     def execute_map(

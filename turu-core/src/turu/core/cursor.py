@@ -46,13 +46,13 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     @override
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
-    ) -> Self:
+    ) -> "Cursor":
         ...
 
     @override
     def executemany(
         self, operation: str, seq_of_parameters: Sequence[Parameters], /
-    ) -> Self:
+    ) -> "Cursor":
         ...
 
     def execute_map(

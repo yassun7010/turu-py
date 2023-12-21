@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Sequence, Type, cast
+from typing import Any, List, Optional, Sequence, Tuple, Type, cast
 
 import turu.core.cursor
 import turu.core.mock
@@ -38,7 +38,7 @@ class Cursor(
     @override
     def execute(
         self, operation: str, parameters: Optional[Any] = None, /
-    ) -> "Cursor[Any]":
+    ) -> "Cursor[Tuple[Any]]":
         self._raw_cursor.execute(operation, parameters)
         self._row_type = None
 
@@ -47,7 +47,7 @@ class Cursor(
     @override
     def executemany(
         self, operation: str, seq_of_parameters: Sequence[Any], /
-    ) -> "Cursor[Any]":
+    ) -> "Cursor[Tuple[Any]]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
         self._row_type = None
 
