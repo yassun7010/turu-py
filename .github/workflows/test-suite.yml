@@ -24,7 +24,7 @@ jobs:
           - turu-core
           - turu-sqlite3
           - turu-snowflake
-          - turu-postgresql
+          - turu-bigquery
           - turu
     defaults:
       run:
