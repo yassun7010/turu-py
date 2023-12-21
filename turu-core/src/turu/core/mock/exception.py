@@ -16,7 +16,12 @@ class TuruMockResponseTypeMismatchError(TuruError):
 
     @property
     def message(self) -> str:
-        return f"Mock response type mismatch: Expected {self.expected.__name__ if self.expected else None}, got {self.actual.__name__}"
+        expected_type = self.expected.__name__ if self.expected else None
+        actual_type = self.actual.__name__ if self.actual else None
+
+        return (
+            f"Mock response type mismatch: Expected {expected_type}, got {actual_type}"
+        )
 
 
 class TuruMockFetchOneSizeError(TuruError):

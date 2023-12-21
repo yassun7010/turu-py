@@ -26,7 +26,10 @@ class TuruRowTypeMismatchError(TuruError):
 
     @property
     def message(self) -> str:
-        return f"Unsupported row type: Expected {self.expected.__name__}, got {self.actual.__name__}."
+        expected_type = self.expected.__name__ if self.expected else None
+        actual_type = self.actual.__name__ if self.actual else None
+
+        return f"Unsupported row type: Expected {expected_type}, got {actual_type}."
 
 
 class TuruRowTypeNotSupportedError(TuruError):
