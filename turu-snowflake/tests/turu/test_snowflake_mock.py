@@ -80,3 +80,41 @@ class TestTuruSnowflakeConnection:
 
         assert cursor.fetchone() == expected[0]
         assert cursor.fetchone() is None
+
+    def test_connection_timeout(self, mock_connection: turu.snowflake.MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().execute_map(
+            Row, "select 1", timeout=10
+        ) as cursor:
+            assert cursor.fetchmany() == expected
+
+    def test_connection_num_statements(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().execute_map(
+            Row, "select 1; select 2;", num_statements=2
+        ) as cursor:
+            assert cursor.fetchall() == expected
+            assert cursor.fetchone() is None
+
+    def test_cursor_timeout(self, mock_connection: turu.snowflake.MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().execute_map(
+            Row, "select 1", timeout=10
+        ) as cursor:
+            assert cursor.fetchmany() == expected
+
+    def test_cursor_num_statements(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().execute_map(
+            Row, "select 1; select 2;", num_statements=2
+        ) as cursor:
+            assert cursor.fetchall() == expected
+            assert cursor.fetchone() is None

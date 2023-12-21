@@ -97,3 +97,25 @@ class TestTuruSnowflakeConnection:
         cursor = connection.cursor()
         cursor.arraysize = 2
         assert cursor.arraysize == 2
+
+    def test_connection_timeout(self, connection: turu.snowflake.Connection):
+        with connection.execute_map(Row, "select 1", timeout=10) as cursor:
+            assert cursor.fetchone() == Row(1)
+
+    def test_connection_num_statements(self, connection: turu.snowflake.Connection):
+        with connection.execute_map(
+            Row, "select 1; select 2;", num_statements=2
+        ) as cursor:
+            assert cursor.fetchall() == [Row(1)]
+            assert cursor.fetchone() is None
+
+    def test_cursor_timeout(self, connection: turu.snowflake.Connection):
+        with connection.cursor().execute_map(Row, "select 1", timeout=10) as cursor:
+            assert cursor.fetchone() == Row(1)
+
+    def test_cursor_num_statements(self, connection: turu.snowflake.Connection):
+        with connection.cursor().execute_map(
+            Row, "select 1; select 2;", num_statements=2
+        ) as cursor:
+            assert cursor.fetchall() == [Row(1)]
+            assert cursor.fetchone() is None

@@ -1,10 +1,17 @@
-from typing import Any, List, Optional, Sequence, Tuple, Type, cast
+from typing import Any, List, Optional, Sequence, Tuple, Type, TypedDict, cast
 
 import turu.core.cursor
 import turu.core.mock
-from typing_extensions import override
+from typing_extensions import Unpack, override
 
 import snowflake.connector
+
+
+class ExecuteOptions(TypedDict, total=False):
+    timeout: int
+    """timeout[sec]"""
+
+    num_statements: int
 
 
 class Cursor(
@@ -37,18 +44,26 @@ class Cursor(
 
     @override
     def execute(
-        self, operation: str, parameters: Optional[Any] = None, /
+        self,
+        operation: str,
+        parameters: Optional[Any] = None,
+        /,
+        **options: Unpack[ExecuteOptions],
     ) -> "Cursor[Tuple[Any]]":
-        self._raw_cursor.execute(operation, parameters)
+        self._raw_cursor.execute(operation, parameters, **options)
         self._row_type = None
 
         return cast(Cursor, self)
 
     @override
     def executemany(
-        self, operation: str, seq_of_parameters: Sequence[Any], /
+        self,
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
     ) -> "Cursor[Tuple[Any]]":
-        self._raw_cursor.executemany(operation, seq_of_parameters)
+        self._raw_cursor.executemany(operation, seq_of_parameters, **options)
         self._row_type = None
 
         return cast(Cursor, self)
@@ -60,8 +75,9 @@ class Cursor(
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
+        **options: Unpack[ExecuteOptions],
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
-        self._raw_cursor.execute(operation, parameters)
+        self._raw_cursor.execute(operation, parameters, **options)
         self._row_type = cast(turu.core.cursor.GenericRowType, row_type)
 
         return cast(Cursor, self)
@@ -73,8 +89,9 @@ class Cursor(
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
+        **options: Unpack[ExecuteOptions],
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
-        self._raw_cursor.executemany(operation, seq_of_parameters)
+        self._raw_cursor.executemany(operation, seq_of_parameters, **options)
         self._row_type = cast(turu.core.cursor.GenericRowType, row_type)
 
         return cast(Cursor, self)
@@ -127,4 +144,46 @@ class MockCursor(  # type: ignore
     turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Any],  # type: ignore
     Cursor[turu.core.cursor.GenericRowType],  # type: ignore
 ):
-    pass
+    @override
+    def execute(
+        self,
+        operation: str,
+        parameters: Optional[Any] = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Tuple[Any]]":
+        return cast(MockCursor, super().execute(operation, parameters))
+
+    @override
+    def executemany(
+        self,
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Tuple[Any]]":
+        return cast(MockCursor, super().executemany(operation, seq_of_parameters))
+
+    @override
+    def execute_map(
+        self,
+        row_type: Type[turu.core.cursor.GenericNewRowType],
+        operation: str,
+        parameters: Optional[Any] = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[turu.core.cursor.GenericNewRowType]":
+        return cast(MockCursor, super().execute_map(row_type, operation, parameters))
+
+    @override
+    def executemany_map(
+        self,
+        row_type: Type[turu.core.cursor.GenericNewRowType],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[turu.core.cursor.GenericNewRowType]":
+        return cast(
+            MockCursor, super().executemany_map(row_type, operation, seq_of_parameters)
+        )
