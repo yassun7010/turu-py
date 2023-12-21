@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Optional, Sequence, Type
+from typing import Any, Optional, Sequence, Tuple, Type
 
 import turu.core.cursor
 from turu.core.protocols.connection import ConnectionProtocol
@@ -29,7 +29,7 @@ class Connection(ConnectionProtocol):
         operation: str,
         parameters: Optional[Parameters] = None,
         /,
-    ) -> turu.core.cursor.Cursor[Never, Parameters]:
+    ) -> turu.core.cursor.Cursor[Tuple[Any], Parameters]:
         return self.cursor().execute(operation, parameters)
 
     def executemany(
@@ -37,7 +37,7 @@ class Connection(ConnectionProtocol):
         operation: str,
         seq_of_parameters: Sequence[Parameters],
         /,
-    ) -> turu.core.cursor.Cursor[Never, Parameters]:
+    ) -> turu.core.cursor.Cursor[Tuple[Any], Parameters]:
         return self.cursor().executemany(operation, seq_of_parameters)
 
     def execute_map(

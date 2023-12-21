@@ -21,7 +21,7 @@ class Row(NamedTuple):
 )
 class TestTuruSnowflakeConnection:
     def test_execute(self, connection: turu.snowflake.Connection):
-        connection.cursor().execute("select 1")
+        assert connection.execute("select 1").fetchall() == [(1,)]
 
     def test_execute_map_fetchone(self, connection: turu.snowflake.Connection):
         cursor = connection.cursor().execute_map(Row, "select 1")
@@ -57,7 +57,8 @@ class TestTuruSnowflakeConnection:
         )
 
         assert cursor.fetchall() == [(1,), (2,)]
-        assert next(cursor) is None
+        with pytest.raises(StopIteration):
+            next(cursor)
 
     def test_executemany_map(self, connection: turu.snowflake.Connection):
         cursor = connection.cursor().executemany_map(Row, "select 1", [(), ()])
