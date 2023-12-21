@@ -23,6 +23,7 @@ classifiers = [
 [tool.poetry.extras]
 sqlite3 = ["turu-sqlite3"]
 snowflake = ["turu-snowflake"]
+bigquery = ["turu-bigquery"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
