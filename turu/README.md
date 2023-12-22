@@ -11,8 +11,7 @@ pip install turu[snowflake]
 ```
 
 ## Why Turu?
-SQL is a powerful language, but it has many dialects and having an ORM for all of them is becoming practically impossible.
-In particular, cloud-based SQL database is difficult to test automatically in a local environment.
+SQL is a powerful language, but it has many dialects and is especially difficult to automatically test cloud-based SQL databases in a local environment.
 
 Turu was developed as a simple tool to assist local development.
 It provides a simple interface according to [PEP 249 – Python Database API Specification v2.0](https://peps.python.org/pep-0249/) and allows for easy recording of query results and injection mock data.
