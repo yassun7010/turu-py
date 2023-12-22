@@ -11,13 +11,11 @@ pip install turu[snowflake]
 ```
 
 ## Why Turu?
-SQL is a powerful language, but it's not very type safe, and recently many new SQL database engines have been created.
+SQL is a powerful language, but it has many dialects and having an ORM for all of them is becoming practically impossible.
 In particular, cloud-based SQL database is difficult to test automatically in a local environment.
 
-Turu was developed to allow for the unified handling and development of many SQL databases.
-
-A simple interface according to [PEP 249 – Python Database API Specification v2.0](https://peps.python.org/pep-0249/)
-is provided to easily record query results and injection mock data.
+Turu was developed as a simple tool to assist local development.
+It provides a simple interface according to [PEP 249 – Python Database API Specification v2.0](https://peps.python.org/pep-0249/) and allows for easy recording of query results and injection mock data.
 
 ## Supprted Database
 
