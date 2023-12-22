@@ -21,6 +21,13 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
 
     @property
     def rowcount(self) -> int:
+        """
+        The rowcount for the last .execute*() operation.
+
+        Per PEP 249: The attribute is -1 in case no .execute*() has been
+        performed on the cursor or the rowcount of the last operation
+        cannot be determined by the interface.
+        """
         return self._raw_cursor.rowcount
 
     @property
@@ -30,6 +37,15 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
     @arraysize.setter
     @deprecated("arraysize is not supported in BigQuery")
     def arraysize(self, size: int) -> None:
+        """
+        The arraysize for fetchmany.
+
+        Per PEP 249: The arraysize attribute defaults to 1, meaning to fetch
+        a single row at a time. However, we deviate from that, and set the
+        default to None, allowing the backend to automatically determine the
+        most appropriate size.
+        """
+        self._raw_cursor.arraysize
         raise NotImplementedError()
 
     @override
