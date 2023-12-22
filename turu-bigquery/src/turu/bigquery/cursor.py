@@ -38,7 +38,7 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
     @deprecated("arraysize is not supported in BigQuery")
     def arraysize(self, size: int) -> None:
         """
-        The arraysize for fetchmany.
+        The arraysize for fetchmany and fetchall.
 
         Per PEP 249: The arraysize attribute defaults to 1, meaning to fetch
         a single row at a time. However, we deviate from that, and set the
