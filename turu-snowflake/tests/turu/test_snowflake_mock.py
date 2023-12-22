@@ -118,3 +118,39 @@ class TestTuruSnowflakeConnection:
         ) as cursor:
             assert cursor.fetchall() == expected
             assert cursor.fetchone() is None
+
+    def test_cursor_use_warehouse(self, mock_connection: turu.snowflake.MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().use_warehouse("test_warehouse").execute_map(
+            Row,
+            "select 1",
+        ) as cursor:
+            assert cursor.fetchmany() == expected
+
+    def test_cursor_use_database(self, mock_connection: turu.snowflake.MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().use_database("test_database").execute_map(
+            Row,
+            "select 1",
+        ) as cursor:
+            assert cursor.fetchmany() == expected
+
+    def test_cursor_use_schema(self, mock_connection: turu.snowflake.MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().use_schema("test_schema").execute_map(
+            Row,
+            "select 1",
+        ) as cursor:
+            assert cursor.fetchmany() == expected
+
+    def test_cursor_use_role(self, mock_connection: turu.snowflake.MockConnection):
+        expected = [Row(1)]
+        mock_connection.inject_response(Row, expected)
+        with mock_connection.cursor().use_role("test_role").execute_map(
+            Row,
+            "select 1",
+        ) as cursor:
+            assert cursor.fetchmany() == expected

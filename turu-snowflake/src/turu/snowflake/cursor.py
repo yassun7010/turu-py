@@ -2,7 +2,7 @@ from typing import Any, List, Optional, Sequence, Tuple, Type, TypedDict, cast
 
 import turu.core.cursor
 import turu.core.mock
-from typing_extensions import Unpack, override
+from typing_extensions import Self, Unpack, override
 
 import snowflake.connector
 
@@ -139,6 +139,26 @@ class Cursor(
         else:
             return next_row  # type: ignore[return-value]
 
+    def use_warehouse(self, warehouse: str, /) -> Self:
+        self._raw_cursor.execute(f"use warehouse {warehouse}")
+
+        return self
+
+    def use_database(self, database: str, /) -> Self:
+        self._raw_cursor.execute(f"use database {database}")
+
+        return self
+
+    def use_schema(self, schema: str, /) -> Self:
+        self._raw_cursor.execute(f"use schema {schema}")
+
+        return self
+
+    def use_role(self, role: str, /) -> Self:
+        self._raw_cursor.execute(f"use role {role}")
+
+        return self
+
 
 class MockCursor(  # type: ignore
     turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Any],  # type: ignore
@@ -187,3 +207,15 @@ class MockCursor(  # type: ignore
         return cast(
             MockCursor, super().executemany_map(row_type, operation, seq_of_parameters)
         )
+
+    def use_warehouse(self, warehouse: str, /) -> Self:
+        return self
+
+    def use_database(self, database: str, /) -> Self:
+        return self
+
+    def use_schema(self, schema: str, /) -> Self:
+        return self
+
+    def use_role(self, role: str, /) -> Self:
+        return self
