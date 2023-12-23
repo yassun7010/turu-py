@@ -4,7 +4,7 @@
 [![pypi package](https://badge.fury.io/py/turu.svg)](https://pypi.org/project/turu)
 
 <p align="center">
-    <img src="./images//logo.svg" width="200" />
+    <img src="./images//logo.svg" width="300" />
 </p>
 
 ## Installation
