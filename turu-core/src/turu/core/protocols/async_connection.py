@@ -2,7 +2,7 @@
 
 from typing import Protocol
 
-from turu.core.protocols.cursor import CursorProtocol
+from turu.core.protocols.async_cursor import AsyncCursorProtocol
 
 
 class AsyncConnectionProtocol(Protocol):
@@ -15,5 +15,5 @@ class AsyncConnectionProtocol(Protocol):
     async def rollback(self) -> None:
         ...
 
-    def cursor(self) -> CursorProtocol:
+    def cursor(self) -> AsyncCursorProtocol:
         ...

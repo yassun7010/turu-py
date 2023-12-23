@@ -48,14 +48,14 @@ class AsyncCursorProtocol(Generic[Parameters], Protocol):
     async def fetchall(self) -> List[Any]:
         ...
 
-    def __aiter__(self) -> Self:
+    async def __aiter__(self) -> Self:
         ...
 
-    def __anext__(self) -> Any:
+    async def __anext__(self) -> Any:
         ...
 
-    def __aenter__(self) -> Self:
+    async def __aenter__(self) -> Self:
         ...
 
-    def __aexit__(self, exc_type, exc_value, traceback):
+    async def __aexit__(self, exc_type, exc_value, traceback):
         ...
