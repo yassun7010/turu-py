@@ -1,6 +1,7 @@
 import os
 
 import pytest
+import pytest_asyncio
 import turu.snowflake
 
 
@@ -17,9 +18,9 @@ def connection() -> turu.snowflake.Connection:
     )
 
 
-@pytest.fixture
-def async_connection() -> turu.snowflake.AsyncConnection:
-    return turu.snowflake.connect_async(
+@pytest_asyncio.fixture
+async def async_connection() -> turu.snowflake.AsyncConnection:
+    return await turu.snowflake.connect_async(
         user=os.environ["SNOWFLAKE_USER"],
         password=os.environ["SNOWFLAKE_PASSWORD"],
         account=os.environ["SNOWFLAKE_ACCOUNT"],

@@ -9,7 +9,7 @@ class Row(NamedTuple):
     id: int
 
 
-class TestMock:
+class TestTuruSqlite3Mock:
     def test_mock_execute(self, mock_connection: MockConnection):
         mock_connection.inject_response(None, [(1,)])
 

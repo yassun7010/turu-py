@@ -30,7 +30,7 @@ class AsyncConnection(AsyncConnectionProtocol):
         parameters: Optional[Parameters] = None,
         /,
     ) -> turu.core.async_cursor.AsyncCursor[Tuple[Any], Parameters]:
-        return await self.cursor().execute(operation, parameters)
+        return await (await self.cursor()).execute(operation, parameters)
 
     async def executemany(
         self,
@@ -38,7 +38,7 @@ class AsyncConnection(AsyncConnectionProtocol):
         seq_of_parameters: Sequence[Parameters],
         /,
     ) -> turu.core.async_cursor.AsyncCursor[Tuple[Any], Parameters]:
-        return await self.cursor().executemany(operation, seq_of_parameters)
+        return await (await self.cursor()).executemany(operation, seq_of_parameters)
 
     async def execute_map(
         self,
@@ -49,7 +49,7 @@ class AsyncConnection(AsyncConnectionProtocol):
     ) -> turu.core.async_cursor.AsyncCursor[
         turu.core.async_cursor.GenericNewRowType, Parameters
     ]:
-        return await self.cursor().execute_map(row_type, operation, parameters)
+        return await (await self.cursor()).execute_map(row_type, operation, parameters)
 
     async def executemany_map(
         self,
@@ -60,6 +60,6 @@ class AsyncConnection(AsyncConnectionProtocol):
     ) -> turu.core.async_cursor.AsyncCursor[
         turu.core.async_cursor.GenericNewRowType, Parameters
     ]:
-        return await self.cursor().executemany_map(
+        return await (await self.cursor()).executemany_map(
             row_type, operation, seq_of_parameters
         )

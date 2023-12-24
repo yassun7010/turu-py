@@ -87,7 +87,7 @@ class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
         return MockAsyncCursor(self._turu_mock_store)
 
 
-def connect_async(
+async def connect_async(
     connection_name: Optional[str] = None,
     connections_file_path: Optional[Path] = None,
     **kwargs,

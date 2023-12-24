@@ -84,7 +84,7 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         try:
             return next(self._turu_mock_rows)
 
-        except StopIteration:
+        except (StopIteration, StopAsyncIteration):
             return None
 
     @override
@@ -115,7 +115,10 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
 
-        return next(self._turu_mock_rows)
+        try:
+            return next(self._turu_mock_rows)
+        except StopIteration as e:
+            raise StopAsyncIteration from e
 
     def _make_new_cursor(self, row_type: Optional[Type]) -> "MockAsyncCursor":
         responses = self._turu_mock_store.provide_response(row_type)
