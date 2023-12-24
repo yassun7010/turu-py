@@ -63,6 +63,7 @@ ruff = "^0.1.4"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
+mkdocs-material = "^9.5.3"
 
 [tool.poetry-dynamic-versioning]
 enable = false

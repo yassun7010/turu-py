@@ -1,1 +1,3 @@
 site_name: Turu
+theme:
+  name: material
