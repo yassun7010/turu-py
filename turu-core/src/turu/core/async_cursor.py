@@ -77,7 +77,7 @@ class AsyncCursor(Generic[GenericRowType, Parameters], AsyncCursorProtocol[Param
         ...
 
     @override
-    async def __aiter__(self) -> Self:
+    def __aiter__(self) -> Self:
         return self
 
     @abstractmethod

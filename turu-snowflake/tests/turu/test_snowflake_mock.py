@@ -7,7 +7,7 @@ class Row(NamedTuple):
     id: int
 
 
-class TestTuruSnowflakeConnection:
+class TestTuruSnowflakeMockConnection:
     def test_execute(self, mock_connection: turu.snowflake.MockConnection):
         mock_connection.inject_response(None, [(1,)])
         cursor = mock_connection.cursor().execute("select 1")

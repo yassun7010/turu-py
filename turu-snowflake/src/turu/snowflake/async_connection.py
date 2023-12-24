@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Optional, Sequence, Tuple, Type
 
 import turu.core.async_connection
@@ -82,3 +83,17 @@ class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
     @override
     def cursor(self) -> "MockAsyncCursor[Never]":
         return MockAsyncCursor(self._turu_mock_store)
+
+
+def connect_async(
+    connection_name: Optional[str] = None,
+    connections_file_path: Optional[Path] = None,
+    **kwargs,
+) -> AsyncConnection:
+    return AsyncConnection(
+        snowflake.connector.SnowflakeConnection(
+            connection_name,
+            connections_file_path,
+            **kwargs,
+        )
+    )

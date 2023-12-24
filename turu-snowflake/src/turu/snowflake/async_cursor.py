@@ -132,7 +132,7 @@ class AsyncCursor(
         next_row = self._raw_cursor.fetchone()
 
         if next_row is None:
-            raise StopIteration()
+            raise StopAsyncIteration()
 
         if self._row_type is not None:
             return map_row(self._row_type, next_row)
@@ -176,6 +176,8 @@ class AsyncCursor(
             while conn.is_still_running(conn.get_query_status(query_id)):
                 await asyncio.sleep(0.01)
 
+            cur.get_results_from_sfqid(query_id)
+
 
 class MockAsyncCursor(  # type: ignore
     turu.core.mock.MockAsyncCursor[turu.core.async_cursor.GenericRowType, Any],  # type: ignore
@@ -189,7 +191,7 @@ class MockAsyncCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockAsyncCursor[Tuple[Any]]":
-        return cast(MockAsyncCursor, super().execute(operation, parameters))
+        return cast(MockAsyncCursor, await super().execute(operation, parameters))
 
     @override
     async def executemany(
@@ -199,7 +201,9 @@ class MockAsyncCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockAsyncCursor[Tuple[Any]]":
-        return cast(MockAsyncCursor, super().executemany(operation, seq_of_parameters))
+        return cast(
+            MockAsyncCursor, await super().executemany(operation, seq_of_parameters)
+        )
 
     @override
     async def execute_map(
@@ -211,7 +215,7 @@ class MockAsyncCursor(  # type: ignore
         **options: Unpack[ExecuteOptions],
     ) -> "MockAsyncCursor[turu.core.async_cursor.GenericNewRowType]":
         return cast(
-            MockAsyncCursor, super().execute_map(row_type, operation, parameters)
+            MockAsyncCursor, await super().execute_map(row_type, operation, parameters)
         )
 
     @override

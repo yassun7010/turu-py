@@ -48,7 +48,7 @@ class AsyncCursorProtocol(Generic[Parameters], Protocol):
     async def fetchall(self) -> List[Any]:
         ...
 
-    async def __aiter__(self) -> Self:
+    def __aiter__(self) -> Self:
         ...
 
     async def __anext__(self) -> Any:

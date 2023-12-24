@@ -105,7 +105,7 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         return list(self._turu_mock_rows)
 
     @override
-    async def __aiter__(self) -> Self:
+    def __aiter__(self) -> Self:
         if self._turu_mock_rows is None:
             raise TuruMockUnexpectedFetchError()
         return self
