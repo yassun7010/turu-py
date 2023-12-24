@@ -19,12 +19,15 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     async def close(self) -> None:
         await self._raw_connection.close()
 
+    @override
     async def commit(self) -> None:
         await self._raw_connection.commit()
 
+    @override
     async def rollback(self) -> None:
         await self._raw_connection.rollback()
 
+    @override
     async def cursor(self) -> AsyncCursor[Never]:
         return AsyncCursor(await self._raw_connection.cursor())
 
@@ -33,6 +36,7 @@ class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockAsyncConnection.__init__(self)
 
+    @override
     async def cursor(self) -> "turu.sqlite3.async_cursor.MockAsyncCursor[Never]":
         return turu.sqlite3.async_cursor.MockAsyncCursor(self._turu_mock_store)
 
