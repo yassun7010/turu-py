@@ -6,3 +6,4 @@ coverage.xml
 htmlcov
 .DS_Store
 dist
+site

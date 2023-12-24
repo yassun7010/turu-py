@@ -61,6 +61,9 @@ taskipy = "^1.12.0"
 pyright = "^1.1.337"
 ruff = "^0.1.4"
 
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.5.3"
+
 [tool.poetry-dynamic-versioning]
 enable = false
 
@@ -77,6 +80,9 @@ lint = "ruff check ."
 typecheck = "pyright src/** tests/**"
 test = "pytest"
 ci = "task format && task lint && task typecheck && task test"
+docs-serve = "mkdocs serve -f ../mkdocs.yml"
+docs-deploy = "mkdocs gh-deploy -f ../mkdocs.yml"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
