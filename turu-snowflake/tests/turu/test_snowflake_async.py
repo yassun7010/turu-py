@@ -36,18 +36,14 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_execute_map_fetchone(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        async with await async_connection.cursor().execute_map(
-            Row, "select 1"
-        ) as cursor:
+        async with await async_connection.execute_map(Row, "select 1") as cursor:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchmany(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = await async_connection.cursor().execute_map(
-            Row, "select 1 union all select 2"
-        )
+        cursor = await async_connection.execute_map(Row, "select 1 union all select 2")
         assert await cursor.fetchmany() == [Row(1)]
         assert await cursor.fetchone() == Row(2)
         assert await cursor.fetchone() is None
@@ -56,7 +52,7 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_execute_map_fetchmany_with_size(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = await async_connection.cursor().execute_map(
+        cursor = await async_connection.execute_map(
             Row, "select 1 union all select 2 union all select 3"
         )
 
@@ -67,16 +63,14 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_execute_map_fetchall(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = await async_connection.cursor().execute_map(
-            Row, "select 1 union all select 2"
-        )
+        cursor = await async_connection.execute_map(Row, "select 1 union all select 2")
 
         assert await cursor.fetchall() == [Row(1), Row(2)]
         assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
     async def test_executemany(self, async_connection: turu.snowflake.AsyncConnection):
-        cursor = await async_connection.cursor().executemany(
+        cursor = await async_connection.executemany(
             "select 1 union all select 2", [(), ()]
         )
 
@@ -131,21 +125,21 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_cursor_rowcount(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = async_connection.cursor()
+        cursor = await async_connection.cursor()
         assert cursor.rowcount == -1
 
     @pytest.mark.asyncio
     async def test_cursor_arraysize(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = async_connection.cursor()
+        cursor = await async_connection.cursor()
         assert cursor.arraysize == 1
 
     @pytest.mark.asyncio
     async def test_cursor_arraysize_setter(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = async_connection.cursor()
+        cursor = await async_connection.cursor()
         cursor.arraysize = 2
         assert cursor.arraysize == 2
 
@@ -172,7 +166,7 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_cursor_timeout(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        async with await async_connection.cursor().execute_map(
+        async with await async_connection.execute_map(
             Row, "select 1", timeout=10
         ) as cursor:
             assert await cursor.fetchone() == Row(1)
@@ -181,7 +175,7 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_cursor_num_statements(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        async with await async_connection.cursor().execute_map(
+        async with await async_connection.execute_map(
             Row, "select 1; select 2;", num_statements=2
         ) as cursor:
             assert await cursor.fetchall() == [Row(1)]
@@ -192,7 +186,7 @@ class TestTuruSnowflakeAsyncConnection:
         self, async_connection: turu.snowflake.AsyncConnection
     ):
         async with await (
-            async_connection.cursor()
+            (await async_connection.cursor())
             .use_warehouse(os.environ["SNOWFLAKE_WAREHOUSE"])
             .execute_map(Row, "select 1")
         ) as cursor:
@@ -203,7 +197,7 @@ class TestTuruSnowflakeAsyncConnection:
         self, async_connection: turu.snowflake.AsyncConnection
     ):
         async with await (
-            async_connection.cursor()
+            (await async_connection.cursor())
             .use_schema(os.environ["SNOWFLAKE_SCHEMA"])
             .execute_map(Row, "select 1")
         ) as cursor:
@@ -214,7 +208,7 @@ class TestTuruSnowflakeAsyncConnection:
         self, async_connection: turu.snowflake.AsyncConnection
     ):
         async with await (
-            async_connection.cursor()
+            (await async_connection.cursor())
             .use_database(os.environ["SNOWFLAKE_DATABASE"])
             .execute_map(Row, "select 1")
         ) as cursor:
@@ -225,7 +219,7 @@ class TestTuruSnowflakeAsyncConnection:
         self, async_connection: turu.snowflake.AsyncConnection
     ):
         async with await (
-            async_connection.cursor()
+            (await async_connection.cursor())
             .use_role(os.environ["SNOWFLAKE_ROLE"])
             .execute_map(Row, "select 1")
         ) as cursor:

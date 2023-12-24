@@ -24,7 +24,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     async def rollback(self) -> None:
         self._raw_connection.rollback()
 
-    def cursor(self) -> AsyncCursor[Never]:
+    async def cursor(self) -> AsyncCursor[Never]:
         return AsyncCursor(self._raw_connection.cursor())
 
     async def execute(
@@ -34,7 +34,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[Tuple[Any]]:
-        return await self.cursor().execute(operation, parameters, **options)
+        return await (await self.cursor()).execute(operation, parameters, **options)
 
     async def executemany(
         self,
@@ -43,7 +43,9 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[Tuple[Any]]:
-        return await self.cursor().executemany(operation, seq_of_parameters, **options)
+        return await (await self.cursor()).executemany(
+            operation, seq_of_parameters, **options
+        )
 
     async def execute_map(
         self,
@@ -53,7 +55,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[turu.core.cursor.GenericNewRowType]:
-        return await self.cursor().execute_map(
+        return await (await self.cursor()).execute_map(
             row_type,
             operation,
             parameters,
@@ -68,7 +70,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[turu.core.cursor.GenericNewRowType]:
-        return await self.cursor().executemany_map(
+        return await (await self.cursor()).executemany_map(
             row_type,
             operation,
             seq_of_parameters,
@@ -81,7 +83,7 @@ class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
         turu.core.mock.MockAsyncConnection.__init__(self)
 
     @override
-    def cursor(self) -> "MockAsyncCursor[Never]":
+    async def cursor(self) -> "MockAsyncCursor[Never]":
         return MockAsyncCursor(self._turu_mock_store)
 
 

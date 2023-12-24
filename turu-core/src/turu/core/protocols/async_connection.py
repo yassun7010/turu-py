@@ -15,5 +15,5 @@ class AsyncConnectionProtocol(Protocol):
     async def rollback(self) -> None:
         ...
 
-    def cursor(self) -> AsyncCursorProtocol:
+    async def cursor(self) -> AsyncCursorProtocol:
         ...

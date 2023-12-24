@@ -14,7 +14,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
         mock_async_connection.inject_response(None, [(1,)])
-        cursor = await mock_async_connection.cursor().execute("select 1")
+        cursor = await mock_async_connection.execute("select 1")
         assert await cursor.fetchone() == (1,)
         assert await cursor.fetchone() is None
 
@@ -25,7 +25,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1), Row(2)]
 
         mock_async_connection.inject_response(Row, expected)
-        cursor = await mock_async_connection.cursor().execute_map(
+        cursor = await mock_async_connection.execute_map(
             Row, "select 1 union all select 2"
         )
 
@@ -42,7 +42,7 @@ class TestTuruSnowflakeMockAsyncConnection:
             )
         )
 
-        cursor = await mock_async_connection.cursor().execute_map(
+        cursor = await mock_async_connection.execute_map(
             Row, "select 1 union all select 2"
         )
 
@@ -57,7 +57,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1), Row(2), Row(3)]
         mock_async_connection.inject_response(Row, expected)
 
-        cursor = await mock_async_connection.cursor().execute_map(
+        cursor = await mock_async_connection.execute_map(
             Row, "select 1 union all select 2 union all select 3"
         )
 
@@ -72,7 +72,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1), Row(2)]
         mock_async_connection.inject_response(Row, expected)
 
-        cursor = await mock_async_connection.cursor().execute_map(
+        cursor = await mock_async_connection.execute_map(
             Row, "select 1 union all select 2"
         )
 
@@ -86,7 +86,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [(1,), (2,)]
         mock_async_connection.inject_response(None, expected)
 
-        cursor = await mock_async_connection.cursor().executemany(
+        cursor = await mock_async_connection.executemany(
             "select 1 union all select 2", []
         )
 
@@ -100,9 +100,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
 
-        cursor = await mock_async_connection.cursor().executemany_map(
-            Row, "select 1", []
-        )
+        cursor = await mock_async_connection.executemany_map(Row, "select 1", [])
 
         assert await cursor.fetchone() == expected[0]
         assert await cursor.fetchone() is None
@@ -113,7 +111,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
-        async with await mock_async_connection.cursor().execute_map(
+        async with await mock_async_connection.execute_map(
             Row, "select 1", timeout=10
         ) as cursor:
             assert await cursor.fetchmany() == expected
@@ -124,7 +122,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
-        async with await mock_async_connection.cursor().execute_map(
+        async with await mock_async_connection.execute_map(
             Row, "select 1; select 2;", num_statements=2
         ) as cursor:
             assert await cursor.fetchall() == expected
@@ -136,7 +134,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
-        async with await mock_async_connection.cursor().execute_map(
+        async with await mock_async_connection.execute_map(
             Row, "select 1", timeout=10
         ) as cursor:
             assert await cursor.fetchmany() == expected
@@ -147,7 +145,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
-        async with await mock_async_connection.cursor().execute_map(
+        async with await mock_async_connection.execute_map(
             Row, "select 1; select 2;", num_statements=2
         ) as cursor:
             assert await cursor.fetchall() == expected
@@ -160,7 +158,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await (
-            mock_async_connection.cursor()
+            (await mock_async_connection.cursor())
             .use_warehouse("test_warehouse")
             .execute_map(
                 Row,
@@ -176,7 +174,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await (
-            mock_async_connection.cursor()
+            (await mock_async_connection.cursor())
             .use_database("test_database")
             .execute_map(
                 Row,
@@ -192,7 +190,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await (
-            mock_async_connection.cursor()
+            (await mock_async_connection.cursor())
             .use_schema("test_schema")
             .execute_map(
                 Row,
@@ -208,7 +206,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await (
-            mock_async_connection.cursor()
+            (await mock_async_connection.cursor())
             .use_role("test_role")
             .execute_map(
                 Row,

@@ -21,7 +21,7 @@ class AsyncConnection(AsyncConnectionProtocol):
         ...
 
     @abstractmethod
-    def cursor(self) -> turu.core.async_cursor.AsyncCursor[Never, Any]:
+    async def cursor(self) -> turu.core.async_cursor.AsyncCursor[Never, Any]:
         ...
 
     async def execute(

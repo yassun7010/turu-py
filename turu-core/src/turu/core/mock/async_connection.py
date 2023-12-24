@@ -101,5 +101,5 @@ class MockAsyncConnection(turu.core.async_connection.AsyncConnection):
         pass
 
     @abstractmethod
-    def cursor(self) -> MockAsyncCursor[Never, Any]:
+    async def cursor(self) -> MockAsyncCursor[Never, Any]:
         ...
