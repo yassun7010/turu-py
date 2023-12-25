@@ -1,6 +1,9 @@
 site_name: Turu
 theme:
   name: material
+  logo: images/icon.svg
+  palette:
+    primary: black
 plugins:
   - inline-svg
 markdown_extensions:
