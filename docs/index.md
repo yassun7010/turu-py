@@ -1,6 +1,10 @@
-# Welcome to MkDocs
+# Turu
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Turu is a simple database api for typed Python.
+
+<p align="center">
+    <img alt="logo" src="images/logo.svg" width="350" />
+</p>
 
 ## Commands
 

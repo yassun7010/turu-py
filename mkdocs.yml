@@ -1,3 +1,8 @@
 site_name: Turu
 theme:
   name: material
+plugins:
+  - inline-svg
+markdown_extensions:
+  - attr_list
+  - md_in_html

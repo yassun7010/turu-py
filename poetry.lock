@@ -771,6 +771,20 @@ files = [
 ]
 
 [[package]]
+name = "mkdocs-plugin-inline-svg"
+version = "0.1.0"
+description = "A MkDocs plugin that inlines SVG images into the output."
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "mkdocs-plugin-inline-svg-0.1.0.tar.gz", hash = "sha256:30753efd1769ad68aade76c95382695ef2b9b153ed765167d5137f7bb6c85130"},
+    {file = "mkdocs_plugin_inline_svg-0.1.0-py3-none-any.whl", hash = "sha256:a5aab2d98a19b24019f8e650f54fc647c2f31e7d0e36fc5cf2d2161acc0ea49a"},
+]
+
+[package.dependencies]
+mkdocs = "*"
+
+[[package]]
 name = "mslex"
 version = "1.1.0"
 description = "shlex for windows"
@@ -1596,4 +1610,4 @@ sqlite3 = ["turu-sqlite3"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "8289d22398ed9aac20a173de7cacb32dd10fd49dd469689e3b0625b02d68c46c"
+content-hash = "1dd35a8eb314a8d1b95b8119c4d339bcc3e3e6938c1a07545d48c56ce7223719"
