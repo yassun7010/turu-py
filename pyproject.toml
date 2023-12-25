@@ -30,27 +30,27 @@ python = "^3.8"
 
 [tool.poetry.dependencies.turu-core]
 # INFO: poetry-dynamic-versioning to replace this.
-path = "../turu-core"
+path = "./turu-core"
 develop = true
 # version = "0.0.0"
 
 [tool.poetry.dependencies.turu-sqlite3]
 # INFO: poetry-dynamic-versioning to replace this.
-path = "../turu-sqlite3"
+path = "./turu-sqlite3"
 develop = true
 # version = "0.0.0"
 optional = true
 
 [tool.poetry.dependencies.turu-snowflake]
 # INFO: poetry-dynamic-versioning to replace this.
-path = "../turu-snowflake"
+path = "./turu-snowflake"
 develop = true
 # version = "0.0.0"
 optional = true
 
 [tool.poetry.dependencies.turu-bigquery]
 # INFO: poetry-dynamic-versioning to replace this.
-path = "../turu-bigquery"
+path = "./turu-bigquery"
 develop = true
 # version = "0.0.0"
 optional = true
@@ -72,17 +72,17 @@ enable = false
 path = "."
 files = ["pyproject.toml"]
 patterns = [
-    "path = \"\\.\\./turu-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
+    "path = \"\\./turu-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
 ]
 
 [tool.taskipy.tasks]
 format = "ruff format ."
 lint = "ruff check ."
 typecheck = "pyright src/** tests/**"
-test = "pytest"
+test = "pytest tests/"
 ci = "task format && task lint && task typecheck && task test"
-docs-serve = "mkdocs serve -f ../mkdocs.yml"
-docs-deploy = "mkdocs gh-deploy -f ../mkdocs.yml"
+docs-serve = "mkdocs serve"
+docs-deploy = "mkdocs gh-deploy"
 
 
 [build-system]

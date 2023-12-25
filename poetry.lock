@@ -1450,7 +1450,7 @@ bigquery-storage = ["google-cloud-bigquery-storage (>=2.24.0,<3.0.0)", "pyarrow 
 
 [package.source]
 type = "directory"
-url = "../turu-bigquery"
+url = "turu-bigquery"
 
 [[package]]
 name = "turu-core"
@@ -1469,7 +1469,7 @@ pydantic = ["pydantic (>=2.5.2,<3.0.0)"]
 
 [package.source]
 type = "directory"
-url = "../turu-core"
+url = "turu-core"
 
 [[package]]
 name = "turu-snowflake"
@@ -1487,7 +1487,7 @@ typing-extensions = "^4.9.0"
 
 [package.source]
 type = "directory"
-url = "../turu-snowflake"
+url = "turu-snowflake"
 
 [[package]]
 name = "turu-sqlite3"
@@ -1505,7 +1505,7 @@ typing-extensions = "^4.8.0"
 
 [package.source]
 type = "directory"
-url = "../turu-sqlite3"
+url = "turu-sqlite3"
 
 [[package]]
 name = "typing-extensions"
@@ -1596,4 +1596,4 @@ sqlite3 = ["turu-sqlite3"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "f088a4334c04753b80904362abb4795f1bc31465c5fc672170327323e73b65d4"
+content-hash = "8289d22398ed9aac20a173de7cacb32dd10fd49dd469689e3b0625b02d68c46c"

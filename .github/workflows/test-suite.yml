@@ -25,7 +25,7 @@ jobs:
           - turu-sqlite3
           - turu-snowflake
           - turu-bigquery
-          - turu
+          - .
     defaults:
       run:
         working-directory: ${{ matrix.package }}

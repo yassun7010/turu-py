@@ -2,7 +2,6 @@ from typing import Dict, Optional, Union
 
 import google.api_core.client_info
 import google.api_core.client_options
-import google.api_core.gapic_v1
 import google.auth.credentials
 import google.cloud.bigquery
 import google.cloud.bigquery.dbapi
@@ -10,7 +9,6 @@ import google.cloud.bigquery.job
 import turu.bigquery.cursor
 import turu.core.connection
 import turu.core.mock
-from google.api_core.gapic_v1.client_info import DEFAULT_CLIENT_INFO
 from typing_extensions import Never, deprecated
 
 from .cursor import Cursor, MockCursor
@@ -48,21 +46,26 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
         return MockCursor(self._turu_mock_store)
 
 
-def connect(
-    project: Optional[str] = None,
-    credentials: Optional[google.auth.credentials.Credentials] = None,
-    location: Optional[str] = None,
-    default_query_job_config: Optional[google.cloud.bigquery.job.QueryJobConfig] = None,
-    default_load_job_config: Optional[google.cloud.bigquery.job.LoadJobConfig] = None,
-    client_info: Optional[google.api_core.gapic_v1.client_info.ClientInfo] = None,
-    client_options: Optional[
-        Union[google.api_core.client_options.ClientOptions, Dict]
-    ] = None,
-) -> Connection:
-    import google.cloud.bigquery
-    import google.cloud.bigquery.dbapi
+try:
+    from google.api_core.gapic_v1.client_info import DEFAULT_CLIENT_INFO, ClientInfo
 
-    try:
+    def connect(  # type: ignore
+        project: Optional[str] = None,
+        credentials: Optional[google.auth.credentials.Credentials] = None,
+        location: Optional[str] = None,
+        default_query_job_config: Optional[
+            google.cloud.bigquery.job.QueryJobConfig
+        ] = None,
+        default_load_job_config: Optional[
+            google.cloud.bigquery.job.LoadJobConfig
+        ] = None,
+        client_info: Optional[ClientInfo] = None,
+        client_options: Optional[
+            Union[google.api_core.client_options.ClientOptions, Dict]
+        ] = None,
+    ) -> Connection:
+        import google.cloud.bigquery
+        import google.cloud.bigquery.dbapi
         import google.cloud.bigquery_storage_v1
 
         bqstorage_client = google.cloud.bigquery_storage_v1.BigQueryReadClient(
@@ -70,20 +73,52 @@ def connect(
             client_info=client_info or DEFAULT_CLIENT_INFO,
             client_options=client_options,
         )
-    except ImportError:
-        bqstorage_client = None
-
-    return Connection(
-        google.cloud.bigquery.dbapi.connect(
-            client=google.cloud.bigquery.Client(
-                project=project,
-                credentials=credentials,
-                location=location,
-                default_query_job_config=default_query_job_config,
-                default_load_job_config=default_load_job_config,
-                client_info=client_info,
-                client_options=client_options,
+        return Connection(
+            google.cloud.bigquery.dbapi.connect(
+                client=google.cloud.bigquery.Client(
+                    project=project,
+                    credentials=credentials,
+                    location=location,
+                    default_query_job_config=default_query_job_config,
+                    default_load_job_config=default_load_job_config,
+                    client_info=client_info,
+                    client_options=client_options,
+                ),
+                bqstorage_client=bqstorage_client,
             ),
-            bqstorage_client=bqstorage_client,
-        ),
-    )
+        )
+
+except ImportError:
+
+    def connect(
+        project: Optional[str] = None,
+        credentials: Optional[google.auth.credentials.Credentials] = None,
+        location: Optional[str] = None,
+        default_query_job_config: Optional[
+            google.cloud.bigquery.job.QueryJobConfig
+        ] = None,
+        default_load_job_config: Optional[
+            google.cloud.bigquery.job.LoadJobConfig
+        ] = None,
+        client_info: Optional[google.api_core.client_info.ClientInfo] = None,
+        client_options: Optional[
+            Union[google.api_core.client_options.ClientOptions, Dict]
+        ] = None,
+    ) -> Connection:
+        import google.cloud.bigquery
+        import google.cloud.bigquery.dbapi
+
+        return Connection(
+            google.cloud.bigquery.dbapi.connect(
+                client=google.cloud.bigquery.Client(
+                    project=project,
+                    credentials=credentials,
+                    location=location,
+                    default_query_job_config=default_query_job_config,
+                    default_load_job_config=default_load_job_config,
+                    client_info=client_info,
+                    client_options=client_options,
+                ),
+                bqstorage_client=None,
+            ),
+        )
