@@ -1,21 +1,14 @@
-# Turu
+# Welcome Turu
 
-Turu is a simple database api for typed Python.
+[Turu](https://github.com/yassun7010/turu-py) is a simple database api for typed Python.
 
 <p align="center">
     <img alt="logo" src="images/logo.svg" width="350" />
 </p>
 
-## Commands
+## Features
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+- :rocket: **Simple** - Turu is a simple database api wrapper of [PEP 249](https://peps.python.org/pep-0249/).
+- :light_bulb: **Type Hint**  - Full support for type hints.
+- :high_voltage: **Async/Await** - Async/Await supports.
+- :test_tube: **Recoed and Mock** - Record and mock database queries for testing.

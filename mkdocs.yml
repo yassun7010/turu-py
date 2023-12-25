@@ -1,11 +1,64 @@
 site_name: Turu
 theme:
   name: material
+  language: en
   logo: images/icon.svg
+  favicon: images/icon.svg
   palette:
-    primary: black
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: orange
+      toggle:
+        icon: material/toggle-switch
+        name: "Switch to dark mode"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: yellow
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: "Switch to light mode"
+  features:
+    - search.highlight
+    - search.suggest
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - navigation.footer
+  icon:
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+repo_name: yassun7010/turu-py
+repo_url: https://github.com/yassun7010/turu-py
+edit_uri: edit/main/docs/
 plugins:
+  - search
   - inline-svg
 markdown_extensions:
+  - toc:
+      permalink: true
   - attr_list
   - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
