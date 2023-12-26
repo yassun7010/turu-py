@@ -37,7 +37,7 @@ It provides a simple interface according to [PEP 249 – Python Database API Spe
 
 - :rocket: **Simple** - Turu is a simple database api wrapper of [PEP 249](https://peps.python.org/pep-0249/).
 - :bulb: **Type Hint**  - Full support for type hints.
-- :voltage: **Async/Await** - Async/Await supports.
+- :zap: **Async/Await** - Async/Await supports.
 - :test_tube: **Recoed and Mock** - Record and mock database queries for testing.
 <!-- --8<-- [end:features] -->
 
