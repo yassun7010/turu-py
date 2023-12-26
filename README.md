@@ -1,8 +1,10 @@
 # Turu: Simple Database API for Typed Python
 
+<!-- --8<-- [start:badges] -->
 [![docs](https://github.com/yassun7010/turu-py/actions/workflows/publish-mkdocs.yml/badge.svg)](https://yassun7010.github.io/turu-py/)
 [![test](https://github.com/yassun7010/turu-py/actions/workflows/test-suite.yml/badge.svg)](https://github.com/yassun7010/turu-py/actions)
 [![pypi package](https://badge.fury.io/py/turu.svg)](https://pypi.org/project/turu)
+<!-- --8<-- [end:badges] -->
 
 <p align="center">
     <img alt="logo" src="./docs/images/logo.svg" width="300" />
@@ -22,11 +24,22 @@
 pip install turu[snowflake]
 ```
 
+<!-- --8<-- [start:why_turu] -->
 ## Why Turu?
 SQL is a powerful language, but it has many dialects and is especially difficult to automatically test cloud-based SQL databases in a local environment.
 
 Turu was developed as a simple tool to assist local development.
 It provides a simple interface according to [PEP 249 – Python Database API Specification v2.0](https://peps.python.org/pep-0249/) and allows for easy recording of query results and injection mock data.
+<!-- --8<-- [end:why_turu] -->
+
+<!-- --8<-- [start:features] -->
+## Features
+
+- :rocket: **Simple** - Turu is a simple database api wrapper of [PEP 249](https://peps.python.org/pep-0249/).
+- :light_bulb: **Type Hint**  - Full support for type hints.
+- :high_voltage: **Async/Await** - Async/Await supports.
+- :test_tube: **Recoed and Mock** - Record and mock database queries for testing.
+<!-- --8<-- [end:features] -->
 
 ## Supprted Database
 
