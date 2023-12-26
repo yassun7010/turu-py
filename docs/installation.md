@@ -1,5 +1,7 @@
 # Installation
 
+--8<-- "README.md:adapters"
+
 ### SQLite3
 
 ```sh
