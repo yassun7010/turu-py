@@ -7,6 +7,14 @@
     <img alt="logo" src="./docs/images/logo.svg" width="300" />
 </p>
 
+---
+
+**Documentation**: <a href="https://yassun7010.github.io/turu-py/" target="_blank">https://yassun7010.github.io/turu-py/</a>
+
+**Source Code**: <a href="https://github.com/yassun7010/turu-py" target="_blank">https://github.com/yassun7010/turu-py</a>
+
+---
+
 ## Installation
 
 ```bash
@@ -21,13 +29,13 @@ It provides a simple interface according to [PEP 249 – Python Database API Spe
 
 ## Supprted Database
 
-| Database   | Supported | Installation                  |
-| ---------- | --------- | ----------------------------- |
-| SQLite3    | Yes       | `pip install turu[sqlite3]`   |
-| MySQL      | No        |  -                            |
-| PostgreSQL | No        |  -                            |
-| Snowflake  | Yes       | `pip install turu[snowflake]` |
-| BigQuery   | Yes       | `pip install turu[bigquery]`  |
+| Database   | Sync Support | Async Support | Installation                  |
+| ---------- | ------------ | ------------- | ----------------------------- |
+| SQLite3    | Yes          | Yes           | `pip install turu[sqlite3]`   |
+| MySQL      | No           | No            |  -                            |
+| PostgreSQL | No           | No            |  -                            |
+| Snowflake  | Yes          | Yes           | `pip install turu[snowflake]` |
+| BigQuery   | Yes          | No            | `pip install turu[bigquery]`  |
 
 ## Usage
 
@@ -45,53 +53,4 @@ connection = turu.sqlite3.connect("test.db")
 
 with connection.execute_map(Row, "select 1, 'a'") as cursor:
     assert cursor.fetchone() == Row(id=1, name="a")
-```
-
-### Recording Usage
-
-```python
-import turu.sqlite3
-from turu.core.record import record_as_csv
-
-from pydantic import BaseModel
-
-
-class Row(BaseModel):
-    id: int
-    name: str
-
-connection = turu.sqlite3.connect("test.db")
-
-with record_as_csv("test.csv", connection.execute_map(Row, "select 1, 'a'")) as cursor:
-    assert cursor.fetchone() == Row(id=1, name="a")
-```
-
-### Testing Usage
-
-```python
-import turu.sqlite3
-
-from pydantic import BaseModel
-
-
-class Row(BaseModel):
-    id: int
-    name: str
-
-expected1 = [Row(id=1, name="a"), Row(id=2, name="b")]
-expected2 = [Row(id=3, name="c"), Row(id=4, name="d")]
-expected3 = [Row(id=5, name="e"), Row(id=6, name="f")]
-
-connection = turu.sqlite3.MockConnection()
-
-(
-    connection.chain()
-    .inject_response(Row, expected1)
-    .inject_response(Row, expected2)
-    .inject_response(Row, expected3)
-)
-
-for expected in [expected1, expected2, expected3]:
-    with connection.execute_map(Row, "select 1, 'a'") as cursor:
-        assert cursor.fetchall() == expected
 ```
