@@ -81,12 +81,26 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
 def connect(
     connection_name: Optional[str] = None,
     connections_file_path: Optional[Path] = None,
+    user: Optional[str] = None,
+    password: Optional[str] = None,
+    account: Optional[str] = None,
+    database: Optional[str] = None,
+    schema: Optional[str] = None,
+    warehouse: Optional[str] = None,
+    role: Optional[str] = None,
     **kwargs,
 ) -> Connection:
     return Connection(
         snowflake.connector.SnowflakeConnection(
             connection_name,
             connections_file_path,
+            user=user,
+            password=password,
+            account=account,
+            database=database,
+            schema=schema,
+            warehouse=warehouse,
+            role=role,
             **kwargs,
         )
     )
