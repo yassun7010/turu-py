@@ -1,12 +1,13 @@
 import importlib.metadata
 
-from .connection import Connection
+from .connection import Connection, connect
 from .cursor import Cursor
 
 __version__ = importlib.metadata.version("turu-postgres")
 
 
 __all__ = [
+    "connect",
     "Connection",
     "Cursor",
 ]
