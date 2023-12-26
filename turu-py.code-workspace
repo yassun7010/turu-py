@@ -11,6 +11,9 @@
             "path": "turu-sqlite3",
         },
         {
+            "path": "turu-postgres",
+        },
+        {
             "path": "turu-snowflake",
         },
         {
