@@ -5,6 +5,7 @@ description = "Simple Database API for Typed Python based PEP 249"
 authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 repository = "https://github.com/yassun7010/turu-py"
+documentation = "https://yassun7010.github.io/turu-py/"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Topic :: Software Development :: Libraries",
@@ -18,6 +19,12 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: SQL",
+    "Topic :: Database",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [tool.poetry.extras]
