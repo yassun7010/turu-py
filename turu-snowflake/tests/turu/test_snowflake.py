@@ -5,9 +5,8 @@ import pytest
 import turu.snowflake
 
 
-class TestTuruSnowflake:
-    def test_version(self):
-        assert turu.snowflake.__version__
+def test_version():
+    assert turu.snowflake.__version__
 
 
 class Row(NamedTuple):
@@ -19,7 +18,7 @@ class Row(NamedTuple):
     or os.environ["USE_REAL_CONNECTION"].lower() != "true",
     reason="USE_REAL_CONNECTION flag is not set.",
 )
-class TestTuruSnowflakeConnection:
+class TestTuruSnowflake:
     def test_execute(self, connection: turu.snowflake.Connection):
         assert connection.execute("select 1").fetchall() == [(1,)]
 
