@@ -66,9 +66,9 @@ try:
     ) -> Connection:
         import google.cloud.bigquery
         import google.cloud.bigquery.dbapi
-        import google.cloud.bigquery_storage_v1
+        import google.cloud.bigquery_storage
 
-        bqstorage_client = google.cloud.bigquery_storage_v1.BigQueryReadClient(
+        bqstorage_client = google.cloud.bigquery_storage.BigQueryReadClient(
             credentials=credentials,
             client_info=client_info or DEFAULT_CLIENT_INFO,
             client_options=client_options,
