@@ -32,7 +32,7 @@ class Connection(turu.core.connection.Connection):
         return Cursor(self._raw_connection.cursor())
 
 
-class MockConnection(Connection, turu.core.mock.MockConnection):
+class MockConnection(turu.core.mock.MockConnection, Connection):
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockConnection.__init__(self)
 

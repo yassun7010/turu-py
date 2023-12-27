@@ -1,20 +1,30 @@
-from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, cast
+from typing import (
+    Any,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    cast,
+)
 
-import aiosqlite
+import psycopg
 import turu.core.async_cursor
 import turu.core.mock
-from turu.core.cursor import map_row
-from typing_extensions import override
+from turu.core.cursor import map_row as _map_row
+from typing_extensions import LiteralString, override
+
+from .cursor import Parameters
 
 
 class AsyncCursor(
     turu.core.async_cursor.AsyncCursor[
-        turu.core.async_cursor.GenericRowType, "Iterator[Any]"
+        turu.core.async_cursor.GenericRowType, Parameters
     ],
 ):
     def __init__(
         self,
-        cursor: aiosqlite.Cursor,
+        cursor: psycopg.AsyncCursor,
         *,
         row_type: Optional[Type[turu.core.async_cursor.GenericRowType]] = None,
     ):
@@ -40,18 +50,20 @@ class AsyncCursor(
 
     @override
     async def execute(
-        self, operation: str, parameters: Optional["Iterator[Any]"] = None, /
+        self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> "AsyncCursor[Tuple[Any]]":
-        await self._raw_cursor.execute(operation, parameters)
+        await self._raw_cursor.execute(cast(LiteralString, operation), parameters)
         self._row_type = None
 
         return cast(AsyncCursor, self)
 
     @override
     async def executemany(
-        self, operation: str, seq_of_parameters: "Sequence[Iterator[Any]]", /
+        self, operation: str, seq_of_parameters: Sequence[Parameters], /
     ) -> "AsyncCursor[Tuple[Any]]":
-        await self._raw_cursor.executemany(operation, seq_of_parameters)
+        await self._raw_cursor.executemany(
+            cast(LiteralString, operation), seq_of_parameters
+        )
         self._row_type = None
 
         return cast(AsyncCursor, self)
@@ -61,10 +73,10 @@ class AsyncCursor(
         self,
         row_type: Type[turu.core.async_cursor.GenericNewRowType],
         operation: str,
-        parameters: "Optional[Iterator[Any]]" = None,
+        parameters: Optional[Parameters] = None,
         /,
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
-        await self._raw_cursor.execute(operation, parameters)
+        await self._raw_cursor.execute(cast(LiteralString, operation), parameters)
         self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
 
         return cast(AsyncCursor, self)
@@ -74,10 +86,12 @@ class AsyncCursor(
         self,
         row_type: Type[turu.core.async_cursor.GenericNewRowType],
         operation: str,
-        seq_of_parameters: "Sequence[Iterator[Any]]",
+        seq_of_parameters: Sequence[Parameters],
         /,
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
-        await self._raw_cursor.executemany(operation, seq_of_parameters)
+        await self._raw_cursor.executemany(
+            cast(LiteralString, operation), seq_of_parameters
+        )
         self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
 
         return cast(AsyncCursor, self)
@@ -124,20 +138,7 @@ class AsyncCursor(
 
 
 class MockAsyncCursor(  # type: ignore
-    turu.core.mock.MockAsyncCursor[
-        turu.core.async_cursor.GenericRowType, "Iterator[Any]"
-    ],
+    turu.core.mock.MockAsyncCursor[turu.core.async_cursor.GenericRowType, Parameters],
     AsyncCursor[turu.core.async_cursor.GenericRowType],
 ):
     pass
-
-
-def _map_row(
-    row_type: Optional[Type[turu.core.async_cursor.GenericRowType]],
-    row: Any,
-) -> turu.core.async_cursor.GenericRowType:
-    if row_type is None:
-        return tuple(row)  # type: ignore
-
-    else:
-        return map_row(row_type, row)

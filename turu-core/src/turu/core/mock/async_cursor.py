@@ -19,12 +19,12 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         store: TuruMockStore,
         *,
         row_count: Optional[int] = None,
-        rows: Optional[Iterator] = None,
+        rows_iter: Optional[Iterator] = None,
         row_type: Optional[Type[GenericRowType]] = None,
     ) -> None:
         self._turu_mock_store = store
         self._rowcount = row_count
-        self._turu_mock_rows = rows
+        self._rows_iter = rows_iter
         self._row_type = row_type
         self._arraysize = 1
 
@@ -78,45 +78,45 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
 
     @override
     async def fetchone(self) -> Optional[GenericRowType]:
-        if self._turu_mock_rows is None:
+        if self._rows_iter is None:
             return None
 
         try:
-            return next(self._turu_mock_rows)
+            return next(self._rows_iter)
 
         except (StopIteration, StopAsyncIteration):
             return None
 
     @override
     async def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
-        if self._turu_mock_rows is None:
+        if self._rows_iter is None:
             raise TuruMockUnexpectedFetchError()
 
         return [
-            next(self._turu_mock_rows)
+            next(self._rows_iter)
             for _ in range(size if size is not None else self.arraysize)
         ]
 
     @override
     async def fetchall(self) -> List[GenericRowType]:
-        if self._turu_mock_rows is None:
+        if self._rows_iter is None:
             raise TuruMockUnexpectedFetchError()
 
-        return list(self._turu_mock_rows)
+        return list(self._rows_iter)
 
     @override
     def __aiter__(self) -> Self:
-        if self._turu_mock_rows is None:
+        if self._rows_iter is None:
             raise TuruMockUnexpectedFetchError()
         return self
 
     @override
     async def __anext__(self) -> GenericRowType:
-        if self._turu_mock_rows is None:
+        if self._rows_iter is None:
             raise TuruMockUnexpectedFetchError()
 
         try:
-            return next(self._turu_mock_rows)
+            return next(self._rows_iter)
         except StopIteration as e:
             raise StopAsyncIteration from e
 
@@ -129,6 +129,6 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
             return MockAsyncCursor(
                 self._turu_mock_store,
                 row_count=len(responses),
-                rows=iter(responses),
+                rows_iter=iter(responses),
                 row_type=row_type,
             )
