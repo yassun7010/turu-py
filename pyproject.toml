@@ -29,6 +29,7 @@ classifiers = [
 
 [tool.poetry.extras]
 sqlite3 = ["turu-sqlite3"]
+postgres = ["turu-postgres"]
 snowflake = ["turu-snowflake"]
 bigquery = ["turu-bigquery"]
 
@@ -44,6 +45,13 @@ develop = true
 [tool.poetry.dependencies.turu-sqlite3]
 # INFO: poetry-dynamic-versioning to replace this.
 path = "./turu-sqlite3"
+develop = true
+# version = "0.0.0"
+optional = true
+
+[tool.poetry.dependencies.turu-postgres]
+# INFO: poetry-dynamic-versioning to replace this.
+path = "./turu-postgres"
 develop = true
 # version = "0.0.0"
 optional = true
