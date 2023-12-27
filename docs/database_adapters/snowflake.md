@@ -1,5 +1,11 @@
 # :snowflake: Snowflake
 
+## Installation
+
+```bash
+pip install "turu[snowflake]"
+```
+
 ## use options
 
 `turu.snowflake.Cursor` supports `use_*` methods to set options.
