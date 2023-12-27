@@ -25,12 +25,3 @@ pip install "turu[snowflake]"
 ```sh
 pip install "turu[bigquery]"
 ```
-
-!!! success "Recommendation"
-
-    You can also use pipx to install `cmdcomp` in a application dedicated virtual
-    environment created for you.
-
-    ```sh
-    pipx install cmdcomp
-    ```
