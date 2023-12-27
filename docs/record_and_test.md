@@ -42,7 +42,7 @@ connection = turu.sqlite3.MockConnection()
     .inject_response(Row, expected1)
     .inject_response(Row, expected2)
     .inject_response(Row, expected3)
-    .inject_response_from_csv("test.csv")
+    .inject_response_from_csv(Row, "test.csv")
 )
 
 for expected in [expected1, expected2, expected3]:
