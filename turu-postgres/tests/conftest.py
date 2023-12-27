@@ -20,3 +20,8 @@ async def async_connection() -> turu.postgres.AsyncConnection:
 @pytest.fixture
 def mock_connection() -> turu.postgres.MockConnection:
     return turu.postgres.MockConnection()
+
+
+@pytest.fixture
+def mock_async_connection() -> turu.postgres.MockAsyncConnection:
+    return turu.postgres.MockAsyncConnection()

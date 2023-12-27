@@ -92,10 +92,14 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         if self._rows_iter is None:
             raise TuruMockUnexpectedFetchError()
 
-        return [
-            next(self._rows_iter)
-            for _ in range(size if size is not None else self.arraysize)
-        ]
+        result = []
+        for _ in range(size if size is not None else self.arraysize):
+            try:
+                result.append(self._rows_iter.__next__())
+            except StopIteration:
+                break
+
+        return result
 
     @override
     async def fetchall(self) -> List[GenericRowType]:

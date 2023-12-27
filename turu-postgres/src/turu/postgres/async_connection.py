@@ -33,7 +33,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         return AsyncCursor(self._raw_connection.cursor())
 
 
-class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
+class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockAsyncConnection.__init__(self)
 
