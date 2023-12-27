@@ -6,7 +6,7 @@ import turu.core.mock
 import turu.sqlite3.cursor
 from typing_extensions import Never, NotRequired, TypedDict, Unpack, override
 
-from .cursor import Cursor
+from .cursor import Cursor, MockCursor
 
 
 class Connection(turu.core.connection.Connection):
@@ -35,8 +35,8 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
         turu.core.mock.MockConnection.__init__(self)
 
     @override
-    def cursor(self) -> "turu.sqlite3.cursor.MockCursor[Never]":
-        return turu.sqlite3.cursor.MockCursor(self._turu_mock_store)
+    def cursor(self) -> "MockCursor[Never]":
+        return MockCursor(self._turu_mock_store)
 
 
 class _ConnectArgs(TypedDict):

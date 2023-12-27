@@ -5,9 +5,10 @@ import psycopg.abc
 import psycopg.rows
 import turu.core.connection
 import turu.core.cursor
+import turu.core.mock
 from typing_extensions import Never, override
 
-from .cursor import Cursor
+from .cursor import Cursor, MockCursor
 
 
 class Connection(turu.core.connection.Connection):
@@ -29,6 +30,15 @@ class Connection(turu.core.connection.Connection):
     @override
     def cursor(self) -> "Cursor[Never]":
         return Cursor(self._raw_connection.cursor())
+
+
+class MockConnection(Connection, turu.core.mock.MockConnection):
+    def __init__(self, *args, **kwargs):
+        turu.core.mock.MockConnection.__init__(self)
+
+    @override
+    def cursor(self) -> "MockCursor[Never]":
+        return MockCursor(self._turu_mock_store)
 
 
 def connect(

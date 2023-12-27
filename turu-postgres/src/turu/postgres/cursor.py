@@ -1,8 +1,9 @@
-from typing import Any, Mapping, Optional, Sequence, Type, Union, cast
+from typing import Any, List, Mapping, Optional, Sequence, Type, Union, cast
 
 import psycopg
 import psycopg.cursor
 import turu.core.cursor
+import turu.core.mock
 from typing_extensions import LiteralString, override
 
 Parameters = Union[Sequence[Any], Mapping[str, Any]]
@@ -102,7 +103,7 @@ class Cursor(
     @override
     def fetchmany(
         self, size: Optional[int] = None
-    ) -> Sequence[turu.core.cursor.GenericRowType]:
+    ) -> List[turu.core.cursor.GenericRowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in self._raw_cursor.fetchmany(
@@ -111,7 +112,7 @@ class Cursor(
         ]
 
     @override
-    def fetchall(self) -> Sequence[turu.core.cursor.GenericRowType]:
+    def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in self._raw_cursor.fetchall()
@@ -133,3 +134,10 @@ class Cursor(
 
         else:
             return next_row
+
+
+class MockCursor(  # type: ignore
+    turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Parameters],
+    Cursor[turu.core.cursor.GenericRowType],
+):
+    pass
