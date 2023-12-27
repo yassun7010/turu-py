@@ -44,13 +44,13 @@ It provides a simple interface according to [PEP 249 – Python Database API Spe
 <!-- --8<-- [start:adapters] -->
 ## Supprted Database
 
-| Database   | Sync Support | Async Support | Installation                  |
-| ---------- | ------------ | ------------- | ----------------------------- |
-| SQLite3    | Yes          | Yes           | `pip install turu[sqlite3]`   |
-| MySQL      | No           | No            |  -                            |
-| PostgreSQL | No           | No            |  -                            |
-| Snowflake  | Yes          | Yes           | `pip install turu[snowflake]` |
-| BigQuery   | Yes          | No            | `pip install turu[bigquery]`  |
+| Database   | Sync Support | Async Support | Installation                    |
+| ---------- | ------------ | ------------- | ------------------------------- |
+| SQLite3    | Yes          | Yes           | `pip install "turu[sqlite3]"`   |
+| MySQL      | No           | No            |  -                              |
+| PostgreSQL | Yes          | Yes           | `pip install "turu[postgres]"`  |
+| Snowflake  | Yes          | Yes           | `pip install "turu[snowflake]"` |
+| BigQuery   | Yes          | No            | `pip install "turu[bigquery]"`  |
 <!-- --8<-- [end:adapters] -->
 
 ## Usage
