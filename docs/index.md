@@ -11,3 +11,9 @@
 --8<-- "README.md:why_turu"
 
 --8<-- "README.md:features"
+
+## Usage
+
+```python
+--8<-- "docs/data/turu_sqlite3_sample.py"
+```

@@ -6,7 +6,8 @@
 pip install "turu[snowflake]"
 ```
 
-## use options
+## Usage
+### use options
 
 `turu.snowflake.Cursor` supports `use_*` methods to set options.
 
