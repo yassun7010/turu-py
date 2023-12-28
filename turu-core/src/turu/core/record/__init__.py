@@ -131,13 +131,13 @@ def record_as_csv(
     record_filepath: Union[str, Path],
     cursor: GenericCursor,
     *,
-    disable: Union[Literal["true", "false"], bool, None] = None,
+    enable: Union[Literal["true", "false"], bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
 ) -> Generator[GenericCursor, None, None]:
-    if isinstance(disable, str):
-        disable = disable.lower() == "true"
+    if isinstance(enable, str):
+        enable = enable.lower() == "true"
 
-    if not disable:
+    if enable:
         cursor = cast(
             GenericCursor,
             _RecordCursor(

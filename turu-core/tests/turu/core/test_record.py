@@ -1,8 +1,10 @@
+from typing import Literal
+
 import pytest
 import turu.core.mock
 from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
-from turu.core.record import record_as_csv
+from turu.core.record import _RecordCursor, record_as_csv
 
 from tests.data.record import TEST_RECORD_DIR
 
@@ -78,8 +80,28 @@ class TestRecord:
         ) as cursor:
             assert cursor.fetchall() == expected
 
+    @pytest.mark.parametrize("enable", ["true", True])
+    def test_record_as_csv_execute_map_with_enable_options(
+        self,
+        mock_connection: turu.core.mock.MockConnection,
+        enable: Literal["true", True],
+    ):
+        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
+        mock_connection.inject_response(RowPydantic, expected)
+
+        with record_as_csv(
+            TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_enable_options.csv",
+            mock_connection.execute_map(RowPydantic, "select 1, 'name"),
+            enable=enable,
+        ) as cursor:
+            assert isinstance(cursor, _RecordCursor)
+            assert cursor.fetchall() == expected
+
+    @pytest.mark.parametrize("enable", ["false", False, None])
     def test_record_as_csv_execute_map_with_disable_options(
-        self, mock_connection: turu.core.mock.MockConnection
+        self,
+        mock_connection: turu.core.mock.MockConnection,
+        enable: Literal["false", False, None],
     ):
         expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
         mock_connection.inject_response(RowPydantic, expected)
@@ -87,6 +109,6 @@ class TestRecord:
         with record_as_csv(
             TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_disable_options.csv",
             mock_connection.execute_map(RowPydantic, "select 1, 'name"),
-            disable=True,
+            enable=enable,
         ) as cursor:
-            assert cursor.fetchall() == expected
+            assert not isinstance(cursor, _RecordCursor)
