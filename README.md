@@ -71,25 +71,6 @@ with connection.execute_map(Row, "select 1, 'a'") as cursor:
     assert cursor.fetchone() == Row(id=1, name="a")
 ```
 
-## Recording
-
-```python
-import turu.sqlite3
-from turu.core.record import record_as_csv
-
-from pydantic import BaseModel
-
-
-class Row(BaseModel):
-    id: int
-    name: str
-
-connection = turu.sqlite3.connect("test.db")
-
-with record_as_csv("test.csv", connection.execute_map(Row, "select 1, 'a'")) as cursor:
-    assert cursor.fetchone() == Row(id=1, name="a")
-```
-
 ## Testing
 
 ```python
