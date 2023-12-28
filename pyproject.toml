@@ -75,6 +75,7 @@ pytest = "^7.4.2"
 taskipy = "^1.12.0"
 pyright = "^1.1.337"
 ruff = "^0.1.4"
+pydantic = "^2.5.3"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
