@@ -125,6 +125,12 @@ class _RecordCursor(
 
         return row
 
+    def __getattr__(self, name):
+        def _method_missing(*args):
+            return args
+
+        return getattr(self._cursor, name, _method_missing)
+
 
 @contextlib.contextmanager
 def record_as_csv(
@@ -138,6 +144,7 @@ def record_as_csv(
         enable = enable.lower() == "true"
 
     if enable:
+        # NOTE: hack to get original cursor type hint.
         cursor = cast(
             GenericCursor,
             _RecordCursor(

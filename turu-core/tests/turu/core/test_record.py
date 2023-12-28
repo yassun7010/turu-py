@@ -1,10 +1,11 @@
-from typing import Literal
+from typing import Any, Literal
 
 import pytest
 import turu.core.mock
 from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
 from turu.core.record import _RecordCursor, record_as_csv
+from typing_extensions import Never
 
 from tests.data.record import TEST_RECORD_DIR
 
@@ -112,3 +113,21 @@ class TestRecord:
             enable=enable,
         ) as cursor:
             assert not isinstance(cursor, _RecordCursor)
+
+    def test_record_as_csv_use_custom_method(self):
+        class CustomCursor(turu.core.mock.MockCursor[Never, Any]):
+            def custom_method(self, value: int) -> None:
+                pass
+
+        class CustomConnection(turu.core.mock.MockConnection):
+            def cursor(self) -> CustomCursor:
+                return CustomCursor(self._turu_mock_store)
+
+            def custom_method(self, value: int) -> None:
+                pass
+
+        with record_as_csv(
+            TEST_RECORD_DIR / "test_record_as_csv_use_custom_method.csv",
+            CustomConnection().cursor(),
+        ) as cursor:
+            assert cursor.custom_method(1) is None
