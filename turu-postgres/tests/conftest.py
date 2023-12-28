@@ -5,16 +5,12 @@ import turu.postgres
 
 @pytest.fixture
 def connection() -> turu.postgres.Connection:
-    return turu.postgres.connect(
-        "postgresql://postgres:postgres@localhost:5432/postgres"
-    )
+    return turu.postgres.connect_from_env()
 
 
 @pytest_asyncio.fixture
 async def async_connection() -> turu.postgres.AsyncConnection:
-    return await turu.postgres.connect_async(
-        "postgresql://postgres:postgres@localhost:5432/postgres"
-    )
+    return await turu.postgres.connect_async_from_env()
 
 
 @pytest.fixture

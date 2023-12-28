@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any, Optional, Sequence, Tuple, Type
 
@@ -103,4 +104,30 @@ def connect(
             role=role,
             **kwargs,
         )
+    )
+
+
+def connect_from_env(
+    connection_name: Optional[str] = None,
+    connections_file_path: Optional[Path] = None,
+    user_envname: str = "SNOWFLAKE_USER",
+    password_envname: str = "SNOWFLAKE_PASSWORD",
+    account_envname: str = "SNOWFLAKE_ACCOUNT",
+    database_envname: str = "SNOWFLAKE_DATABASE",
+    schema_envname: str = "SNOWFLAKE_SCHEMA",
+    warehouse_envname: str = "SNOWFLAKE_WAREHOUSE",
+    role_envname: str = "SNOWFLAKE_ROLE",
+    **kwargs,
+) -> Connection:
+    return connect(
+        connection_name,
+        connections_file_path,
+        user=os.environ.get(user_envname),
+        password=os.environ.get(password_envname),
+        account=os.environ.get(account_envname),
+        database=os.environ.get(database_envname),
+        schema=os.environ.get(schema_envname),
+        warehouse=os.environ.get(warehouse_envname),
+        role=os.environ.get(role_envname),
+        **kwargs,
     )

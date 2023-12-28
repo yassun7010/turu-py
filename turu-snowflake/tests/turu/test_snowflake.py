@@ -26,12 +26,12 @@ class TestTuruSnowflake:
         assert connection.execute("select 1").fetchone() == (1,)
 
     def test_execute_map_fetchone(self, connection: turu.snowflake.Connection):
-        cursor = connection.cursor().execute_map(Row, "select 1")
+        cursor = connection.execute_map(Row, "select 1")
 
         assert cursor.fetchone() == Row(1)
 
     def test_execute_map_fetchmany(self, connection: turu.snowflake.Connection):
-        cursor = connection.cursor().execute_map(Row, "select 1 union all select 2")
+        cursor = connection.execute_map(Row, "select 1 union all select 2")
 
         assert cursor.fetchmany() == [Row(1)]
         assert cursor.fetchone() == Row(2)
@@ -40,7 +40,7 @@ class TestTuruSnowflake:
     def test_execute_map_fetchmany_with_size(
         self, connection: turu.snowflake.Connection
     ):
-        cursor = connection.cursor().execute_map(
+        cursor = connection.execute_map(
             Row, "select 1 union all select 2 union all select 3"
         )
 
@@ -48,15 +48,13 @@ class TestTuruSnowflake:
         assert cursor.fetchmany(2) == [Row(3)]
 
     def test_execute_map_fetchall(self, connection: turu.snowflake.Connection):
-        cursor = connection.cursor().execute_map(Row, "select 1 union all select 2")
+        cursor = connection.execute_map(Row, "select 1 union all select 2")
 
         assert cursor.fetchall() == [Row(1), Row(2)]
         assert cursor.fetchone() is None
 
     def test_executemany(self, connection: turu.snowflake.Connection):
-        cursor = connection.cursor().executemany(
-            "select 1 union all select 2", [(), ()]
-        )
+        cursor = connection.executemany("select 1 union all select 2", [(), ()])
 
         assert cursor.fetchall() == [(1,), (2,)]
         with pytest.raises(StopIteration):
