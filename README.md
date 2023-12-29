@@ -6,9 +6,9 @@
 [![pypi package](https://badge.fury.io/py/turu.svg)](https://pypi.org/project/turu)
 <!-- --8<-- [end:badges] -->
 
-<p align="center">
+<a align="center" src="https://yassun7010.github.io/turu-py/">
     <img alt="logo" src="./docs/images/logo.svg" width="300" />
-</p>
+</a>
 
 ---
 
