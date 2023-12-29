@@ -9,5 +9,5 @@ class User(pydantic.BaseModel):
 
 connection = turu.postgres.connect_from_env()
 
-with connection.cursor().execute_map(User, "select 1, 'taro'") as cursor:
+with connection.execute_map(User, "select 1, 'taro'") as cursor:
     assert cursor.fetchone() == User(id=1, name="taro")
