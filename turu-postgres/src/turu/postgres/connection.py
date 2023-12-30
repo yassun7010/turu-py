@@ -52,7 +52,6 @@ def connect(
     context: Optional[psycopg.abc.AdaptContext] = None,
     **kwargs: Union[None, int, str],
 ):
-    print(conninfo)
     return Connection(
         psycopg.connect(
             conninfo,
