@@ -26,6 +26,16 @@ jobs:
           working-directory: turu-sqlite3
           pypi-token: ${{ secrets.PYPI_TOKEN }}
 
+  publish-turu-mysql:
+    runs-on: ubuntu-latest
+    needs: publish-turu-core
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/publish-pypi
+        with:
+          working-directory: turu-mysql
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
+
   publish-turu-postgres:
     runs-on: ubuntu-latest
     needs: publish-turu-core
@@ -61,6 +71,7 @@ jobs:
     needs:
       - publish-turu-core
       - publish-turu-sqlite3
+      - publish-turu-mysql
       - publish-turu-postgres
       - publish-turu-snowflake
       - publish-turu-bigquery

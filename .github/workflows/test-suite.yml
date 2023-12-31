@@ -23,6 +23,7 @@ jobs:
         package:
           - turu-core
           - turu-sqlite3
+          - turu-mysql
           - turu-postgres
           - turu-snowflake
           - turu-bigquery
