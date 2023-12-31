@@ -1,5 +1,8 @@
 # PostgreSQL
 
+!!! tip
+    `turu-postgres` depends on [psycopg](https://pypi.org/project/psycopg/).
+
 ## Installation
 
 ```bash

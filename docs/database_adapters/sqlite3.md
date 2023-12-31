@@ -1,5 +1,8 @@
 # SQLite3
 
+!!! tip
+    `turu-sqlite3` depends on [aiosqlite](https://pypi.org/project/aiosqlite/).
+
 ## Installation
 
 ```bash

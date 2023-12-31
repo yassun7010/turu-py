@@ -1,5 +1,8 @@
 # MySQL
 
+!!! tip
+    `turu-mysql` depends on [aiomysql](https://pypi.org/project/aiomysql/).
+
 ## Installation
 
 ```bash

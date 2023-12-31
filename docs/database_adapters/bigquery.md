@@ -1,5 +1,8 @@
 # BigQuery
 
+!!! tip
+    `turu-bigquery` depends on [google-cloud-bigquery](https://pypi.org/project/google-cloud-bigquery/).
+
 !!! todo
     `turu-bigquery` does not support `async` yet.
     [bigquery](https://pypi.org/project/google-cloud-bigquery/) does not officially support async.
