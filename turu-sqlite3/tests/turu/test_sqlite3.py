@@ -1,10 +1,17 @@
-from typing import NamedTuple
-
 import turu.sqlite3
+from pydantic import BaseModel
+from turu.core.record import record_as_csv
+
+from tests.data.records import TEST_RECORD_DIR
 
 
 def test_turu_sqlite3_version():
     assert turu.sqlite3.__version__
+
+
+class Row(BaseModel):
+    id: int
+    name: str
 
 
 class TestTuruSqlite3:
@@ -37,45 +44,29 @@ class TestTuruSqlite3:
         assert list(cursor) == [(1,), (2,)]
 
     def test_execute_map(self, connection: turu.sqlite3.Connection):
-        class Row(NamedTuple):
-            id: int
-            name: str
-
         cursor = connection.cursor().execute_map(Row, "select 1, 'a'")
 
-        assert next(cursor) == Row(1, "a")
+        assert next(cursor) == Row(id=1, name="a")
 
     def test_execute_map_fetchone(self, connection: turu.sqlite3.Connection):
-        class Row(NamedTuple):
-            id: int
-            name: str
-
         cursor = connection.cursor().execute_map(Row, "select 1, 'a'")
 
-        assert cursor.fetchone() == Row(1, "a")
+        assert cursor.fetchone() == Row(id=1, name="a")
         assert cursor.fetchone() is None
 
     def test_execute_map_fetchmany(self, connection: turu.sqlite3.Connection):
-        class Row(NamedTuple):
-            id: int
-            name: str
-
         cursor = connection.cursor().execute_map(
             Row, "select 1, 'a' union all select 2, 'b'"
         )
 
-        assert cursor.fetchmany() == [Row(1, "a")]
-        assert cursor.fetchmany() == [Row(2, "b")]
+        assert cursor.fetchmany() == [Row(id=1, name="a")]
+        assert cursor.fetchmany() == [Row(id=2, name="b")]
         assert cursor.fetchmany() == []
 
     def test_execute_map_fetchall(self, connection: turu.sqlite3.Connection):
-        class Row(NamedTuple):
-            id: int
-            name: str
-
         cursor = connection.execute_map(Row, "select 1, 'a' union all select 2, 'b'")
 
-        assert cursor.fetchall() == [Row(1, "a"), Row(2, "b")]
+        assert cursor.fetchall() == [Row(id=1, name="a"), Row(id=2, name="b")]
         assert cursor.fetchall() == []
 
     def test_connection_close(self, connection: turu.sqlite3.Connection):
@@ -101,3 +92,23 @@ class TestTuruSqlite3:
     def test_cursor_close(self, connection: turu.sqlite3.Connection):
         with connection.cursor() as cursor:
             cursor.close()
+
+    def test_recording_and_testing(
+        self,
+        connection: turu.sqlite3.Connection,
+        mock_connection: turu.sqlite3.MockConnection,
+    ):
+        csv_file = TEST_RECORD_DIR / "test_recording_and_testing.csv"
+
+        def do_something(connection: turu.sqlite3.Connection):
+            with record_as_csv(
+                csv_file, connection.execute_map(Row, "select 1, 'taro'")
+            ) as cursor:
+                assert cursor.fetchall() == [Row(id=1, name="taro")]
+
+        # NOTE: production code
+        do_something(connection)
+
+        # NOTE: testing codeå
+        mock_connection.inject_response_from_csv(Row, csv_file)
+        do_something(mock_connection)
