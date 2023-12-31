@@ -14,13 +14,7 @@ class TestTuruDocs:
     )
     @pytest.mark.parametrize(
         "script_file",
-        [
-            "turu_sqlite3_sample.py",
-            "turu_mysql_sample.py",
-            "turu_postgres_sample.py",
-            "turu_snowflake_sample.py",
-            "turu_bigquery_sample.py",
-        ],
+        DOCS_DATA_DIR.glob("turu_*.py"),
     )
-    def test_turu_docs_sample(self, script_file: str):
-        exec((DOCS_DATA_DIR / script_file).read_text())
+    def test_turu_docs_sample(self, script_file: Path):
+        exec(script_file.read_text())

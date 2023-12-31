@@ -74,6 +74,7 @@ with connection.execute_map(Row, "select 1, 'a'") as cursor:
 ## Testing
 
 ```python
+<!-- --8<-- [start:inject_response] -->
 import turu.sqlite3
 
 from pydantic import BaseModel
@@ -100,6 +101,7 @@ for expected in [expected1, expected2, expected3]:
     with connection.execute_map(Row, "select 1, 'a'") as cursor:
         assert cursor.fetchall() == expected
 
+<!-- --8<-- [end:inject_response] -->
 ```
 
 ## Recording and Testing
@@ -107,6 +109,7 @@ for expected in [expected1, expected2, expected3]:
 Your Production Code
 
 ```python
+<!-- --8<-- [start:recording] -->
 import os
 
 import turu.sqlite3
@@ -121,13 +124,16 @@ def do_something(connection: turu.sqlite3.Connection):
         RECORD_DIR / "test.csv",
         connection.execute_map(Row, "select 1, 'a'"),
         enable=os.environ.get("ENABLE_RECORDING"),
+        limit=100,
     ) as cursor:
         ... # Your logic
+<!-- --8<-- [end:recording] -->
 ```
 
 Your Test Code
 
 ```python
+<!-- --8<-- [start:testing] -->
 import turu.sqlite3
 
 from your_package.data import RECORD_DIR
@@ -141,4 +147,5 @@ def test_do_something(connection: turu.sqlite3.MockConnection):
     )
 
     assert do_something(connection) is None
+<!-- --8<-- [end:testing] -->
 ```

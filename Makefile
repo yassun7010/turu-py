@@ -37,3 +37,7 @@ poetry-update:
 .PHONY: poetry-lock
 poetry-lock:
 	bash scripts/poetry-lock.sh
+
+.PHONY: docs
+docs:
+	poetry run task docs-serve
