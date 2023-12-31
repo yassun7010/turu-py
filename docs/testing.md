@@ -1,4 +1,4 @@
-# Test
+# Testing
 
 ## Response Injection
 Turu supports `MockConnection` for all of the database adapters.
