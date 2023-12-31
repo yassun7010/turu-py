@@ -14,6 +14,9 @@
             "path": "turu-postgres",
         },
         {
+            "path": "turu-mysql",
+        },
+        {
             "path": "turu-snowflake",
         },
         {
