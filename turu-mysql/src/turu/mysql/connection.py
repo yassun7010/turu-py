@@ -101,13 +101,11 @@ def connect_from_env(
     port_envname: str = "MYSQL_PORT",
     **kwargs: Unpack[_ConnectParams],
 ):
-    return Connection(
-        pymysql.connect(
-            user=os.environ.get(user_envname),
-            password=os.environ.get(password_envname, ""),
-            host=os.environ.get(host_envname),
-            database=os.environ.get(database_envname),
-            port=int(os.environ.get(port_envname, 0)),
-            **kwargs,
-        )
+    return connect(
+        user=os.environ.get(user_envname),
+        password=os.environ.get(password_envname, ""),
+        host=os.environ.get(host_envname),
+        database=os.environ.get(database_envname),
+        port=int(os.environ.get(port_envname, 0)),
+        **kwargs,
     )

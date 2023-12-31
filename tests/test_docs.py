@@ -15,10 +15,11 @@ class TestTuruDocs:
     @pytest.mark.parametrize(
         "script_file",
         [
-            "turu_bigquery_sample.py",
+            "turu_sqlite3_sample.py",
+            "turu_mysql_sample.py",
             "turu_postgres_sample.py",
             "turu_snowflake_sample.py",
-            "turu_sqlite3_sample.py",
+            "turu_bigquery_sample.py",
         ],
     )
     def test_turu_docs_sample(self, script_file: str):
