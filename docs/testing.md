@@ -3,13 +3,18 @@
 ## Response Injection
 Turu supports `MockConnection` for all of the database adapters.
 
-`MockConnection` has an `inject_response` method that allows you to write automated tests by injecting the return value corresponding to the Row type specified in the `execute_map` / `executemany_map`.
+`MockConnection` has an `inject_response` method that allows you to write automated tests by injecting the return value corresponding to the Row type specified in the `Cursor.execute_map` / `Cursor.executemany_map`.
 
 ```python
 --8<-- "README.md:inject_response"
 ```
 
-For queries that do not require a return value, such as INSERT, `inject_response` can be injected as `None`.
+!!! tip
+    The `MockConnection.chain` method is used to make method chains more readable.
+    It improves code readability when using black formatter.
+
+For queries that do not require a return value, such as INSERT,
+`MockConnection.inject_response` can be injected as `None`.
 
 ```python
 # The production code
@@ -34,7 +39,7 @@ Recording on/off can be controlled with the `enable` option (default is `True`).
 --8<-- "README.md:recording"
 ```
 
-In the test code, the recorded csv is available using the `inject_response_from_csv` method.
+In the test code, the recorded csv is available using the `MockConnection.inject_response_from_csv` method.
 
 ```python
 --8<-- "README.md:testing"
