@@ -47,7 +47,7 @@ It provides a simple interface according to [PEP 249 – Python Database API Spe
 | Database   | Sync Support | Async Support | Installation                    |
 | ---------- | ------------ | ------------- | ------------------------------- |
 | SQLite3    | Yes          | Yes           | `pip install "turu[sqlite3]"`   |
-| MySQL      | No           | No            |  -                              |
+| MySQL      | Yes          | Yes           | `pip install "turu[mysql]"`     |
 | PostgreSQL | Yes          | Yes           | `pip install "turu[postgres]"`  |
 | Snowflake  | Yes          | Yes           | `pip install "turu[snowflake]"` |
 | BigQuery   | Yes          | No            | `pip install "turu[bigquery]"`  |
