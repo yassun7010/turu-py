@@ -1,4 +1,4 @@
-# Turu: Simple Database API for Typed Python
+# Turu: Simple Database API Client for Typed Python
 
 <!-- --8<-- [start:badges] -->
 [![docs](https://github.com/yassun7010/turu-py/actions/workflows/publish-mkdocs.yml/badge.svg)](https://yassun7010.github.io/turu-py/)
