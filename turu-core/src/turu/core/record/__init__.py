@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import (
     Generator,
     List,
-    Literal,
     Optional,
     Sequence,
     Type,
@@ -137,7 +136,7 @@ def record_as_csv(
     record_filepath: Union[str, Path],
     cursor: GenericCursor,
     *,
-    enable: Union[Literal["true", "false"], bool, None] = True,
+    enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
 ) -> Generator[GenericCursor, None, None]:
     if isinstance(enable, str):

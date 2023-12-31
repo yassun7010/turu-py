@@ -45,12 +45,8 @@ In the production code, the actual rows can be recorded to a csv file using the 
 
 Recording on/off can be controlled with the `enable` option (default is `True`).
 
-```python title="production_code.py"
---8<-- "README.md:recording"
-```
-
 In the test code, the recorded csv is available using the `MockConnection.inject_response_from_csv` method.
 
-```python title="test_code.py"
---8<-- "README.md:testing"
+```python
+--8<-- "docs/data/turu_recording_and_testing.py"
 ```

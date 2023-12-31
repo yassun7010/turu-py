@@ -7,7 +7,7 @@
 <!-- --8<-- [end:badges] -->
 
 <p align="center">
-    <img alt="logo" src="./docs/images/logo.png" width="300" />
+    <img alt="logo" src="./docs/images/logo.svg" width="300" />
 </p>
 
 ---
@@ -74,7 +74,6 @@ with connection.execute_map(Row, "select 1, 'a'") as cursor:
 ## Testing
 
 ```python
-<!-- --8<-- [start:inject_response] -->
 import turu.sqlite3
 
 from pydantic import BaseModel
@@ -100,8 +99,6 @@ connection = turu.sqlite3.MockConnection()
 for expected in [expected1, expected2, expected3]:
     with connection.execute_map(Row, "select 1, 'a'") as cursor:
         assert cursor.fetchall() == expected
-
-<!-- --8<-- [end:inject_response] -->
 ```
 
 ## Recording and Testing
@@ -109,7 +106,6 @@ for expected in [expected1, expected2, expected3]:
 Your Production Code
 
 ```python
-<!-- --8<-- [start:recording] -->
 import os
 
 import turu.sqlite3
@@ -127,13 +123,11 @@ def do_something(connection: turu.sqlite3.Connection):
         limit=100,
     ) as cursor:
         ... # Your logic
-<!-- --8<-- [end:recording] -->
 ```
 
 Your Test Code
 
 ```python
-<!-- --8<-- [start:testing] -->
 import turu.sqlite3
 
 from your_package.data import RECORD_DIR
@@ -141,11 +135,7 @@ from your_package.schema import Row
 
 
 def test_do_something(connection: turu.sqlite3.MockConnection):
-    (
-        connection.chain()
-        .inject_response_from_csv(Row, RECORD_DIR / "test.csv")
-    )
+    connection.inject_response_from_csv(Row, RECORD_DIR / "test.csv")
 
     assert do_something(connection) is None
-<!-- --8<-- [end:testing] -->
 ```
