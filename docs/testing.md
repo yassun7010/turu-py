@@ -16,8 +16,7 @@ Turu supports `MockConnection` for all of the database adapters.
 For queries that do not require a return value, such as INSERT,
 `MockConnection.inject_response` can be injected as `None`.
 
-```python
-# The production code
+```python title="production_code.py"
 def do_something(connection: turu.sqlite3.Connection):
     with connection.execute("insert ...") as cursor:
         ...
@@ -25,7 +24,9 @@ def do_something(connection: turu.sqlite3.Connection):
     with connection.execute_map(Row, "select ...") as cursor:
         ...
 
-# The test code
+```
+
+```python title="test_code.py"
 def test_do_something():
     connection = turu.sqlite3.MockConnection()
 
@@ -44,12 +45,12 @@ In the production code, the actual rows can be recorded to a csv file using the 
 
 Recording on/off can be controlled with the `enable` option (default is `True`).
 
-```python
+```python title="production_code.py"
 --8<-- "README.md:recording"
 ```
 
 In the test code, the recorded csv is available using the `MockConnection.inject_response_from_csv` method.
 
-```python
+```python title="test_code.py"
 --8<-- "README.md:testing"
 ```

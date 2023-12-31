@@ -15,7 +15,7 @@ pip install "turu[postgres]"
 ```
 
 ### Parameters Usage
-#### [format](https://peps.python.org/pep-0249/#paramstyle) style
+#### [format style](https://peps.python.org/pep-0249/#paramstyle)
 
 ```python
 --8<-- "docs/data/turu_postgres_sample_format_params.py"
@@ -25,7 +25,7 @@ pip install "turu[postgres]"
     The variables placeholder must always be a `%s`, even if a different placeholder (such as a `%d` for integers or `%f` for floats) may look more appropriate for the type.
 
 ### Keyword Parameters Usage
-#### [pyformat](https://peps.python.org/pep-0249/#paramstyle) style
+#### [pyformat style](https://peps.python.org/pep-0249/#paramstyle)
 
 ```python
 --8<-- "docs/data/turu_postgres_sample_pyformat_params.py"

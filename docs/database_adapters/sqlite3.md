@@ -15,14 +15,14 @@ pip install "turu[sqlite3]"
 ```
 
 ### Parameters Usage
-#### [qmark](https://peps.python.org/pep-0249/#paramstyle) style
+#### [qmark style](https://peps.python.org/pep-0249/#paramstyle)
 
 ```python
 --8<-- "docs/data/turu_sqlite3_sample_qmark_params.py"
 ```
 
 ### Keyword Parameters Usage
-#### [named](https://peps.python.org/pep-0249/#paramstyle) style
+#### [named style](https://peps.python.org/pep-0249/#paramstyle)
 
 ```python
 --8<-- "docs/data/turu_sqlite3_sample_named_params.py"
