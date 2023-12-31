@@ -7,7 +7,7 @@
 <!-- --8<-- [end:badges] -->
 
 <p align="center">
-    <img alt="logo" src="./docs/images/logo.svg" width="300" />
+    <img alt="logo" src="./docs/images/logo.png" width="300" />
 </p>
 
 ---
