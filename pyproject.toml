@@ -84,6 +84,9 @@ taskipy = "^1.12.0"
 pyright = "^1.1.337"
 ruff = "^0.1.4"
 pydantic = "^2.5.3"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.23.2"
+pytest-xdist = "^3.5.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
@@ -104,7 +107,7 @@ patterns = [
 format = "ruff format ."
 lint = "ruff check ."
 typecheck = "pyright src/** tests/**"
-test = "pytest tests/"
+test = "pytest ./tests -n auto --cov=src --cov-report=term --cov-report=xml"
 ci = "task format && task lint && task typecheck && task test"
 docs-serve = "mkdocs serve"
 docs-deploy = "mkdocs gh-deploy"

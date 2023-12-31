@@ -14,14 +14,16 @@ pip install "turu[mysql]"
 --8<-- "docs/data/turu_mysql_sample.py"
 ```
 
-## Parameters Usage
+### Parameters Usage
+#### [format](https://peps.python.org/pep-0249/#paramstyle) style
 
 ```python
---8<-- "docs/data/turu_mysql_sample_params.py"
+--8<-- "docs/data/turu_mysql_sample_format_params.py"
 ```
 
-## Keyword Parameters Usage
+### Keyword Parameters Usage
+#### [pyformat](https://peps.python.org/pep-0249/#paramstyle) style
 
 ```python
---8<-- "docs/data/turu_mysql_sample_keyword_params.py"
+--8<-- "docs/data/turu_mysql_sample_pyformat_params.py"
 ```
