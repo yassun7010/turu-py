@@ -11,7 +11,7 @@ Turu supports `MockConnection` for all of the database adapters.
 
 !!! tip
     The `MockConnection.chain` method is used to make method chains more readable.
-    It improves code readability when using black formatter.
+    It improves code readability when using [black](https://pypi.org/project/black/) formatter.
 
 For queries that do not require a return value, such as INSERT,
 `MockConnection.inject_response` can be injected as `None`.
@@ -19,13 +19,22 @@ For queries that do not require a return value, such as INSERT,
 ```python
 # The production code
 def do_something(connection: turu.sqlite3.Connection):
-    with connection.execute("select 1, 'a'") as cursor:
-        ... # Your logic
+    with connection.execute("insert ...") as cursor:
+        ...
+
+    with connection.execute_map(Row, "select ...") as cursor:
+        ...
 
 # The test code
 def test_do_something():
     connection = turu.sqlite3.MockConnection()
+
+    # Indicates the use of the `execute` method call.
     connection.inject_response(None)
+
+    # Indicates the use of the `execute_map` method call.
+    connection.inject_response(Row)
+
     do_something(connection)
 ```
 
