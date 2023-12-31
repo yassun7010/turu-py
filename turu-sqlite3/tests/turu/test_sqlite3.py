@@ -109,6 +109,6 @@ class TestTuruSqlite3:
         # NOTE: production code
         do_something(connection)
 
-        # NOTE: testing codeå
+        # NOTE: testing code
         mock_connection.inject_response_from_csv(Row, csv_file)
         do_something(mock_connection)
