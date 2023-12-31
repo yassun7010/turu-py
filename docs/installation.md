@@ -8,6 +8,12 @@
 pip install "turu[sqlite3]"
 ```
 
+### MySQL
+
+```sh
+pip install "turu[mysql]"
+```
+
 ### PostgreSQL
 
 ```sh
