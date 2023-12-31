@@ -6,7 +6,7 @@ Turu supports `MockConnection` for all of the database adapters.
 `MockConnection` has an `inject_response` method that allows you to write automated tests by injecting the return value corresponding to the Row type specified in the `Cursor.execute_map` / `Cursor.executemany_map`.
 
 ```python
---8<-- "README.md:inject_response"
+--8<-- "docs/data/turu_testing.py"
 ```
 
 !!! tip
