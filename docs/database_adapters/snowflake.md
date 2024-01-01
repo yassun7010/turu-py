@@ -26,7 +26,7 @@ pip install "turu[snowflake]"
 !!! warning
     The variables placeholder must always be a `%s`, even if a different placeholder (such as a `%d` for integers or `%f` for floats) may look more appropriate for the type.
 
-#### [qmark style](https://peps.python.org/pep-0249/#paramstyle)
+<!-- #### [qmark style](https://peps.python.org/pep-0249/#paramstyle)
 
 ```python
 --8<-- "docs/data/turu_snowflake_sample_qmark_params.py"
@@ -39,7 +39,7 @@ pip install "turu[snowflake]"
 ```
 
 !!! warning
-    `qmark` and `numeric` styles have some points to note. Please refer to [the official document](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-example#qmark-or-numeric-binding) for details.
+    `qmark` and `numeric` styles have some points to note. Please refer to [the official document](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-example#qmark-or-numeric-binding) for details. -->
 
 ### Keyword Parameters Usage
 #### [pyformat style](https://peps.python.org/pep-0249/#paramstyle)
