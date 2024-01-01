@@ -90,8 +90,9 @@ pytest-xdist = "^3.5.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
-mkdocs-material = "^9.5.3"
+mkdocs-material = {extras = ["imaging"], version = "^9.5.3"}
 mkdocs-plugin-inline-svg = "^0.1.0"
+mkdocs-exclude = "^1.0.2"
 
 [tool.poetry-dynamic-versioning]
 enable = false

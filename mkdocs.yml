@@ -42,10 +42,20 @@ theme:
       quote: octicons/quote-16
 repo_name: yassun7010/turu-py
 repo_url: https://github.com/yassun7010/turu-py
+site_url: https://yassun7010.github.io/turu-py/
 edit_uri: edit/main/docs/
 plugins:
   - search
   - inline-svg
+  - exclude:
+      glob:
+        - "**/.pytest_cache/*"
+  - social:
+      cards_layout_options:
+        title: Turu
+        description: Simple Database API Client for Typed Python based PEP 249
+        logo: images/logo.svg
+        background_color: black
 markdown_extensions:
   - toc:
       permalink: true

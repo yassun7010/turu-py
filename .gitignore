@@ -1,6 +1,7 @@
 __pycache__
 .env
 .coverage
+.cache
 .coverage.*
 coverage.xml
 htmlcov
