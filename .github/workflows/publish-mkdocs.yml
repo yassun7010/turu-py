@@ -22,5 +22,5 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs mkdocs-material mkdocs-plugin-inline-svg
+      - run: pip install mkdocs mkdocs-material[imaging] mkdocs-plugin-inline-svg mkdocs-exclude
       - run: mkdocs gh-deploy --force
