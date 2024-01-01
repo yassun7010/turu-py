@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "turu"
 version = "0.1.0"
-description = "Simple Database API Client for Typed Python based PEP 249"
+description = "Simple Typed Python Database Client based PEP 249"
 authors = ["yassun7010 <yassun7010@outlook.com>"]
 readme = "README.md"
 repository = "https://github.com/yassun7010/turu-py"
@@ -90,7 +90,7 @@ pytest-xdist = "^3.5.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.5.3"
-mkdocs-material = {extras = ["imaging"], version = "^9.5.3"}
+mkdocs-material = { extras = ["imaging"], version = "^9.5.3" }
 mkdocs-plugin-inline-svg = "^0.1.0"
 mkdocs-exclude = "^1.0.2"
 

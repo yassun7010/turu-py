@@ -1,5 +1,5 @@
 site_name: Turu
-site_description: Simple Database API Client for Typed Python based PEP 249
+site_description: Simple Typed Python Database Client based PEP 249
 theme:
   name: material
   language: en

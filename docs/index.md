@@ -1,6 +1,6 @@
 # Welcome Turu
 
-[Turu](https://github.com/yassun7010/turu-py) is a Simple Database API Client for Typed Python.
+[Turu](https://github.com/yassun7010/turu-py) is a Simple Database Client for Typed Python.
 
 --8<-- "README.md:badges"
 
