@@ -1,4 +1,4 @@
-# BigQuery
+# BigQuery Adapter
 
 !!! tip
     `turu-bigquery` depends on [google-cloud-bigquery](https://pypi.org/project/google-cloud-bigquery/).

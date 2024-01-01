@@ -1,4 +1,4 @@
-# :snowflake: Snowflake
+# Snowflake Adapter
 
 !!! tip
     `turu-snowflake` depends on [snowflake-connector-python](https://pypi.org/project/snowflake-connector-python/).

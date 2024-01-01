@@ -1,4 +1,5 @@
 site_name: Turu
+site_description: Simple Database API Client for Typed Python based PEP 249
 theme:
   name: material
   language: en
@@ -50,13 +51,7 @@ plugins:
   - exclude:
       glob:
         - "**/.pytest_cache/*"
-  - social:
-      cards_layout_options:
-        title: Turu
-        description: Simple Database API Client for Typed Python based PEP 249
-        logo: images/logo.svg
-        background_color: black
-        background_image: images/icon.svg
+  - social
 markdown_extensions:
   - toc:
       permalink: true

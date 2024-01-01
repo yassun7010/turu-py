@@ -1,4 +1,4 @@
-# SQLite3
+# SQLite3 Adapter
 
 !!! tip
     `turu-sqlite3` depends on [aiosqlite](https://pypi.org/project/aiosqlite/).

@@ -1,4 +1,4 @@
-# MySQL
+# MySQL Adapter
 
 !!! tip
     `turu-mysql` depends on [aiomysql](https://pypi.org/project/aiomysql/).

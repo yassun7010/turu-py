@@ -1,4 +1,4 @@
-# PostgreSQL
+# PostgreSQL Adapter
 
 !!! tip
     `turu-postgres` depends on [psycopg](https://pypi.org/project/psycopg/).
