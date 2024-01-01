@@ -27,6 +27,8 @@ with conn.execute_map(Row, "select 1") as cursor:
     But, for type validation, we reccomend using [pydantic](https://pydantic-docs.helpmanual.io/).
 
 
+## Connection Pool
+
 !!! todo
     Connection Pool may be implemented in the future, but has not yet been started.
 
