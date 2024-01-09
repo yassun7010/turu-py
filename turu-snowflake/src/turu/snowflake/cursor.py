@@ -159,6 +159,22 @@ class Cursor(
 
         return self
 
+    def fetch_arrow_all(self):
+        return self._raw_cursor.fetch_arrow_all()
+
+    def fetch_arrow_batches(self):
+        return self._raw_cursor.fetch_arrow_batches()
+
+    def fetch_pandas_all(self, **kwargs):
+        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
+
+        return self._raw_cursor.fetch_pandas_all(**kwargs)
+
+    def fetch_pandas_batches(self, **kwargs):
+        """Fetches a single Arrow Table."""
+
+        return self._raw_cursor.fetch_pandas_batches(**kwargs)
+
 
 class MockCursor(  # type: ignore
     turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Any],  # type: ignore
