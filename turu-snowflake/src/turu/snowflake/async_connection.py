@@ -114,15 +114,20 @@ async def connect_async_from_env(
     role_envname: str = "SNOWFLAKE_ROLE",
     **kwargs,
 ) -> AsyncConnection:
+    if (
+        authenticator := os.environ.get("SNOWFLAKE_AUTHENTICATOR")
+    ) and "authenticator" not in kwargs:
+        kwargs["authenticator"] = authenticator
+
     return await connect_async(
         connection_name,
         connections_file_path,
-        user=os.environ.get(user_envname),
-        password=os.environ.get(password_envname),
-        account=os.environ.get(account_envname),
-        database=os.environ.get(database_envname),
-        schema=os.environ.get(schema_envname),
-        warehouse=os.environ.get(warehouse_envname),
-        role=os.environ.get(role_envname),
+        user=os.environ.get(user_envname, kwargs.get("user")),
+        password=os.environ.get(password_envname, kwargs.get("password")),
+        account=os.environ.get(account_envname, kwargs.get("account")),
+        database=os.environ.get(database_envname, kwargs.get("database")),
+        schema=os.environ.get(schema_envname, kwargs.get("schema")),
+        warehouse=os.environ.get(warehouse_envname, kwargs.get("warehouse")),
+        role=os.environ.get(role_envname, kwargs.get("role")),
         **kwargs,
     )
