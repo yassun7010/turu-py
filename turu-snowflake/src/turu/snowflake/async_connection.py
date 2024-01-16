@@ -16,18 +16,23 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     def __init__(self, connection: snowflake.connector.SnowflakeConnection):
         self._raw_connection = connection
 
+    @override
     async def close(self) -> None:
         self._raw_connection.close()
 
+    @override
     async def commit(self) -> None:
         self._raw_connection.commit()
 
+    @override
     async def rollback(self) -> None:
         self._raw_connection.rollback()
 
+    @override
     async def cursor(self) -> AsyncCursor[Never]:
         return AsyncCursor(self._raw_connection.cursor())
 
+    @override
     async def execute(
         self,
         operation: str,
@@ -37,6 +42,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     ) -> AsyncCursor[Tuple[Any]]:
         return await (await self.cursor()).execute(operation, parameters, **options)
 
+    @override
     async def executemany(
         self,
         operation: str,
@@ -48,6 +54,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             operation, seq_of_parameters, **options
         )
 
+    @override
     async def execute_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
@@ -63,6 +70,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             **options,
         )
 
+    @override
     async def executemany_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
