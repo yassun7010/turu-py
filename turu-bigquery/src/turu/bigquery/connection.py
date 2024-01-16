@@ -9,7 +9,7 @@ import google.cloud.bigquery.job
 import turu.bigquery.cursor
 import turu.core.connection
 import turu.core.mock
-from typing_extensions import Never, deprecated
+from typing_extensions import Never, deprecated, override
 
 from .cursor import Cursor, MockCursor
 
@@ -18,11 +18,13 @@ class Connection(turu.core.connection.Connection):
     def __init__(self, connection: google.cloud.bigquery.dbapi.Connection):
         self._raw_connection = connection
 
+    @override
     def close(self) -> None:
         """Close the connection and any cursors created from it."""
 
         self._raw_connection.close()
 
+    @override
     def commit(self) -> None:
         """No-op, but for consistency raise an error if connection is closed."""
 
@@ -32,6 +34,7 @@ class Connection(turu.core.connection.Connection):
     def rollback(self) -> None:
         raise NotImplementedError()
 
+    @override
     def cursor(self) -> Cursor[Never]:
         """Return a new cursor object."""
 
@@ -42,6 +45,7 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockConnection.__init__(self)
 
+    @override
     def cursor(self) -> "MockCursor[Never]":
         return MockCursor(self._turu_mock_store)
 

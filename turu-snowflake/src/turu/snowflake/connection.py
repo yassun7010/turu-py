@@ -17,18 +17,23 @@ class Connection(turu.core.connection.Connection):
     def __init__(self, connection: snowflake.connector.SnowflakeConnection):
         self._raw_connection = connection
 
+    @override
     def close(self) -> None:
         self._raw_connection.close()
 
+    @override
     def commit(self) -> None:
         self._raw_connection.commit()
 
+    @override
     def rollback(self) -> None:
         self._raw_connection.rollback()
 
+    @override
     def cursor(self) -> Cursor[Never]:
         return Cursor(self._raw_connection.cursor())
 
+    @override
     def execute(
         self,
         operation: str,
@@ -38,6 +43,7 @@ class Connection(turu.core.connection.Connection):
     ) -> Cursor[Tuple[Any]]:
         return self.cursor().execute(operation, parameters, **options)
 
+    @override
     def executemany(
         self,
         operation: str,
@@ -47,6 +53,7 @@ class Connection(turu.core.connection.Connection):
     ) -> Cursor[Tuple[Any]]:
         return self.cursor().executemany(operation, seq_of_parameters, **options)
 
+    @override
     def execute_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
@@ -57,6 +64,7 @@ class Connection(turu.core.connection.Connection):
     ) -> Cursor[turu.core.cursor.GenericNewRowType]:
         return self.cursor().execute_map(row_type, operation, parameters, **options)
 
+    @override
     def executemany_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
