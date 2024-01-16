@@ -40,7 +40,7 @@ pydantic = ["pydantic"]
 [tool.poetry.dependencies]
 python = "^3.8"
 typing-extensions = "^4.8.0"
-pydantic = { version = "^2.5.2", optional = true }
+pydantic = { version = "^2", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
