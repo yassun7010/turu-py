@@ -1,9 +1,10 @@
 import asyncio
-from typing import Any, List, Optional, Sequence, Tuple, Type, TypedDict, cast
+from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDict, cast
 
 import turu.core.async_cursor
 import turu.core.mock
 from turu.core.cursor import map_row
+from turu.snowflake.features import PandasDataFlame
 from typing_extensions import Self, Unpack, override
 
 import snowflake.connector
@@ -133,12 +134,12 @@ class AsyncCursor(
     async def fetch_arrow_batches(self):
         return self._raw_cursor.fetch_arrow_batches()
 
-    async def fetch_pandas_all(self, **kwargs):
+    async def fetch_pandas_all(self, **kwargs) -> PandasDataFlame:
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
         return self._raw_cursor.fetch_pandas_all(**kwargs)
 
-    async def fetch_pandas_batches(self, **kwargs):
+    async def fetch_pandas_batches(self, **kwargs) -> Iterator[PandasDataFlame]:
         """Fetches a single Arrow Table."""
 
         return self._raw_cursor.fetch_pandas_batches(**kwargs)

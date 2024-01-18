@@ -1,7 +1,8 @@
-from typing import Any, List, Optional, Sequence, Tuple, Type, TypedDict, cast
+from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDict, cast
 
 import turu.core.cursor
 import turu.core.mock
+from turu.snowflake.features import PandasDataFlame
 from typing_extensions import Self, Unpack, override
 
 import snowflake.connector
@@ -235,3 +236,19 @@ class MockCursor(  # type: ignore
 
     def use_role(self, role: str, /) -> Self:
         return self
+
+    def fetch_arrow_all(self):
+        return self._raw_cursor.fetch_arrow_all()
+
+    def fetch_arrow_batches(self):
+        return self._raw_cursor.fetch_arrow_batches()
+
+    def fetch_pandas_all(self, **kwargs) -> PandasDataFlame:
+        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
+
+        return self._raw_cursor.fetch_pandas_all(**kwargs)
+
+    def fetch_pandas_batches(self, **kwargs) -> Iterator[PandasDataFlame]:
+        """Fetches a single Arrow Table."""
+
+        return self._raw_cursor.fetch_pandas_batches(**kwargs)
