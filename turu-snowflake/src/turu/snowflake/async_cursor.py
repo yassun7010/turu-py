@@ -127,6 +127,22 @@ class AsyncCursor(
     async def fetchall(self) -> List[turu.core.async_cursor.GenericRowType]:
         return [map_row(self._row_type, row) for row in self._raw_cursor.fetchall()]
 
+    async def fetch_arrow_all(self):
+        return self._raw_cursor.fetch_arrow_all()
+
+    async def fetch_arrow_batches(self):
+        return self._raw_cursor.fetch_arrow_batches()
+
+    async def fetch_pandas_all(self, **kwargs):
+        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
+
+        return self._raw_cursor.fetch_pandas_all(**kwargs)
+
+    async def fetch_pandas_batches(self, **kwargs):
+        """Fetches a single Arrow Table."""
+
+        return self._raw_cursor.fetch_pandas_batches(**kwargs)
+
     @override
     async def __anext__(self) -> turu.core.async_cursor.GenericRowType:
         next_row = self._raw_cursor.fetchone()
