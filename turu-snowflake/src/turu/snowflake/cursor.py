@@ -166,12 +166,12 @@ class Cursor(
     def fetch_arrow_batches(self):
         return self._raw_cursor.fetch_arrow_batches()
 
-    def fetch_pandas_all(self, **kwargs):
+    def fetch_pandas_all(self, **kwargs) -> "PandasDataFlame":
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
         return self._raw_cursor.fetch_pandas_all(**kwargs)
 
-    def fetch_pandas_batches(self, **kwargs):
+    def fetch_pandas_batches(self, **kwargs) -> "Iterator[PandasDataFlame]":
         """Fetches a single Arrow Table."""
 
         return self._raw_cursor.fetch_pandas_batches(**kwargs)
@@ -238,17 +238,15 @@ class MockCursor(  # type: ignore
         return self
 
     def fetch_arrow_all(self):
-        return self._raw_cursor.fetch_arrow_all()
+        return self.fetchone()
 
     def fetch_arrow_batches(self):
-        return self._raw_cursor.fetch_arrow_batches()
+        return iter([self.fetch_arrow_all()])
 
     def fetch_pandas_all(self, **kwargs) -> PandasDataFlame:
-        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
-
-        return self._raw_cursor.fetch_pandas_all(**kwargs)
+        return cast(PandasDataFlame, self.fetchone())
 
     def fetch_pandas_batches(self, **kwargs) -> Iterator[PandasDataFlame]:
         """Fetches a single Arrow Table."""
 
-        return self._raw_cursor.fetch_pandas_batches(**kwargs)
+        return iter([self.fetch_pandas_all(**kwargs)])

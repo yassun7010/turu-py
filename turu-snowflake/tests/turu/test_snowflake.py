@@ -147,32 +147,38 @@ class TestTuruSnowflake:
         reason="pyarrow is not installed",
     )
     def test_fetch_arrow_all(self, connection: turu.snowflake.Connection):
-        cursor = connection.execute("select 1 as ID union all select 2 as ID")
+        import pyarrow as pa
 
-        assert cursor.fetch_arrow_all().to_pandas().to_dict() == {"ID": {0: 1, 1: 2}}  # type: ignore[union-attr]
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int8())],
+            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+        )
+
+        with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
+            assert cursor.fetch_arrow_all() == expected
 
     @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
     def test_fetch_arrow_batches(self, connection: turu.snowflake.Connection):
         from pandas import DataFrame
         from pandas.testing import assert_frame_equal
 
-        cursor = connection.execute("select 1 as ID union all select 2 as ID")
-
-        for row in cursor.fetch_arrow_batches():
-            assert_frame_equal(row.to_pandas(), DataFrame({"ID": [1, 2]}, dtype="int8"))
+        with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
+            for row in cursor.fetch_arrow_batches():
+                assert_frame_equal(
+                    row.to_pandas(),
+                    DataFrame({"ID": [1, 2]}, dtype="int8"),
+                )
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_fetch_pandas_all(self, connection: turu.snowflake.Connection):
-        cursor = connection.execute("select 1 as ID union all select 2 ID")
-
-        assert cursor.fetch_pandas_all().to_dict() == {"ID": {0: 1, 1: 2}}
+        with connection.execute("select 1 as ID union all select 2 ID") as cursor:
+            assert cursor.fetch_pandas_all().to_dict() == {"ID": {0: 1, 1: 2}}
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_fetch_pandas_batches(self, connection: turu.snowflake.Connection):
         from pandas import DataFrame
         from pandas.testing import assert_frame_equal
 
-        cursor = connection.execute("select 1 as ID union all select 2 AS ID")
-
-        for df in cursor.fetch_pandas_batches():
-            assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))
+        with connection.execute("select 1 as ID union all select 2 AS ID") as cursor:
+            for df in cursor.fetch_pandas_batches():
+                assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))

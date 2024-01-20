@@ -60,7 +60,7 @@ class MockConnection(turu.core.connection.Connection):
     def inject_response_from_csv(
         self,
         row_type: None,
-        filepath: Union[str, pathlib.Path, Exception],
+        filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
     ) -> Self:
         ...
@@ -69,7 +69,7 @@ class MockConnection(turu.core.connection.Connection):
     def inject_response_from_csv(
         self,
         row_type: Type[GenericRowType],
-        filepath: Union[str, pathlib.Path, Exception],
+        filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
     ) -> Self:
         ...
@@ -77,19 +77,16 @@ class MockConnection(turu.core.connection.Connection):
     def inject_response_from_csv(
         self,
         row_type: Optional[Type[GenericRowType]],
-        filepath: Union[str, pathlib.Path, Exception],
+        filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
     ):
-        if isinstance(filepath, Exception):
-            response = filepath
-        else:
-            with open(filepath, "r") as file:
-                reader = csv.reader(file)
+        with open(filepath, "r") as file:
+            reader = csv.reader(file)
 
-                if options.get("header", True):
-                    next(reader)
+            if options.get("header", True):
+                next(reader)
 
-                response = [map_row(row_type, row) for row in reader]
+            response = [map_row(row_type, row) for row in reader]
 
         self.inject_response(row_type, response)
 
