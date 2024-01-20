@@ -39,6 +39,10 @@ pydantic = "^2.5.2"
 pytest-xdist = "^3.5.0"
 pytest-cov = "^4.1.0"
 google-cloud-bigquery-storage = "^2.24.0"
+numpy = [
+    { version = ">=1.26", python = ">=3.9" },
+    { version = "<1.25", python = "=3.8" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
