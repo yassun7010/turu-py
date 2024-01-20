@@ -16,7 +16,7 @@ class TuruMockStore:
     def inject_response(
         self,
         row_type: None,
-        response: Union[Optional[Sequence[GenericRowType]], Exception] = None,
+        response: Union[Optional[Sequence[GenericRowType]], Exception],
     ):
         ...
 
@@ -31,7 +31,7 @@ class TuruMockStore:
     def inject_response(
         self,
         row_type: Optional[Type[GenericRowType]],
-        response: Union[Sequence[GenericRowType], None, Exception] = None,
+        response: Union[Optional[Sequence[GenericRowType]], Exception],
     ):
         self._data.append((row_type, response))
 
