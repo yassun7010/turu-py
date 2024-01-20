@@ -40,15 +40,6 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         )
 
 
-class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
-    def __init__(self, *args, **kwargs):
-        turu.core.mock.MockAsyncConnection.__init__(self)
-
-    @override
-    async def cursor(self) -> "turu.mysql.async_cursor.MockAsyncCursor[Never]":
-        return turu.mysql.async_cursor.MockAsyncCursor(self._turu_mock_store)
-
-
 class _ConnectParams(TypedDict, total=False):
     unix_socket: Optional[str]
     charset: str
