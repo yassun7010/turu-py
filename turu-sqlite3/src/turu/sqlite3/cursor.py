@@ -64,7 +64,7 @@ class Cursor(
         /,
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
         self._raw_cursor.execute(operation, parameters or ())
-        self._row_type = cast(turu.core.cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
         return cast(Cursor, self)
 
@@ -77,7 +77,7 @@ class Cursor(
         /,
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
         self._raw_cursor.executemany(operation, seq_of_parameters)
-        self._row_type = cast(turu.core.cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
         return cast(Cursor, self)
 

@@ -1,7 +1,7 @@
 import csv
 from dataclasses import is_dataclass
 from pathlib import Path
-from typing import Union, cast
+from typing import Union
 
 import turu.core.cursor
 from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
@@ -42,7 +42,7 @@ class CsvRecorder(RecorderProtcol):
             return
 
         if isinstance(row, tuple):
-            self._writer.writerow(cast(tuple, row))
+            self._writer.writerow(row)
             return
 
         if USE_PYDANTIC:

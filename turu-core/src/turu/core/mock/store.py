@@ -1,4 +1,4 @@
-from typing import Optional, Sequence, Type, Union, overload
+from typing import Any, List, Optional, Sequence, Tuple, Type, Union, overload
 
 from turu.core.cursor import GenericRowType
 from turu.core.mock.exception import (
@@ -9,7 +9,7 @@ from turu.core.mock.exception import (
 
 class TuruMockStore:
     def __init__(self):
-        self._data = []
+        self._data: List[Tuple[Optional[Type], Sequence | None | Exception]] = []
         self._counter = 0
 
     @overload
@@ -38,7 +38,7 @@ class TuruMockStore:
     def provide_response(
         self,
         row_type: Optional[Type],
-    ) -> list:
+    ) -> "Sequence[Any] | None":
         self._counter += 1
 
         if len(self._data) == 0:

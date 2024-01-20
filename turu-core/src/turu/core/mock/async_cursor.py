@@ -128,9 +128,13 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         responses = self._turu_mock_store.provide_response(row_type)
 
         if responses is None:
-            return MockAsyncCursor(responses, row_type=row_type)
+            return self.__class__(
+                self._turu_mock_store,
+                row_type=row_type,
+            )
+
         else:
-            return MockAsyncCursor(
+            return self.__class__(
                 self._turu_mock_store,
                 row_count=len(responses),
                 rows_iter=iter(responses),

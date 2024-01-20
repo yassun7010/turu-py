@@ -77,7 +77,7 @@ class AsyncCursor(
         /,
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
         await self._raw_cursor.execute(cast(LiteralString, operation), parameters)
-        self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 
@@ -92,7 +92,7 @@ class AsyncCursor(
         await self._raw_cursor.executemany(
             cast(LiteralString, operation), seq_of_parameters
         )
-        self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 

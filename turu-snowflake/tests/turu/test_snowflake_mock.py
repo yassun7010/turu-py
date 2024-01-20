@@ -1,6 +1,13 @@
 from typing import NamedTuple
 
+import pytest
 import turu.snowflake
+from turu.snowflake.features import (
+    USE_PANDAS,
+    USE_PYARROW,
+    PandasDataFlame,
+    PyArrowTable,
+)
 
 
 class Row(NamedTuple):
@@ -154,3 +161,63 @@ class TestTuruSnowflakeMockConnection:
             "select 1",
         ) as cursor:
             assert cursor.fetchmany() == expected
+
+    @pytest.mark.skipif(
+        not (USE_PYARROW and USE_PANDAS),
+        reason="pyarrow is not installed",
+    )
+    def test_fetch_arrow_all(self, mock_connection: turu.snowflake.MockConnection):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int8())],
+            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+        )
+
+        mock_connection.inject_response(PyArrowTable, expected)
+
+        with mock_connection.execute_map(
+            PyArrowTable, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert cursor.fetch_arrow_all() == expected
+
+    @pytest.mark.skipif(
+        not (USE_PYARROW and USE_PANDAS),
+        reason="pyarrow is not installed",
+    )
+    def test_fetch_arrow_batches(self, mock_connection: turu.snowflake.MockConnection):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int8())],
+            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+        )
+
+        with mock_connection.inject_response(PyArrowTable, expected).execute_map(
+            PyArrowTable, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert list(cursor.fetch_arrow_batches()) == [expected]
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_fetch_pandas_all(self, mock_connection: turu.snowflake.MockConnection):
+        import pandas as pd
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        mock_connection.inject_response(PandasDataFlame, expected)
+
+        with mock_connection.execute_map(
+            PandasDataFlame, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert cursor.fetch_pandas_all().equals(expected)
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_fetch_pandas_batches(self, mock_connection: turu.snowflake.MockConnection):
+        import pandas as pd
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        with mock_connection.inject_response(PandasDataFlame, expected).execute_map(
+            PandasDataFlame, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert list(cursor.fetch_pandas_batches()) == [expected]

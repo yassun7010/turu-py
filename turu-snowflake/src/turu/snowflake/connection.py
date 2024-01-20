@@ -1,12 +1,16 @@
 import os
+import pathlib
 from pathlib import Path
-from typing import Any, Optional, Sequence, Tuple, Type
+from typing import Any, Optional, Sequence, Tuple, Type, Union, cast
 
 import turu.core.connection
 import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
-from typing_extensions import Never, Unpack, override
+from turu.core.exception import TuruCsvHeaderOptionRequiredError
+from turu.core.mock.connection import CSVOptions
+from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from typing_extensions import Never, Self, Unpack, overload, override
 
 import snowflake.connector
 
@@ -62,7 +66,12 @@ class Connection(turu.core.connection.Connection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> Cursor[turu.core.cursor.GenericNewRowType]:
-        return self.cursor().execute_map(row_type, operation, parameters, **options)
+        return self.cursor().execute_map(
+            row_type,
+            operation,
+            parameters,
+            **options,
+        )
 
     @override
     def executemany_map(
@@ -85,6 +94,100 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
     @override
     def cursor(self) -> "turu.snowflake.cursor.MockCursor[Never]":
         return turu.snowflake.cursor.MockCursor(self._turu_mock_store)
+
+    @overload
+    def inject_response(
+        self,
+        row_type: None,
+        response: Union[Optional[Sequence[Any]], Exception] = None,
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[turu.core.cursor.GenericRowType],
+        response: Union[Sequence[turu.core.cursor.GenericRowType], Exception],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[PyArrowTable],
+        response: Union[PyArrowTable, Exception],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[PandasDataFlame],
+        response: Union[PandasDataFlame, Exception],
+    ) -> Self:
+        ...
+
+    def inject_response(
+        self,
+        row_type,
+        response=None,
+    ):
+        if row_type is not None and issubclass(
+            row_type, (PandasDataFlame, PyArrowTable)
+        ):
+            self._turu_mock_store.inject_response(row_type, (response,))  # type: ignore
+        else:
+            self._turu_mock_store.inject_response(row_type, response)
+        return self
+
+    @overload
+    def inject_response_from_csv(
+        self,
+        row_type: None,
+        filepath: Union[str, pathlib.Path],
+        **options: Unpack[CSVOptions],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response_from_csv(
+        self,
+        row_type: Type[turu.core.cursor.GenericRowType],
+        filepath: Union[str, pathlib.Path],
+        **options: Unpack[CSVOptions],
+    ) -> Self:
+        ...
+
+    def inject_response_from_csv(
+        self,
+        row_type,
+        filepath: Union[str, pathlib.Path],
+        **options: Unpack[CSVOptions],
+    ):
+        if row_type is not None:
+            if issubclass(row_type, PandasDataFlame):
+                import pandas
+
+                if options.get("header", True) is False:
+                    raise TuruCsvHeaderOptionRequiredError(row_type)
+
+                self._turu_mock_store.inject_response(
+                    row_type,
+                    cast(Any, pandas.read_csv(filepath, **options)),
+                )
+
+            elif issubclass(row_type, PyArrowTable):
+                import pyarrow.csv
+
+                self._turu_mock_store.inject_response(
+                    row_type,
+                    cast(Any, pyarrow.csv.read_csv(filepath, **options)),
+                )
+
+            else:
+                super().inject_response_from_csv(row_type, filepath, **options)
+
+        return self
 
 
 def connect(

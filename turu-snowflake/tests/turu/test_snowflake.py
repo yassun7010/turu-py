@@ -3,6 +3,7 @@ from typing import NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.snowflake.features import USE_PANDAS, USE_PYARROW
 
 
 def test_version():
@@ -140,3 +141,44 @@ class TestTuruSnowflake:
             Row, "select 1"
         ) as cursor:
             assert cursor.fetchone() == Row(1)
+
+    @pytest.mark.skipif(
+        not (USE_PYARROW and USE_PANDAS),
+        reason="pyarrow is not installed",
+    )
+    def test_fetch_arrow_all(self, connection: turu.snowflake.Connection):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int8())],
+            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+        )
+
+        with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
+            assert cursor.fetch_arrow_all() == expected
+
+    @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
+    def test_fetch_arrow_batches(self, connection: turu.snowflake.Connection):
+        from pandas import DataFrame
+        from pandas.testing import assert_frame_equal
+
+        with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
+            for row in cursor.fetch_arrow_batches():
+                assert_frame_equal(
+                    row.to_pandas(),
+                    DataFrame({"ID": [1, 2]}, dtype="int8"),
+                )
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_fetch_pandas_all(self, connection: turu.snowflake.Connection):
+        with connection.execute("select 1 as ID union all select 2 ID") as cursor:
+            assert cursor.fetch_pandas_all().to_dict() == {"ID": {0: 1, 1: 2}}
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_fetch_pandas_batches(self, connection: turu.snowflake.Connection):
+        from pandas import DataFrame
+        from pandas.testing import assert_frame_equal
+
+        with connection.execute("select 1 as ID union all select 2 AS ID") as cursor:
+            for df in cursor.fetch_pandas_batches():
+                assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))

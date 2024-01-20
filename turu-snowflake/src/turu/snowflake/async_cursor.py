@@ -1,9 +1,10 @@
 import asyncio
-from typing import Any, List, Optional, Sequence, Tuple, Type, TypedDict, cast
+from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDict, cast
 
 import turu.core.async_cursor
 import turu.core.mock
 from turu.core.cursor import map_row
+from turu.snowflake.features import PandasDataFlame
 from typing_extensions import Self, Unpack, override
 
 import snowflake.connector
@@ -81,7 +82,7 @@ class AsyncCursor(
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
         self._raw_cursor.execute(operation, parameters, **options)
-        self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 
@@ -96,7 +97,7 @@ class AsyncCursor(
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
         """CAUTION: executemany does not support async. Actually, this is sync."""
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
-        self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 
@@ -126,6 +127,22 @@ class AsyncCursor(
     @override
     async def fetchall(self) -> List[turu.core.async_cursor.GenericRowType]:
         return [map_row(self._row_type, row) for row in self._raw_cursor.fetchall()]
+
+    async def fetch_arrow_all(self):
+        return self._raw_cursor.fetch_arrow_all()
+
+    async def fetch_arrow_batches(self):
+        return self._raw_cursor.fetch_arrow_batches()
+
+    async def fetch_pandas_all(self, **kwargs) -> PandasDataFlame:
+        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
+
+        return self._raw_cursor.fetch_pandas_all(**kwargs)
+
+    async def fetch_pandas_batches(self, **kwargs) -> Iterator[PandasDataFlame]:
+        """Fetches a single Arrow Table."""
+
+        return self._raw_cursor.fetch_pandas_batches(**kwargs)
 
     @override
     async def __anext__(self) -> turu.core.async_cursor.GenericRowType:
