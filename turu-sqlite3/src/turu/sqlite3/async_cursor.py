@@ -9,7 +9,7 @@ from typing_extensions import override
 
 class AsyncCursor(
     turu.core.async_cursor.AsyncCursor[
-        turu.core.async_cursor.GenericRowType, "Iterator[Any]"
+        turu.core.async_cursor.GenericRowType, Iterator[Any]
     ],
 ):
     def __init__(
@@ -121,15 +121,6 @@ class AsyncCursor(
 
         next_row = await self._aiter.__anext__()
         return _map_row(self._row_type, next_row)
-
-
-class MockAsyncCursor(  # type: ignore
-    turu.core.mock.MockAsyncCursor[
-        turu.core.async_cursor.GenericRowType, "Iterator[Any]"
-    ],
-    AsyncCursor[turu.core.async_cursor.GenericRowType],
-):
-    pass
 
 
 def _map_row(

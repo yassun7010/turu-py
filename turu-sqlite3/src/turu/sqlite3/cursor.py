@@ -119,10 +119,3 @@ class Cursor(
 
         else:
             return next_row
-
-
-class MockCursor(  # type: ignore
-    turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, "_Parameters"],
-    Cursor[turu.core.cursor.GenericRowType],
-):
-    pass

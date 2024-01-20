@@ -32,15 +32,6 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         return AsyncCursor(await self._raw_connection.cursor())
 
 
-class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
-    def __init__(self, *args, **kwargs):
-        turu.core.mock.MockAsyncConnection.__init__(self)
-
-    @override
-    async def cursor(self) -> "turu.sqlite3.async_cursor.MockAsyncCursor[Never]":
-        return turu.sqlite3.async_cursor.MockAsyncCursor(self._turu_mock_store)
-
-
 class _ConnectArgs(TypedDict):
     timeout: NotRequired[float]
     detect_types: NotRequired[int]
