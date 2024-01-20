@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 import pytest
-from turu.bigquery.connection import MockConnection
+from turu.bigquery import MockConnection
 from turu.core.mock.exception import TuruMockUnexpectedFetchError
 
 

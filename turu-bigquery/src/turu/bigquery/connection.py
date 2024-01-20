@@ -11,7 +11,7 @@ import turu.core.connection
 import turu.core.mock
 from typing_extensions import Never, deprecated, override
 
-from .cursor import Cursor, MockCursor
+from .cursor import Cursor
 
 
 class Connection(turu.core.connection.Connection):
@@ -39,15 +39,6 @@ class Connection(turu.core.connection.Connection):
         """Return a new cursor object."""
 
         return Cursor(self._raw_connection.cursor())
-
-
-class MockConnection(Connection, turu.core.mock.MockConnection):
-    def __init__(self, *args, **kwargs):
-        turu.core.mock.MockConnection.__init__(self)
-
-    @override
-    def cursor(self) -> "MockCursor[Never]":
-        return MockCursor(self._turu_mock_store)
 
 
 try:

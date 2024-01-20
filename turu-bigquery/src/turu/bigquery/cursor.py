@@ -143,13 +143,6 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
             return tuple(next_row)  # type: ignore[return-value]
 
 
-class MockCursor(  # type: ignore
-    turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Parameter],
-    Cursor[turu.core.cursor.GenericRowType],
-):
-    pass
-
-
 def _map_row(
     row_type: Optional[Type[turu.core.cursor.GenericNewRowType]],
     row: Any,
