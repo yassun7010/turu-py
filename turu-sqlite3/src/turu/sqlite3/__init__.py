@@ -1,9 +1,13 @@
 import importlib.metadata
 
-from .async_connection import AsyncConnection, MockAsyncConnection, connect_async
-from .async_cursor import AsyncCursor, MockAsyncCursor
-from .connection import Connection, MockConnection, connect
-from .cursor import Cursor, MockCursor
+from .async_connection import AsyncConnection, connect_async
+from .async_cursor import AsyncCursor
+from .connection import Connection, connect
+from .cursor import Cursor
+from .mock_async_connection import MockAsyncConnection
+from .mock_async_cursor import MockAsyncCursor
+from .mock_connection import MockConnection
+from .mock_cursor import MockCursor
 
 __version__ = importlib.metadata.version("turu-sqlite3")
 

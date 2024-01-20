@@ -34,15 +34,6 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         return AsyncCursor(self._raw_connection.cursor())
 
 
-class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
-    def __init__(self, *args, **kwargs):
-        turu.core.mock.MockAsyncConnection.__init__(self)
-
-    @override
-    async def cursor(self) -> "turu.postgres.async_cursor.MockAsyncCursor[Never]":
-        return turu.postgres.async_cursor.MockAsyncCursor(self._turu_mock_store)
-
-
 async def connect_async(
     conninfo: str = "",
     *,

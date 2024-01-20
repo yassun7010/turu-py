@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 import pytest
 from turu.core.mock.exception import TuruMockUnexpectedFetchError
-from turu.sqlite3.connection import MockConnection
+from turu.sqlite3.mock_connection import MockConnection
 
 
 class Row(NamedTuple):
