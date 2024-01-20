@@ -82,7 +82,7 @@ class AsyncCursor(
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
         self._raw_cursor.execute(operation, parameters, **options)
-        self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 
@@ -97,7 +97,7 @@ class AsyncCursor(
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
         """CAUTION: executemany does not support async. Actually, this is sync."""
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
-        self._row_type = cast(turu.core.async_cursor.GenericRowType, row_type)
+        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 

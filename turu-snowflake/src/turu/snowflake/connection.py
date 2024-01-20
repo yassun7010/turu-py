@@ -57,7 +57,7 @@ class Connection(turu.core.connection.Connection):
     ) -> Cursor[Tuple[Any]]:
         return self.cursor().executemany(operation, seq_of_parameters, **options)
 
-    @overload
+    @override
     def execute_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
@@ -66,39 +66,6 @@ class Connection(turu.core.connection.Connection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> Cursor[turu.core.cursor.GenericNewRowType]:
-        ...
-
-    @overload
-    def execute_map(
-        self,
-        row_type: Type[PyArrowTable],
-        operation: str,
-        parameters: Optional[Any] = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Any]:
-        ...
-
-    @overload
-    def execute_map(
-        self,
-        row_type: Type[PandasDataFlame],
-        operation: str,
-        parameters: Optional[Any] = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Any]:
-        ...
-
-    @override
-    def execute_map(
-        self,
-        row_type,
-        operation: str,
-        parameters: Optional[Any] = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ):
         return self.cursor().execute_map(
             row_type,
             operation,
@@ -191,33 +158,13 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
     ) -> Self:
         ...
 
-    @overload
-    def inject_response_from_csv(
-        self,
-        row_type: Type[PyArrowTable],
-        filepath: Union[str, pathlib.Path],
-        **options: Unpack[CSVOptions],
-    ) -> Self:
-        ...
-
-    @overload
-    def inject_response_from_csv(
-        self,
-        row_type: Type[PandasDataFlame],
-        filepath: Union[str, pathlib.Path],
-        **options: Unpack[CSVOptions],
-    ) -> Self:
-        ...
-
     def inject_response_from_csv(
         self,
         row_type,
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
     ):
-        if row_type is not None and issubclass(
-            row_type, (PandasDataFlame, PyArrowTable)
-        ):
+        if row_type is not None:
             if issubclass(row_type, PandasDataFlame):
                 import pandas
 
@@ -229,8 +176,16 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
                     cast(Any, pandas.read_csv(filepath, **options)),
                 )
 
-        else:
-            super().inject_response_from_csv(row_type, filepath, **options)
+            elif issubclass(row_type, PyArrowTable):
+                import pyarrow.csv
+
+                self._turu_mock_store.inject_response(
+                    row_type,
+                    cast(Any, pyarrow.csv.read_csv(filepath, **options)),
+                )
+
+            else:
+                super().inject_response_from_csv(row_type, filepath, **options)
 
         return self
 

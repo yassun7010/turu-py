@@ -29,7 +29,7 @@ class _RecordCursor(
         cursor: turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameters],
     ):
         self._recorder = recorder
-        self._cursor = cursor
+        self._cursor: turu.core.cursor.Cursor = cursor
 
     @property
     def rowcount(self) -> int:
@@ -68,10 +68,7 @@ class _RecordCursor(
         parameters: Optional[Parameters] = None,
         /,
     ) -> "_RecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
-        self._cursor = cast(
-            turu.core.cursor.Cursor,
-            self._cursor.execute_map(row_type, operation, parameters),
-        )
+        self._cursor = self._cursor.execute_map(row_type, operation, parameters)
 
         return cast(_RecordCursor, self)
 
@@ -82,9 +79,8 @@ class _RecordCursor(
         seq_of_parameters: Sequence[Parameters],
         /,
     ) -> "_RecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
-        self._cursor = cast(
-            turu.core.cursor.Cursor,
-            self._cursor.executemany_map(row_type, operation, seq_of_parameters),
+        self._cursor = self._cursor.executemany_map(
+            row_type, operation, seq_of_parameters
         )
 
         return cast(_RecordCursor, self)
