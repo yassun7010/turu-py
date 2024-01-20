@@ -9,7 +9,7 @@ from typing_extensions import Never, Unpack, override
 
 import snowflake.connector
 
-from .async_cursor import AsyncCursor, ExecuteOptions, MockAsyncCursor
+from .async_cursor import AsyncCursor, ExecuteOptions
 
 
 class AsyncConnection(turu.core.async_connection.AsyncConnection):
@@ -85,15 +85,6 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             seq_of_parameters,
             **options,
         )
-
-
-class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
-    def __init__(self, *args, **kwargs):
-        turu.core.mock.MockAsyncConnection.__init__(self)
-
-    @override
-    async def cursor(self) -> "MockAsyncCursor[Never]":
-        return MockAsyncCursor(self._turu_mock_store)
 
 
 async def connect_async(
