@@ -19,8 +19,8 @@ from turu.core.protocols.dataclass import Dataclass
 from typing_extensions import Self, override
 
 RowType = Union[Tuple[Any], Dataclass, PydanticModel]
-GenericRowType = TypeVar("GenericRowType", bound=RowType)
-GenericNewRowType = TypeVar("GenericNewRowType", bound=RowType)
+GenericRowType = TypeVar("GenericRowType")
+GenericNewRowType = TypeVar("GenericNewRowType")
 
 
 class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
