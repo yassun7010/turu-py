@@ -7,8 +7,8 @@ import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
 import turu.snowflake.mock_cursor
-from turu.core.exception import TuruCsvHeaderOptionRequiredError
 from turu.core.mock.connection import CSVOptions
+from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
 from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Self, Unpack, override
 
@@ -58,9 +58,6 @@ class MockAsyncConnection(AsyncConnection, turu.core.mock.MockAsyncConnection):
             Exception,
         ] = None,
     ) -> Self:
-        if row_type is not None and isinstance(response, row_type):
-            response = (response,)
-
         self._turu_mock_store.inject_response(
             row_type,
             response,

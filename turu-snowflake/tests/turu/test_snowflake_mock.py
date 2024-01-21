@@ -9,6 +9,8 @@ from turu.snowflake.features import (
     PyArrowTable,
 )
 
+from tests.data import TEST_DATA_DIR
+
 
 class Row(NamedTuple):
     id: int
@@ -221,3 +223,38 @@ class TestTuruSnowflakeMockConnection:
             PandasDataFlame, "select 1 as ID union all select 2 as ID"
         ) as cursor:
             assert list(cursor.fetch_pandas_batches()) == [expected]
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_inject_pyarrow_response_from_csv(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int64())],
+            schema=pa.schema([pa.field("ID", pa.int64())]),
+        )
+
+        with mock_connection.inject_response_from_csv(
+            PyArrowTable,
+            TEST_DATA_DIR / "simple.csv",
+        ).execute_map(
+            PyArrowTable, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert cursor.fetch_pandas_all().equals(expected)
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_inject_pandas_response_from_csv(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        with mock_connection.inject_response_from_csv(
+            pd.DataFrame,
+            TEST_DATA_DIR / "simple.csv",
+        ).execute_map(
+            pd.DataFrame, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert cursor.fetch_pandas_all().equals(expected)

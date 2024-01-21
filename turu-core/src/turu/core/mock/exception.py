@@ -36,3 +36,12 @@ class TuruMockUnexpectedFetchError(TuruMockError):
     @property
     def message(self) -> str:
         return "Mock fetch is unexpected. use execute_map() or executemany_map() to specify row type."
+
+
+class TuruCsvHeaderOptionRequiredError(TuruError):
+    def __init__(self, row_type: type):
+        self.row_type = row_type
+
+    @property
+    def message(self) -> str:
+        return f'"{self.row_type}" requires header=True when reading from CSV'
