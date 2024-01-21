@@ -29,6 +29,10 @@ class TestRecord:
             ) as cursor:
                 assert cursor.fetchall() == expected
 
+        assert (
+            TEST_RECORD_DIR / "test_record_as_csv_execute_tuple.csv"
+        ).read_text() == ""
+
     def test_record_as_csv_execute_tuple_without_header(
         self, mock_connection: turu.core.mock.MockConnection
     ):
@@ -131,3 +135,10 @@ class TestRecord:
             CustomConnection().cursor(),
         ) as cursor:
             assert cursor.custom_method(1) is None
+
+        assert (
+            TEST_RECORD_DIR.joinpath(
+                "test_record_as_csv_use_custom_method.csv"
+            ).read_text()
+            == ""
+        )

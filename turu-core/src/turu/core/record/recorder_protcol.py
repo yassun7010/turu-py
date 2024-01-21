@@ -2,7 +2,7 @@ from typing import Any, Protocol
 
 
 class RecorderProtcol(Protocol):
-    def write_row(self, row: Any) -> None:
+    def record(self, rows: Any) -> Any:
         ...
 
     def close(self) -> None:

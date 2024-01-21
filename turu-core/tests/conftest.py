@@ -4,12 +4,11 @@ import pytest
 import turu.core.mock
 from typing_extensions import Never
 
-from tests.data.record import TEST_RECORD_DIR
-
 
 def pytest_configure(config):
-    for csv_file in TEST_RECORD_DIR.glob("*.csv"):
-        csv_file.unlink()
+    # for csv_file in TEST_RECORD_DIR.glob("*.csv"):
+    #     csv_file.unlink()
+    pass
 
 
 class MockConnection(turu.core.mock.MockConnection):
