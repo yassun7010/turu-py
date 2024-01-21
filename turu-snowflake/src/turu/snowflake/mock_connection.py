@@ -6,8 +6,8 @@ import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
 import turu.snowflake.mock_cursor
-from turu.core.exception import TuruCsvHeaderOptionRequiredError
 from turu.core.mock.connection import CSVOptions
+from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
 from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Self, Unpack, override
 
@@ -76,20 +76,24 @@ class MockConnection(Connection, turu.core.mock.MockConnection):
             if issubclass(row_type, PandasDataFlame):
                 import pandas
 
-                if options.get("header", True) is False:
-                    raise TuruCsvHeaderOptionRequiredError(row_type)
+                pd_options = {}
+                if not options.get("header", True):
+                    pd_options["header"] = None
 
                 self._turu_mock_store.inject_response(
                     row_type,
-                    cast(Any, pandas.read_csv(filepath, **options)),
+                    pandas.read_csv(filepath, **pd_options),
                 )
 
             elif issubclass(row_type, PyArrowTable):
                 import pyarrow.csv
 
+                if not options.get("header", True):
+                    raise TuruCsvHeaderOptionRequiredError(row_type)
+
                 self._turu_mock_store.inject_response(
                     row_type,
-                    cast(Any, pyarrow.csv.read_csv(filepath, **options)),
+                    cast(Any, pyarrow.csv.read_csv(filepath)),
                 )
 
             else:

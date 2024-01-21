@@ -49,12 +49,3 @@ class TuruUnexpectedFetchError(TuruError):
     @property
     def message(self) -> str:
         return "Fetch is unexpected. use execute_*() to specify row type."
-
-
-class TuruCsvHeaderOptionRequiredError(TuruError):
-    def __init__(self, row_type: type):
-        self.row_type = row_type
-
-    @property
-    def message(self) -> str:
-        return f'"{self.row_type}" requires header=True when reading from CSV'
