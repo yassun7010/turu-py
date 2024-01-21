@@ -2,6 +2,7 @@ from typing import NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.snowflake.features import USE_PANDAS, USE_PYARROW, PyArrowTable
 
 
 class Row(NamedTuple):
@@ -214,3 +215,79 @@ class TestTuruSnowflakeMockAsyncConnection:
             )
         ) as cursor:
             assert await cursor.fetchmany() == expected
+
+    @pytest.mark.skipif(
+        not (USE_PYARROW and USE_PANDAS),
+        reason="pyarrow is not installed",
+    )
+    @pytest.mark.asyncio
+    async def test_fetch_arrow_all(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int8())],
+            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+        )
+
+        mock_async_connection.inject_response(PyArrowTable, expected)
+
+        async with await mock_async_connection.execute_map(
+            PyArrowTable, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert (await cursor.fetch_arrow_all()) == expected
+
+    @pytest.mark.skipif(
+        not (USE_PYARROW and USE_PANDAS),
+        reason="pyarrow is not installed",
+    )
+    @pytest.mark.asyncio
+    async def test_fetch_arrow_batches(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int8())],
+            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+        )
+
+        async with await mock_async_connection.inject_response(
+            PyArrowTable, expected
+        ).execute_map(
+            PyArrowTable, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert list(await cursor.fetch_arrow_batches()) == [expected]
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_fetch_pandas_all(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        mock_async_connection.inject_response(pd.DataFrame, expected)
+
+        async with await mock_async_connection.execute_map(
+            pd.DataFrame, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert (await cursor.fetch_pandas_all()).to_dict() == {"ID": {0: 1, 1: 2}}
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_fetch_pandas_batches(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        async with await mock_async_connection.inject_response(
+            pd.DataFrame, expected
+        ).execute_map(
+            pd.DataFrame, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert list(await cursor.fetch_pandas_batches()) == [expected]

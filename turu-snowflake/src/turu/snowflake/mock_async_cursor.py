@@ -1,7 +1,8 @@
-from typing import Any, Optional, Sequence, Tuple, Type, cast
+from typing import Any, Iterator, Optional, Sequence, Tuple, Type, cast
 
 import turu.core.async_cursor
 import turu.core.mock
+from turu.snowflake.features import PandasDataFlame
 from typing_extensions import Self, Unpack, override
 
 from .async_cursor import AsyncCursor, ExecuteOptions
@@ -71,3 +72,17 @@ class MockAsyncCursor(  # type: ignore
 
     def use_role(self, role: str, /) -> Self:
         return self
+
+    async def fetch_arrow_all(self):
+        return await self.fetchone()
+
+    async def fetch_arrow_batches(self):
+        return iter([await self.fetch_arrow_all()])
+
+    async def fetch_pandas_all(self, **kwargs) -> PandasDataFlame:
+        return cast(PandasDataFlame, await self.fetchone())
+
+    async def fetch_pandas_batches(self, **kwargs) -> Iterator[PandasDataFlame]:
+        """Fetches a single Arrow Table."""
+
+        return iter([await self.fetch_pandas_all(**kwargs)])

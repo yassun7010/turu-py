@@ -234,13 +234,14 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_arrow_all(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = await async_connection.execute(
-            "select 1 as ID union all select 2 as ID"
-        )
+        import pyarrow
 
-        expected = {"ID": {0: 1, 1: 2}}
+        async with await async_connection.execute_map(
+            pyarrow.Table, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            expected = {"ID": {0: 1, 1: 2}}
 
-        assert (await cursor.fetch_arrow_all()).to_pandas().to_dict() == expected  # type: ignore[union-attr]
+            assert (await cursor.fetch_arrow_all()).to_pandas().to_dict() == expected  # type: ignore[union-attr]
 
     @pytest.mark.skipif(
         not (USE_PYARROW and USE_PANDAS),
@@ -250,15 +251,17 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_arrow_batches(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
+        import pyarrow
         from pandas import DataFrame
         from pandas.testing import assert_frame_equal
 
-        cursor = await async_connection.execute(
-            "select 1 as ID union all select 2 as ID"
-        )
-
-        for row in await cursor.fetch_arrow_batches():
-            assert_frame_equal(row.to_pandas(), DataFrame({"ID": [1, 2]}, dtype="int8"))
+        async with await async_connection.execute_map(
+            pyarrow.Table, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            for row in await cursor.fetch_arrow_batches():
+                assert_frame_equal(
+                    row.to_pandas(), DataFrame({"ID": [1, 2]}, dtype="int8")
+                )
 
     @pytest.mark.skipif(
         not USE_PANDAS,
@@ -268,9 +271,12 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_pandas_all(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        cursor = await async_connection.execute("select 1 as ID union all select 2 ID")
+        from pandas import DataFrame
 
-        assert (await cursor.fetch_pandas_all()).to_dict() == {"ID": {0: 1, 1: 2}}
+        async with await async_connection.execute_map(
+            DataFrame, "select 1 as ID union all select 2 ID"
+        ) as cursor:
+            assert (await cursor.fetch_pandas_all()).to_dict() == {"ID": {0: 1, 1: 2}}
 
     @pytest.mark.skipif(
         not USE_PANDAS,
@@ -283,9 +289,8 @@ class TestTuruSnowflakeAsyncConnection:
         from pandas import DataFrame
         from pandas.testing import assert_frame_equal
 
-        cursor = await async_connection.execute(
-            "select 1 as ID union all select 2 AS ID"
-        )
-
-        for df in await cursor.fetch_pandas_batches():
-            assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))
+        async with await async_connection.execute_map(
+            DataFrame, "select 1 as ID union all select 2 AS ID"
+        ) as cursor:
+            for df in await cursor.fetch_pandas_batches():
+                assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))
