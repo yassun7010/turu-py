@@ -2,6 +2,7 @@ from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDi
 
 import turu.core.cursor
 import turu.core.mock
+import turu.snowflake._record
 from turu.snowflake.features import PandasDataFlame
 from typing_extensions import Self, Unpack, override
 
@@ -175,3 +176,7 @@ class Cursor(
         """Fetches a single Arrow Table."""
 
         return self._raw_cursor.fetch_pandas_batches(**kwargs)
+
+    @property
+    def _RecordCursor(self) -> Type["turu.snowflake._record._RecordCursor"]:
+        return turu.snowflake._record._RecordCursor

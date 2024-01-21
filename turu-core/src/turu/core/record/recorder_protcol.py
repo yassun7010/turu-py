@@ -1,8 +1,12 @@
-from typing import Any, Protocol
+from typing import Any, Protocol, TextIO
 
 
 class RecorderProtcol(Protocol):
-    def record(self, rows: Any) -> Any:
+    @property
+    def file(self) -> TextIO:
+        ...
+
+    def record(self, rows: Any) -> None:
         ...
 
     def close(self) -> None:

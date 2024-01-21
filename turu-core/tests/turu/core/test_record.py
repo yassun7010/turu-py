@@ -1,3 +1,4 @@
+from textwrap import dedent
 from typing import Any, Literal
 
 import pytest
@@ -25,13 +26,13 @@ class TestRecord:
         with pytest.raises(TuruRowTypeNotSupportedError):
             with record_as_csv(
                 TEST_RECORD_DIR / "test_record_as_csv_execute_tuple.csv",
-                mock_connection.execute("select 1, 'taro"),
+                mock_connection.execute("select 1 as ID, 'taro' as NAME"),
             ) as cursor:
                 assert cursor.fetchall() == expected
 
         assert (
             TEST_RECORD_DIR / "test_record_as_csv_execute_tuple.csv"
-        ).read_text() == ""
+        ).read_text() == dedent("")
 
     def test_record_as_csv_execute_tuple_without_header(
         self, mock_connection: turu.core.mock.MockConnection
@@ -101,6 +102,19 @@ class TestRecord:
         ) as cursor:
             assert isinstance(cursor, _RecordCursor)
             assert cursor.fetchall() == expected
+
+        assert (
+            TEST_RECORD_DIR / "test_record_as_csv_execute_map_with_enable_options.csv"
+        ).read_text().strip() == dedent(
+            """
+            id,name
+            0,name0
+            1,name1
+            2,name2
+            3,name3
+            4,name4
+            """
+        ).strip()
 
     @pytest.mark.parametrize("enable", ["false", False, None])
     def test_record_as_csv_execute_map_with_disable_options(

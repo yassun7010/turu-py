@@ -140,7 +140,7 @@ def record_as_csv(
         # NOTE: hack to get original cursor type hint.
         cursor = cast(
             GenericCursor,
-            _RecordCursor(
+            getattr(cursor, "_RecordCursor", _RecordCursor)(
                 CsvRecorder(record_filepath, **options),
                 cursor,
             ),
