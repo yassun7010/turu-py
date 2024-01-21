@@ -1,8 +1,12 @@
 import os
+import tempfile
+from pathlib import Path
+from textwrap import dedent
 from typing import NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.core.record import record_as_csv
 from turu.snowflake.features import USE_PANDAS, USE_PYARROW
 
 
@@ -294,3 +298,39 @@ class TestTuruSnowflakeAsyncConnection:
         ) as cursor:
             for df in await cursor.fetch_pandas_batches():
                 assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_record_pandas_dataframe(
+        self, async_connection: turu.snowflake.AsyncConnection
+    ):
+        import pandas as pd
+        from pandas.testing import assert_frame_equal
+
+        with tempfile.NamedTemporaryFile() as file:
+            async with record_as_csv(
+                file.name,
+                await async_connection.execute_map(
+                    pd.DataFrame,
+                    "select 1 as ID union all select 2 AS ID",
+                ),
+            ) as cursor:
+                expected = pd.DataFrame(
+                    {"ID": [1, 2]},
+                    dtype="int8",
+                )
+
+                assert_frame_equal(await cursor.fetch_pandas_all(), expected)
+                for row in expected.values:
+                    print(row)
+
+            assert (
+                Path(file.name).read_text()
+                == dedent(
+                    """
+                    ID
+                    1
+                    2
+                    """
+                ).lstrip()
+            )

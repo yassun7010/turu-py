@@ -5,6 +5,7 @@ from typing import (
     Optional,
     Sequence,
     Type,
+    TypeVar,
 )
 
 from turu.core.cursor import GenericNewRowType, GenericRowType
@@ -91,3 +92,6 @@ class AsyncCursor(Generic[GenericRowType, Parameters], AsyncCursorProtocol[Param
     @override
     async def __aexit__(self, exc_type, exc_value, traceback):
         await self.close()
+
+
+GenericAsyncCursor = TypeVar("GenericAsyncCursor", bound=AsyncCursor)

@@ -104,6 +104,9 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
         self.close()
 
 
+GenericCursor = TypeVar("GenericCursor", bound=Cursor)
+
+
 def map_row(row_type: Optional[Type[GenericRowType]], row: Any) -> GenericRowType:
     if row_type is None:
         return row
