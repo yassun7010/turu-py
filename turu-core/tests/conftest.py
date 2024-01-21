@@ -19,3 +19,13 @@ class MockConnection(turu.core.mock.MockConnection):
 @pytest.fixture
 def mock_connection() -> turu.core.mock.MockConnection:
     return MockConnection()
+
+
+class MockAsyncConnection(turu.core.mock.MockAsyncConnection):
+    async def cursor(self) -> turu.core.mock.MockAsyncCursor[Never, Any]:
+        return turu.core.mock.MockAsyncCursor(self._turu_mock_store)
+
+
+@pytest.fixture
+def mock_async_connection() -> turu.core.mock.MockAsyncConnection:
+    return MockAsyncConnection()
