@@ -1,12 +1,13 @@
 import os
+import tempfile
+from pathlib import Path
+from textwrap import dedent
 from typing import NamedTuple
 
 import pytest
 import turu.snowflake
 from turu.core.record import record_as_csv
 from turu.snowflake.features import USE_PANDAS, USE_PYARROW
-
-from tests.data import TEST_DATA_DIR
 
 
 def test_version():
@@ -191,14 +192,30 @@ class TestTuruSnowflake:
         import pandas as pd
         from pandas.testing import assert_frame_equal
 
-        with record_as_csv(
-            TEST_DATA_DIR / "test.csv",
-            connection.execute_map(
-                pd.DataFrame, "select 1 as ID union all select 2 AS ID"
-            ),
-        ) as cursor:
-            expected = pd.DataFrame({"ID": [1, 2]}, dtype="int8")
+        with tempfile.NamedTemporaryFile() as file:
+            with record_as_csv(
+                file.name,
+                connection.execute_map(
+                    pd.DataFrame,
+                    "select 1 as ID union all select 2 AS ID",
+                ),
+            ) as cursor:
+                expected = pd.DataFrame(
+                    {"ID": [1, 2]},
+                    dtype="int8",
+                )
 
-            assert_frame_equal(cursor.fetch_pandas_all(), expected)
-            for row in expected.values:
-                print(row)
+                assert_frame_equal(cursor.fetch_pandas_all(), expected)
+                for row in expected.values:
+                    print(row)
+
+            assert (
+                Path(file.name).read_text()
+                == dedent(
+                    """
+                    ID
+                    1
+                    2
+                    """
+                ).lstrip()
+            )
