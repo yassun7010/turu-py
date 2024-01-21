@@ -12,8 +12,8 @@ from typing import (
     Union,
 )
 
-from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeMismatchError
+from turu.core.features import USE_PYDANTIC, PydanticModel
 from turu.core.protocols.cursor import CursorProtocol, Parameters
 from turu.core.protocols.dataclass import Dataclass
 from typing_extensions import Self, override

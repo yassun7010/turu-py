@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Union
 
 import turu.core.cursor
-from turu.core._feature_flags import USE_PYDANTIC, PydanticModel
 from turu.core.exception import TuruRowTypeNotSupportedError
+from turu.core.features import USE_PYDANTIC, PydanticModel
 from turu.core.record.recorder_protcol import RecorderProtcol
 from typing_extensions import NotRequired, TypedDict, Unpack
 

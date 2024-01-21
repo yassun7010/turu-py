@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from turu.core.features import _NotSupportFeature
 from typing_extensions import Never, TypeAlias
 
 try:
@@ -18,9 +19,7 @@ try:
 
     USE_PYARROW = True
     if TYPE_CHECKING:
-
-        class PyArrowTable:
-            pass
+        PyArrowTable = _NotSupportFeature
 
     else:
         PyArrowTable = pyarrow.Table
