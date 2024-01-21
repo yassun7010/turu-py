@@ -4,6 +4,8 @@ import pytest
 import turu.snowflake
 from turu.snowflake.features import USE_PANDAS, USE_PYARROW, PyArrowTable
 
+from tests.data import TEST_DATA_DIR
+
 
 class Row(NamedTuple):
     id: int
@@ -291,3 +293,40 @@ class TestTuruSnowflakeMockAsyncConnection:
             pd.DataFrame, "select 1 as ID union all select 2 as ID"
         ) as cursor:
             assert list(await cursor.fetch_pandas_batches()) == [expected]
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_inject_pyarrow_response_from_csv(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pyarrow as pa
+
+        expected = pa.table(
+            data=[pa.array([1, 2], type=pa.int64())],
+            schema=pa.schema([pa.field("ID", pa.int64())]),
+        )
+
+        async with await mock_async_connection.inject_response_from_csv(
+            PyArrowTable,
+            TEST_DATA_DIR / "simple.csv",
+        ).execute_map(
+            PyArrowTable, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert (await cursor.fetch_pandas_all()).equals(expected)
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_inject_pandas_response_from_csv(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        async with await mock_async_connection.inject_response_from_csv(
+            pd.DataFrame,
+            TEST_DATA_DIR / "simple.csv",
+        ).execute_map(
+            pd.DataFrame, "select 1 as ID union all select 2 as ID"
+        ) as cursor:
+            assert (await cursor.fetch_pandas_all()).equals(expected)
