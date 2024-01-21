@@ -3,7 +3,7 @@ from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDi
 
 import turu.core.async_cursor
 import turu.core.mock
-import turu.snowflake.async_record_cursor
+import turu.snowflake.record.async_record_cursor
 from turu.core.cursor import map_row
 from turu.snowflake.features import PandasDataFlame
 from typing_extensions import Self, Unpack, override
@@ -200,4 +200,4 @@ class AsyncCursor(
     def _AsyncRecordCursor(
         self,
     ):
-        return turu.snowflake.async_record_cursor.AsyncRecordCursor
+        return turu.snowflake.record.async_record_cursor.AsyncRecordCursor

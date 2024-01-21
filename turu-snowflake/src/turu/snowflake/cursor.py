@@ -178,6 +178,6 @@ class Cursor(
 
     @property
     def _RecordCursor(self):
-        import turu.snowflake.record_cursor
+        import turu.snowflake.record.record_cursor
 
-        return turu.snowflake.record_cursor.RecordCursor
+        return turu.snowflake.record.record_cursor.RecordCursor
