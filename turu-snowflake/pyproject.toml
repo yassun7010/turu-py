@@ -27,19 +27,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-[tool.poetry.group.dev.dependencies]
-taskipy = "^1.12.2"
-pyright = "^1.1.339"
-ruff = "^0.1.7"
-pytest = "^7.4.3"
-pydantic = "^2.5.2"
-pytest-xdist = "^3.5.0"
-pytest-cov = "^4.1.0"
-pytest-asyncio = "^0.23.2"
-pandas = "^2.1.4"
-pyarrow = "^14.0.2"
-numpy = "^1.26.3"
-
 [tool.poetry.dependencies]
 python = "^3.9"
 typing-extensions = "^4.9.0"
@@ -60,6 +47,19 @@ files = ["pyproject.toml"]
 patterns = [
     "path = \"\\.\\./turu-[\\w-]+\"\ndevelop = true\n# (version = \"())0\\.0\\.0",
 ]
+
+[tool.poetry.group.dev.dependencies]
+taskipy = "^1.12.2"
+pyright = "^1.1.339"
+ruff = "^0.1.7"
+pytest = "^7.4.3"
+pydantic = "^2.5.2"
+pytest-xdist = "^3.5.0"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.23.2"
+pandas = "^2.1.4"
+pyarrow = "^14.0.2"
+numpy = "^1.26.3"
 
 [tool.taskipy.tasks]
 format = "ruff format ."
