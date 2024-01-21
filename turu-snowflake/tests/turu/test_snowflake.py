@@ -3,7 +3,10 @@ from typing import NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.core.record import record_as_csv
 from turu.snowflake.features import USE_PANDAS, USE_PYARROW
+
+from tests.data import TEST_DATA_DIR
 
 
 def test_version():
@@ -182,3 +185,20 @@ class TestTuruSnowflake:
         with connection.execute("select 1 as ID union all select 2 AS ID") as cursor:
             for df in cursor.fetch_pandas_batches():
                 assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_record_pandas_dataframe(self, connection: turu.snowflake.Connection):
+        import pandas as pd
+        from pandas.testing import assert_frame_equal
+
+        with record_as_csv(
+            TEST_DATA_DIR / "test.csv",
+            connection.execute_map(
+                pd.DataFrame, "select 1 as ID union all select 2 AS ID"
+            ),
+        ) as cursor:
+            expected = pd.DataFrame({"ID": [1, 2]}, dtype="int8")
+
+            assert_frame_equal(cursor.fetch_pandas_all(), expected)
+            for row in expected.values:
+                print(row)

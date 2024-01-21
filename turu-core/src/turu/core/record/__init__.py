@@ -88,7 +88,7 @@ class _RecordCursor(
     def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
         row = self._cursor.fetchone()
         if row is not None:
-            self._recorder.write_row(row)
+            self._recorder.record([row])
 
         return row
 
@@ -97,16 +97,14 @@ class _RecordCursor(
     ) -> List[turu.core.cursor.GenericRowType]:
         rows = self._cursor.fetchmany(size)
 
-        for row in rows:
-            self._recorder.write_row(row)
+        self._recorder.record(rows)
 
         return rows
 
     def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
         rows = self._cursor.fetchall()
 
-        for row in rows:
-            self._recorder.write_row(row)
+        self._recorder.record(rows)
 
         return rows
 
@@ -116,7 +114,7 @@ class _RecordCursor(
     def __next__(self) -> turu.core.cursor.GenericRowType:
         row = next(self._cursor)
 
-        self._recorder.write_row(row)
+        self._recorder.record([row])
 
         return row
 
@@ -142,7 +140,7 @@ def record_as_csv(
         # NOTE: hack to get original cursor type hint.
         cursor = cast(
             GenericCursor,
-            _RecordCursor(
+            getattr(cursor, "_RecordCursor", _RecordCursor)(
                 CsvRecorder(record_filepath, **options),
                 cursor,
             ),

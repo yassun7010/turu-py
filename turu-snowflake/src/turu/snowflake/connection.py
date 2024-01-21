@@ -1,12 +1,11 @@
 import os
 from pathlib import Path
-from typing import Any, Optional, Sequence, Tuple, Type, cast
+from typing import Any, Optional, Sequence, Tuple, Type
 
 import turu.core.connection
 import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
-from turu.snowflake.mock_cursor import MockCursor
 from typing_extensions import Never, Unpack, override
 
 import snowflake.connector
@@ -62,15 +61,12 @@ class Connection(turu.core.connection.Connection):
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> MockCursor[turu.core.cursor.GenericNewRowType]:
-        return cast(
-            MockCursor,
-            self.cursor().execute_map(
-                row_type,
-                operation,
-                parameters,
-                **options,
-            ),
+    ) -> Cursor[turu.core.cursor.GenericNewRowType]:
+        return self.cursor().execute_map(
+            row_type,
+            operation,
+            parameters,
+            **options,
         )
 
     @override
@@ -82,11 +78,8 @@ class Connection(turu.core.connection.Connection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> Cursor[turu.core.cursor.GenericNewRowType]:
-        return cast(
-            MockCursor,
-            self.cursor().executemany_map(
-                row_type, operation, seq_of_parameters, **options
-            ),
+        return self.cursor().executemany_map(
+            row_type, operation, seq_of_parameters, **options
         )
 
 
