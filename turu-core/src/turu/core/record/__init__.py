@@ -1,146 +1,82 @@
-import contextlib
+from contextlib import _AsyncGeneratorContextManager, _GeneratorContextManager
 from pathlib import Path
 from typing import (
+    AsyncGenerator,
     Generator,
-    List,
-    Optional,
-    Sequence,
-    Type,
-    TypeVar,
     Union,
     cast,
+    overload,
 )
 
+import turu.core.async_cursor
 import turu.core.cursor
-from turu.core.protocols.cursor import Parameters
+from turu.core.record.async_record_cursor import AsyncRecordCursor
 from turu.core.record.csv_recorder import CsvRecorder, CsvRecorderOptions
-from turu.core.record.recorder_protcol import RecorderProtcol
+from turu.core.record.record_cursor import RecordCursor
 from typing_extensions import Unpack
 
-GenericCursor = TypeVar("GenericCursor", bound=turu.core.cursor.Cursor)
 
-
-class _RecordCursor(
-    turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameters]
-):
-    def __init__(
-        self,
-        recorder: RecorderProtcol,
-        cursor: turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameters],
-    ):
-        self._recorder = recorder
-        self._cursor: turu.core.cursor.Cursor = cursor
-
-    @property
-    def rowcount(self) -> int:
-        return self._cursor.rowcount
-
-    @property
-    def arraysize(self) -> int:
-        return self._cursor.arraysize
-
-    @arraysize.setter
-    def arraysize(self, size: int) -> None:
-        self._cursor.arraysize = size
-
-    def close(self) -> None:
-        self._cursor.close()
-        self._recorder.close()
-
-    def execute(
-        self, operation: str, parameters: Optional[Parameters] = None, /
-    ) -> "_RecordCursor[turu.core.cursor.GenericRowType, Parameters]":
-        self._cursor = self._cursor.execute(operation, parameters)
-
-        return self
-
-    def executemany(
-        self, operation: str, seq_of_parameters: "Sequence[Parameters]", /
-    ) -> "_RecordCursor[turu.core.cursor.GenericRowType, Parameters]":
-        self._cursor = self._cursor.executemany(operation, seq_of_parameters)
-
-        return self
-
-    def execute_map(
-        self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
-        operation: str,
-        parameters: Optional[Parameters] = None,
-        /,
-    ) -> "_RecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
-        self._cursor = self._cursor.execute_map(row_type, operation, parameters)
-
-        return cast(_RecordCursor, self)
-
-    def executemany_map(
-        self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
-        operation: str,
-        seq_of_parameters: Sequence[Parameters],
-        /,
-    ) -> "_RecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
-        self._cursor = self._cursor.executemany_map(
-            row_type, operation, seq_of_parameters
-        )
-
-        return cast(_RecordCursor, self)
-
-    def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
-        row = self._cursor.fetchone()
-        if row is not None:
-            self._recorder.record([row])
-
-        return row
-
-    def fetchmany(
-        self, size: Optional[int] = None
-    ) -> List[turu.core.cursor.GenericRowType]:
-        rows = self._cursor.fetchmany(size)
-
-        self._recorder.record(rows)
-
-        return rows
-
-    def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
-        rows = self._cursor.fetchall()
-
-        self._recorder.record(rows)
-
-        return rows
-
-    def __iter__(self) -> "_RecordCursor[turu.core.cursor.GenericRowType, Parameters]":
-        return self
-
-    def __next__(self) -> turu.core.cursor.GenericRowType:
-        row = next(self._cursor)
-
-        self._recorder.record([row])
-
-        return row
-
-    def __getattr__(self, name):
-        def _method_missing(*args):
-            return args
-
-        return getattr(self._cursor, name, _method_missing)
-
-
-@contextlib.contextmanager
+@overload
 def record_as_csv(
     record_filepath: Union[str, Path],
-    cursor: GenericCursor,
+    cursor: turu.core.cursor.GenericCursor,
     *,
     enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
-) -> Generator[GenericCursor, None, None]:
+) -> "_GeneratorContextManager[turu.core.cursor.GenericCursor]":
+    ...
+
+
+@overload
+def record_as_csv(
+    record_filepath: Union[str, Path],
+    cursor: turu.core.async_cursor.GenericAsyncCursor,
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+) -> _AsyncGeneratorContextManager[turu.core.async_cursor.GenericAsyncCursor]:
+    ...
+
+
+def record_as_csv(  # type: ignore
+    record_filepath: Union[str, Path],
+    cursor: Union[
+        turu.core.cursor.GenericCursor, turu.core.async_cursor.GenericAsyncCursor
+    ],
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+):
+    if isinstance(cursor, turu.core.cursor.Cursor):
+        return _GeneratorContextManager(
+            _record_as_csv, (record_filepath, cursor), dict(enable=enable, **options)
+        )
+
+    elif isinstance(cursor, turu.core.async_cursor.AsyncCursor):
+        return _AsyncGeneratorContextManager(
+            _record_as_csv_async,
+            (record_filepath, cursor),
+            dict(enable=enable, **options),
+        )
+
+    raise NotImplementedError(f"cursor type {type(cursor)} is not supported")
+
+
+def _record_as_csv(
+    record_filepath: Union[str, Path],
+    cursor: turu.core.cursor.GenericCursor,
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+) -> Generator[turu.core.cursor.GenericCursor, None, None]:
     if isinstance(enable, str):
         enable = enable.lower() == "true"
 
     if enable:
         # NOTE: hack to get original cursor type hint.
         cursor = cast(
-            GenericCursor,
-            getattr(cursor, "_RecordCursor", _RecordCursor)(
+            turu.core.cursor.GenericCursor,
+            getattr(cursor, "_RecordCursor", RecordCursor)(
                 CsvRecorder(record_filepath, **options),
                 cursor,
             ),
@@ -151,3 +87,30 @@ def record_as_csv(
 
     finally:
         cursor.close()
+
+
+async def _record_as_csv_async(
+    record_filepath: Union[str, Path],
+    cursor: turu.core.async_cursor.GenericAsyncCursor,
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+) -> AsyncGenerator[turu.core.async_cursor.GenericAsyncCursor, None]:
+    if isinstance(enable, str):
+        enable = enable.lower() == "true"
+
+    if enable:
+        # NOTE: hack to get original cursor type hint.
+        cursor = cast(
+            turu.core.async_cursor.GenericAsyncCursor,
+            getattr(cursor, "_AsyncRecordCursor", AsyncRecordCursor)(
+                CsvRecorder(record_filepath, **options),
+                cursor,
+            ),
+        )
+
+    try:
+        yield cursor
+
+    finally:
+        await cursor.close()

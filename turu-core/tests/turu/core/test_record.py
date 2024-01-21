@@ -7,7 +7,7 @@ import pytest
 import turu.core.mock
 from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
-from turu.core.record import _RecordCursor, record_as_csv
+from turu.core.record import RecordCursor, record_as_csv
 from typing_extensions import Never
 
 
@@ -155,7 +155,7 @@ class TestRecord:
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
                 enable=enable,
             ) as cursor:
-                assert isinstance(cursor, _RecordCursor)
+                assert isinstance(cursor, RecordCursor)
                 assert cursor.fetchall() == expected
 
             assert (
@@ -187,7 +187,7 @@ class TestRecord:
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
                 enable=enable,
             ) as cursor:
-                assert not isinstance(cursor, _RecordCursor)
+                assert not isinstance(cursor, RecordCursor)
 
             assert Path(file.name).read_text() == ""
 
