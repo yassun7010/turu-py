@@ -13,11 +13,11 @@ import turu.core.cursor
 from turu.core.record.async_record_cursor import AsyncRecordCursor
 from turu.core.record.csv_recorder import CsvRecorder, CsvRecorderOptions
 from turu.core.record.record_cursor import RecordCursor
-from typing_extensions import Unpack
+from typing_extensions import Unpack, deprecated
 
 
 @overload
-def record_as_csv(
+def record_to_csv(
     record_filepath: Union[str, Path],
     cursor: turu.core.cursor.GenericCursor,
     *,
@@ -28,7 +28,7 @@ def record_as_csv(
 
 
 @overload
-def record_as_csv(
+def record_to_csv(
     record_filepath: Union[str, Path],
     cursor: turu.core.async_cursor.GenericAsyncCursor,
     *,
@@ -38,7 +38,7 @@ def record_as_csv(
     ...
 
 
-def record_as_csv(  # type: ignore
+def record_to_csv(  # type: ignore
     record_filepath: Union[str, Path],
     cursor: Union[
         turu.core.cursor.GenericCursor, turu.core.async_cursor.GenericAsyncCursor
@@ -57,12 +57,12 @@ def record_as_csv(  # type: ignore
     """
     if isinstance(cursor, turu.core.cursor.Cursor):
         return _GeneratorContextManager(
-            _record_as_csv, (record_filepath, cursor), dict(enable=enable, **options)
+            _record_to_csv, (record_filepath, cursor), dict(enable=enable, **options)
         )
 
     elif isinstance(cursor, turu.core.async_cursor.AsyncCursor):
         return _AsyncGeneratorContextManager(
-            _record_as_csv_async,
+            _record_to_csv_async,
             (record_filepath, cursor),
             dict(enable=enable, **options),
         )
@@ -70,7 +70,7 @@ def record_as_csv(  # type: ignore
     raise NotImplementedError(f"cursor type {type(cursor)} is not supported")
 
 
-def _record_as_csv(
+def _record_to_csv(
     record_filepath: Union[str, Path],
     cursor: turu.core.cursor.GenericCursor,
     *,
@@ -97,7 +97,7 @@ def _record_as_csv(
         cursor.close()
 
 
-async def _record_as_csv_async(
+async def _record_to_csv_async(
     record_filepath: Union[str, Path],
     cursor: turu.core.async_cursor.GenericAsyncCursor,
     *,
@@ -122,3 +122,40 @@ async def _record_as_csv_async(
 
     finally:
         await cursor.close()
+
+
+@overload
+def record_as_csv(
+    record_filepath: Union[str, Path],
+    cursor: turu.core.cursor.GenericCursor,
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+) -> "_GeneratorContextManager[turu.core.cursor.GenericCursor]":
+    ...
+
+
+@overload
+def record_as_csv(
+    record_filepath: Union[str, Path],
+    cursor: turu.core.async_cursor.GenericAsyncCursor,
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+) -> _AsyncGeneratorContextManager[turu.core.async_cursor.GenericAsyncCursor]:
+    ...
+
+
+@deprecated(
+    "This function is deprecated. Use `record_to_csv` instead.",
+)
+def record_as_csv(  # type: ignore
+    record_filepath: Union[str, Path],
+    cursor: Union[
+        turu.core.cursor.GenericCursor, turu.core.async_cursor.GenericAsyncCursor
+    ],
+    *,
+    enable: Union[str, bool, None] = True,
+    **options: Unpack[CsvRecorderOptions],
+):
+    return record_to_csv(record_filepath, cursor, enable=enable, **options)

@@ -7,7 +7,7 @@ import pytest
 import turu.core.mock
 from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
-from turu.core.record import RecordCursor, record_as_csv
+from turu.core.record import RecordCursor, record_to_csv
 from typing_extensions import Never
 
 
@@ -17,7 +17,7 @@ class RowPydantic(BaseModel):
 
 
 class TestRecord:
-    def test_record_as_csv_execute_tuple(
+    def test_record_to_csv_execute_tuple(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [(i, f"name{i}") for i in range(5)]
@@ -25,7 +25,7 @@ class TestRecord:
 
         with tempfile.NamedTemporaryFile() as file:
             with pytest.raises(TuruRowTypeNotSupportedError):
-                with record_as_csv(
+                with record_to_csv(
                     file.name,
                     mock_connection.execute("select 1 as ID, 'taro' as NAME"),
                 ) as cursor:
@@ -33,14 +33,14 @@ class TestRecord:
 
             assert Path(file.name).read_text() == ""
 
-    def test_record_as_csv_execute_tuple_without_header(
+    def test_record_to_csv_execute_tuple_without_header(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [(i, f"name{i}") for i in range(5)]
         mock_connection.inject_response(None, expected)
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 mock_connection.execute("select 1, 'taro"),
                 header=False,
@@ -60,14 +60,14 @@ class TestRecord:
                 ).lstrip()
             )
 
-    def test_record_as_csv_execute_map(
+    def test_record_to_csv_execute_map(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
         mock_connection.inject_response(RowPydantic, expected)
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
             ) as cursor:
@@ -87,14 +87,14 @@ class TestRecord:
                 ).lstrip()
             )
 
-    def test_record_as_csv_execute_map_without_header_options(
+    def test_record_to_csv_execute_map_without_header_options(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
         mock_connection.inject_response(RowPydantic, expected)
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
                 header=False,
@@ -114,14 +114,14 @@ class TestRecord:
                 ).lstrip()
             )
 
-    def test_record_as_csv_execute_map_with_limit_options(
+    def test_record_to_csv_execute_map_with_limit_options(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
         mock_connection.inject_response(RowPydantic, expected)
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
                 limit=3,
@@ -141,7 +141,7 @@ class TestRecord:
             )
 
     @pytest.mark.parametrize("enable", ["true", True])
-    def test_record_as_csv_execute_map_with_enable_options(
+    def test_record_to_csv_execute_map_with_enable_options(
         self,
         mock_connection: turu.core.mock.MockConnection,
         enable: Literal["true", True],
@@ -150,7 +150,7 @@ class TestRecord:
         mock_connection.inject_response(RowPydantic, expected)
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
                 enable=enable,
@@ -173,7 +173,7 @@ class TestRecord:
             )
 
     @pytest.mark.parametrize("enable", ["false", False, None])
-    def test_record_as_csv_execute_map_with_disable_options(
+    def test_record_to_csv_execute_map_with_disable_options(
         self,
         mock_connection: turu.core.mock.MockConnection,
         enable: Literal["false", False, None],
@@ -182,7 +182,7 @@ class TestRecord:
         mock_connection.inject_response(RowPydantic, expected)
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 mock_connection.execute_map(RowPydantic, "select 1, 'name"),
                 enable=enable,
@@ -191,7 +191,7 @@ class TestRecord:
 
             assert Path(file.name).read_text() == ""
 
-    def test_record_as_csv_use_custom_method(self):
+    def test_record_to_csv_use_custom_method(self):
         class CustomCursor(turu.core.mock.MockCursor[Never, Any]):
             def custom_method(self, value: int) -> None:
                 pass
@@ -204,7 +204,7 @@ class TestRecord:
                 pass
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 CustomConnection().cursor(),
             ) as cursor:
