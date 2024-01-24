@@ -41,8 +41,13 @@ RecordRowsMap: Dict[str, Callable[[Any], Iterable[Iterable[str]]]] = {
 
 
 class CsvRecorderOptions(TypedDict):
+    """Options for CSV recorder."""
+
     header: NotRequired[bool]
+    """Whether to write header or not."""
+
     limit: NotRequired[int]
+    """Limit of rows to write."""
 
 
 class CsvRecorder(RecorderProtcol):

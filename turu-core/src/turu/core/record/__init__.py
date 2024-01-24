@@ -47,6 +47,14 @@ def record_as_csv(  # type: ignore
     enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
 ):
+    """Records cursor's fetched data to CSV.
+
+    Parameters:
+        record_filepath: Path to record file.
+        cursor: Cursor to record.
+        enable: Enable recording.
+        options: Options for CSV recorder.
+    """
     if isinstance(cursor, turu.core.cursor.Cursor):
         return _GeneratorContextManager(
             _record_as_csv, (record_filepath, cursor), dict(enable=enable, **options)
