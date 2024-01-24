@@ -47,7 +47,7 @@ site_url: https://yassun7010.github.io/turu-py/
 edit_uri: edit/main/docs/
 plugins:
   - search
-  - inline-svg
+  - inline-svg:
   - exclude:
       glob:
         - "**/.pytest_cache/*"
