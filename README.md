@@ -109,14 +109,14 @@ Your Production Code
 import os
 
 import turu.sqlite3
-from turu.core.record import record_as_csv
+from turu.core.record import record_to_csv
 
 from your_package.data import RECORD_DIR
 from your_package.schema import Row
 
 
 def do_something(connection: turu.sqlite3.Connection):
-    with record_as_csv(
+    with record_to_csv(
         RECORD_DIR / "test.csv",
         connection.execute_map(Row, "select 1, 'a'"),
         enable=os.environ.get("ENABLE_RECORDING"),

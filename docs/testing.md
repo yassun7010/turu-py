@@ -41,7 +41,7 @@ def test_do_something():
 
 ## Recording & Testing
 
-In the production code, the actual rows can be recorded to a csv file using the `record_as_csv` method.
+In the production code, the actual rows can be recorded to a csv file using the `record_to_csv` method.
 
 Recording on/off can be controlled with the `enable` option (default is `True`).
 
