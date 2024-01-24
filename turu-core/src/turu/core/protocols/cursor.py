@@ -8,8 +8,7 @@ Parameters = TypeVar("Parameters", contravariant=True)
 class CursorProtocol(Generic[Parameters], Protocol):
     @property
     def rowcount(self) -> int:
-        """
-        the number of rows that the last `.execute*()` produced (for DQL statements like )
+        """The number of rows that the last `.execute*()` produced (for DQL statements like )
         or affected (for DML statements like or ).
 
         The attribute is `-1` in case no `.execute*()` has been performed
@@ -19,8 +18,7 @@ class CursorProtocol(Generic[Parameters], Protocol):
 
     @property
     def arraysize(self) -> int:
-        """
-        the number of rows to fetch at a time with `.fetchmany()`.
+        """The number of rows to fetch at a time with `.fetchmany()`.
 
         It defaults to 1 meaning to fetch a single row at a time.
         """
@@ -36,8 +34,7 @@ class CursorProtocol(Generic[Parameters], Protocol):
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> Self:
-        """
-        Prepare and execute a database operation (query or command).
+        """Prepare and execute a database operation (query or command).
 
         Parameters:
             operation: A database operation (query or command).
@@ -68,8 +65,7 @@ class CursorProtocol(Generic[Parameters], Protocol):
         ...
 
     def fetchmany(self, size: Optional[int] = None) -> List[Any]:
-        """
-        Fetch the next set of rows of a query result.
+        """Fetch the next set of rows of a query result.
 
         An empty sequence is returned when no more rows are available.
 

@@ -34,8 +34,7 @@ class Connection(ConnectionProtocol):
         parameters: Optional[Parameters] = None,
         /,
     ) -> turu.core.cursor.Cursor[Tuple[Any], Parameters]:
-        """
-        Prepare and execute a database operation (query or command).
+        """Prepare and execute a database operation (query or command).
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
         but is simply a convenient shortcut to `.cursor().execute()`.
@@ -47,6 +46,7 @@ class Connection(ConnectionProtocol):
         Returns:
             A cursor that holds a reference to an operation.
         """
+
         return self.cursor().execute(operation, parameters)
 
     def executemany(
