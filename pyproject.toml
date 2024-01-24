@@ -93,6 +93,9 @@ mkdocs = "^1.5.3"
 mkdocs-material = { extras = ["imaging"], version = "^9.5.3" }
 mkdocs-plugin-inline-svg = "^0.1.0"
 mkdocs-exclude = "^1.0.2"
+mkdocstrings = {extras = ["python"], version = "^0.24.0"}
+griffe = "^0.39.1"
+griffe-inherited-docstrings = "^1.0.0"
 
 [tool.poetry-dynamic-versioning]
 enable = false

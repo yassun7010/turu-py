@@ -1,4 +1,14 @@
-from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDict, cast
+from typing import (
+    Any,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypedDict,
+    cast,
+)
 
 import turu.core.cursor
 import turu.core.mock
@@ -13,6 +23,7 @@ class ExecuteOptions(TypedDict, total=False):
     """timeout[sec]"""
 
     num_statements: int
+    """number of statements"""
 
 
 class Cursor(
