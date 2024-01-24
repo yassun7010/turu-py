@@ -28,5 +28,5 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
       - run: poetry --version
-      - run: poetry install --no-interaction --with docs
+      - run: poetry install --no-interaction --all-extras --with docs
       - run: mkdocs gh-deploy --force
