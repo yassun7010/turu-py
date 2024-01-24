@@ -6,7 +6,7 @@ from typing import NamedTuple
 
 import pytest
 import turu.snowflake
-from turu.core.record import record_as_csv
+from turu.core.record import record_to_csv
 from turu.snowflake.features import USE_PANDAS, USE_PYARROW
 
 
@@ -193,7 +193,7 @@ class TestTuruSnowflake:
         from pandas.testing import assert_frame_equal
 
         with tempfile.NamedTemporaryFile() as file:
-            with record_as_csv(
+            with record_to_csv(
                 file.name,
                 connection.execute_map(
                     pd.DataFrame,

@@ -2,7 +2,7 @@ import os
 
 import turu.sqlite3
 from pydantic import BaseModel
-from turu.core.record import record_as_csv
+from turu.core.record import record_to_csv
 
 
 class Row(BaseModel):
@@ -12,7 +12,7 @@ class Row(BaseModel):
 
 # Production code
 def do_something(connection: turu.sqlite3.Connection):
-    with record_as_csv(
+    with record_to_csv(
         "test.csv",
         connection.execute_map(Row, "select 1, 'a'"),
         enable=os.environ.get("ENABLE_RECORDING"),

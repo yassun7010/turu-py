@@ -1,6 +1,6 @@
 import turu.sqlite3
 from pydantic import BaseModel
-from turu.core.record import record_as_csv
+from turu.core.record import record_to_csv
 
 from tests.data.records import TEST_RECORD_DIR
 
@@ -101,7 +101,7 @@ class TestTuruSqlite3:
         csv_file = TEST_RECORD_DIR / "test_recording_and_testing.csv"
 
         def do_something(connection: turu.sqlite3.Connection):
-            with record_as_csv(
+            with record_to_csv(
                 csv_file, connection.execute_map(Row, "select 1, 'taro'")
             ) as cursor:
                 assert cursor.fetchall() == [Row(id=1, name="taro")]
