@@ -8,7 +8,7 @@ import turu.core.mock
 from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
 from turu.core.record import RecordCursor, record_to_csv
-from typing_extensions import Never
+from typing_extensions import Never, Self
 
 
 class RowPydantic(BaseModel):
@@ -197,6 +197,14 @@ class TestRecord:
                 pass
 
         class CustomConnection(turu.core.mock.MockConnection):
+            @classmethod
+            def connect(cls) -> Self:
+                return cls()
+
+            @classmethod
+            def connect_from_env(cls) -> Self:
+                return cls.connect()
+
             def cursor(self) -> CustomCursor:
                 return CustomCursor(self._turu_mock_store)
 

@@ -9,6 +9,18 @@ from typing_extensions import Never, override
 
 class Connection(ConnectionProtocol):
     @abstractmethod
+    @classmethod
+    def connect(cls, **kwargs: Any) -> "Connection":
+        """Connect to a database."""
+        ...
+
+    @abstractmethod
+    @classmethod
+    def connect_from_env(cls, **kwargs: Any) -> "Connection":
+        """Connect to a database using environment variables."""
+        ...
+
+    @abstractmethod
     @override
     def close(self) -> None:
         ...

@@ -27,6 +27,14 @@ class MockConnection(turu.core.connection.Connection):
     def __init__(self, store: Optional[TuruMockStore] = None):
         self._turu_mock_store = store or TuruMockStore()
 
+    @classmethod
+    def connect(cls, **kwargs: Any):
+        return cls()
+
+    @classmethod
+    def connect_from_env(cls, **kwargs: Any):
+        return cls()
+
     def chain(self) -> Self:
         """this method is just for code formatting by black."""
 
