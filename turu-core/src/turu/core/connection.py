@@ -4,19 +4,19 @@ from typing import Any, Optional, Sequence, Tuple, Type
 import turu.core.cursor
 from turu.core.protocols.connection import ConnectionProtocol
 from turu.core.protocols.cursor import Parameters
-from typing_extensions import Never, override
+from typing_extensions import Never, Self, override
 
 
 class Connection(ConnectionProtocol):
-    @abstractmethod
     @classmethod
-    def connect(cls, **kwargs: Any) -> "Connection":
+    @abstractmethod
+    def connect(cls, *args: Any, **kwargs: Any) -> Self:
         """Connect to a database."""
         ...
 
-    @abstractmethod
     @classmethod
-    def connect_from_env(cls, **kwargs: Any) -> "Connection":
+    @abstractmethod
+    def connect_from_env(cls, *args: Any, **kwargs: Any) -> Self:
         """Connect to a database using environment variables."""
         ...
 

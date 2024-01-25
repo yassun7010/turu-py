@@ -19,7 +19,7 @@ class Connection(turu.core.connection.Connection):
 
     @override
     @classmethod
-    def connect(
+    def connect(  # type: ignore[override]
         cls,
         connection_name: Optional[str] = None,
         connections_file_path: Optional[Path] = None,
@@ -31,7 +31,7 @@ class Connection(turu.core.connection.Connection):
         warehouse: Optional[str] = None,
         role: Optional[str] = None,
         **kwargs,
-    ) -> "Self":
+    ) -> Self:
         return cls(
             snowflake.connector.SnowflakeConnection(
                 connection_name,
@@ -49,7 +49,7 @@ class Connection(turu.core.connection.Connection):
 
     @override
     @classmethod
-    def connect_from_env(
+    def connect_from_env(  # type: ignore[override]
         cls,
         connection_name: Optional[str] = None,
         connections_file_path: Optional[Path] = None,
@@ -60,10 +60,14 @@ class Connection(turu.core.connection.Connection):
         schema_envname: str = "SNOWFLAKE_SCHEMA",
         warehouse_envname: str = "SNOWFLAKE_WAREHOUSE",
         role_envname: str = "SNOWFLAKE_ROLE",
+        authenticator_envname: str = "SNOWFLAKE_AUTHENTICATOR",
         **kwargs: Any,
     ) -> Self:
         if (
-            authenticator := os.environ.get("SNOWFLAKE_AUTHENTICATOR")
+            authenticator := os.environ.get(
+                authenticator_envname,
+                kwargs.get("authenticator"),
+            )
         ) and "authenticator" not in kwargs:
             kwargs["authenticator"] = authenticator
 

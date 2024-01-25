@@ -28,11 +28,11 @@ class MockConnection(turu.core.connection.Connection):
         self._turu_mock_store = store or TuruMockStore()
 
     @classmethod
-    def connect(cls, **kwargs: Any):
+    def connect(cls, *args: Any, **kwargs: Any) -> Self:
         return cls()
 
     @classmethod
-    def connect_from_env(cls, **kwargs: Any):
+    def connect_from_env(cls, *args: Any, **kwargs: Any) -> Self:
         return cls()
 
     def chain(self) -> Self:

@@ -198,11 +198,11 @@ class TestRecord:
 
         class CustomConnection(turu.core.mock.MockConnection):
             @classmethod
-            def connect(cls) -> Self:
+            def connect(cls, *args, **kwargs) -> Self:
                 return cls()
 
             @classmethod
-            def connect_from_env(cls) -> Self:
+            def connect_from_env(cls, *args, **kwargs) -> Self:
                 return cls.connect()
 
             def cursor(self) -> CustomCursor:

@@ -1,6 +1,6 @@
 import importlib.metadata
 
-from .connection import Connection, connect
+from .connection import Connection
 from .cursor import Cursor
 from .mock_connection import MockConnection
 from .mock_cursor import MockCursor
@@ -14,3 +14,5 @@ __all__ = [
     "MockConnection",
     "MockCursor",
 ]
+
+connect = Connection.connect

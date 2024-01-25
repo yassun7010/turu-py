@@ -4,10 +4,22 @@ from typing import Any, Optional, Sequence, Tuple, Type
 import turu.core.async_cursor
 from turu.core.protocols.async_connection import AsyncConnectionProtocol
 from turu.core.protocols.async_cursor import Parameters
-from typing_extensions import Never
+from typing_extensions import Never, Self
 
 
 class AsyncConnection(AsyncConnectionProtocol):
+    @classmethod
+    @abstractmethod
+    async def connect(cls, *args: Any, **kwargs: Any) -> Self:
+        """Connect to a database."""
+        ...
+
+    @classmethod
+    @abstractmethod
+    async def connect_from_env(cls, *args: Any, **kwargs: Any) -> Self:
+        """Connect to a database using environment variables."""
+        ...
+
     @abstractmethod
     async def close(self) -> None:
         ...
