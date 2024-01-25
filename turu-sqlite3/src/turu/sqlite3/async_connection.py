@@ -17,7 +17,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
 
     @override
     @classmethod
-    async def connect(
+    async def connect(  # type: ignore[override]
         cls,
         database: Union[str, Path],
         *,

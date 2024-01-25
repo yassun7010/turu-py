@@ -15,7 +15,7 @@ class Connection(turu.core.connection.Connection):
 
     @override
     @classmethod
-    def connect(
+    def connect(  # type: ignore[override]
         cls,
         database: Union[str, bytes],
         **kwargs: Unpack["_ConnectArgs"],
