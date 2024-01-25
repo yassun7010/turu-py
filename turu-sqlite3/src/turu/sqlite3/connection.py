@@ -1,10 +1,10 @@
 import sqlite3
-from typing import Optional, Type, Union
+from typing import Any, Optional, Type, Union
 
 import turu.core.connection
 import turu.core.mock
 import turu.sqlite3.cursor
-from typing_extensions import Never, NotRequired, TypedDict, Unpack, override
+from typing_extensions import Never, NotRequired, Self, TypedDict, Unpack, override
 
 from .cursor import Cursor
 
@@ -12,6 +12,20 @@ from .cursor import Cursor
 class Connection(turu.core.connection.Connection):
     def __init__(self, connection: sqlite3.Connection):
         self._raw_connection = connection
+
+    @override
+    @classmethod
+    def connect(  # type: ignore[override]
+        cls,
+        database: Union[str, bytes],
+        **kwargs: Unpack["_ConnectArgs"],
+    ) -> Self:
+        return cls(sqlite3.Connection(database, **kwargs))
+
+    @override
+    @classmethod
+    def connect_from_env(cls, *args: Any, **kwargs: Any) -> Self:
+        return cls.connect(*args, **kwargs)
 
     @override
     def close(self) -> None:
@@ -38,10 +52,3 @@ class _ConnectArgs(TypedDict):
     factory: NotRequired[Optional[Type[sqlite3.Connection]]]
     cached_statements: NotRequired[int]
     uri: NotRequired[bool]
-
-
-def connect(
-    database: Union[str, bytes],
-    **kwargs: Unpack[_ConnectArgs],
-) -> Connection:
-    return Connection(sqlite3.Connection(database, **kwargs))

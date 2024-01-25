@@ -14,7 +14,7 @@ from typing_extensions import Never, Self, Unpack, override
 from .connection import Connection
 
 
-class MockConnection(Connection, turu.core.mock.MockConnection):
+class MockConnection(turu.core.mock.MockConnection, Connection):
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockConnection.__init__(self)
 

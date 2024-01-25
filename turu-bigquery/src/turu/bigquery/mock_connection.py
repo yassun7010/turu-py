@@ -7,7 +7,7 @@ from .connection import Connection
 from .mock_cursor import MockCursor
 
 
-class MockConnection(Connection, turu.core.mock.MockConnection):
+class MockConnection(turu.core.mock.MockConnection, Connection):
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockConnection.__init__(self)
 
