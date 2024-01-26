@@ -47,6 +47,7 @@ site_url: https://yassun7010.github.io/turu-py/
 edit_uri: edit/main/docs/
 plugins:
   - search
+  - awesome-pages:
   - inline-svg:
   - exclude:
       glob:
@@ -82,3 +83,10 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+nav:
+  - ...
+  - Database Adapter:
+      - ... | flat | adapters/*.md
+  - API Documentation:
+      - api/turu-core.md
+      - ... | flat | api/turu-*.md
