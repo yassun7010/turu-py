@@ -54,6 +54,17 @@ class AsyncCursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[Tuple[Any]]":
+        """Prepare and execute a database operation (query or command).
+
+        Parameters:
+            operation: A database operation (query or command).
+            parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         await self._execute_async(operation, parameters, **options)
         self._row_type = None
 
@@ -67,7 +78,21 @@ class AsyncCursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[Tuple[Any]]":
-        """CAUTION: executemany does not support async. Actually, this is sync."""
+        """Prepare a database operation (query or command)
+        and then execute it against all parameter sequences or mappings.
+
+        Caution:
+            executemany does not support async. Actually, this is sync.
+
+        Parameters:
+            operation: A database operation (query or command).
+            seq_of_parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
         self._row_type = None
 
@@ -82,6 +107,19 @@ class AsyncCursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
+        """
+        Execute a database operation (query or command) and map each row to a `row_type`.
+
+        Parameters:
+            row_type: The type of the row that will be returned.
+            operation: A database operation (query or command).
+            parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.execute(operation, parameters, **options)
         self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
@@ -96,7 +134,20 @@ class AsyncCursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
-        """CAUTION: executemany does not support async. Actually, this is sync."""
+        """Execute a database operation (query or command) against all parameter sequences or mappings.
+
+        Caution:
+            executemany does not support async. Actually, this is sync.
+
+        Parameters:
+            operation: A database operation (query or command).
+            seq_of_parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
         self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
@@ -130,18 +181,22 @@ class AsyncCursor(
         return [map_row(self._row_type, row) for row in self._raw_cursor.fetchall()]
 
     async def fetch_arrow_all(self):
+        """Fetches a single Arrow Table."""
+
         return self._raw_cursor.fetch_arrow_all()
 
     async def fetch_arrow_batches(self):
+        """Fetches Arrow Tables in batches, where 'batch' refers to Snowflake Chunk."""
+
         return self._raw_cursor.fetch_arrow_batches()
 
     async def fetch_pandas_all(self, **kwargs) -> PandasDataFlame:
-        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
+        """Fetch Pandas dataframes."""
 
         return self._raw_cursor.fetch_pandas_all(**kwargs)
 
     async def fetch_pandas_batches(self, **kwargs) -> Iterator[PandasDataFlame]:
-        """Fetches a single Arrow Table."""
+        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
         return self._raw_cursor.fetch_pandas_batches(**kwargs)
 
@@ -159,21 +214,29 @@ class AsyncCursor(
             return next_row  # type: ignore[return-value]
 
     def use_warehouse(self, warehouse: str, /) -> Self:
+        """Use a warehouse in cursor."""
+
         self._raw_cursor.execute(f"use warehouse {warehouse}")
 
         return self
 
     def use_database(self, database: str, /) -> Self:
+        """Use a database in cursor."""
+
         self._raw_cursor.execute(f"use database {database}")
 
         return self
 
     def use_schema(self, schema: str, /) -> Self:
+        """Use a schema in cursor."""
+
         self._raw_cursor.execute(f"use schema {schema}")
 
         return self
 
     def use_role(self, role: str, /) -> Self:
+        """Use a role in cursor."""
+
         self._raw_cursor.execute(f"use role {role}")
 
         return self

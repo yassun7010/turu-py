@@ -107,6 +107,20 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[Tuple[Any]]:
+        """Prepare and execute a database operation (query or command).
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+        but is simply a convenient shortcut to `.cursor().execute()`.
+
+        Parameters:
+            operation: A database operation (query or command).
+            parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         return await (await self.cursor()).execute(operation, parameters, **options)
 
     @override
@@ -117,6 +131,21 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[Tuple[Any]]:
+        """Prepare a database operation (query or command)
+        and then execute it against all parameter sequences or mappings.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+        but is simply a convenient shortcut to `.cursor().executemany()`.
+
+        Parameters:
+            operation: A database operation (query or command).
+            seq_of_parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         return await (await self.cursor()).executemany(
             operation, seq_of_parameters, **options
         )
@@ -130,6 +159,22 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[turu.core.cursor.GenericNewRowType]:
+        """
+        Execute a database operation (query or command) and map each row to a `row_type`.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+        but is simply a convenient shortcut to `.cursor().execute_map()`.
+
+        Parameters:
+            row_type: The type of the row that will be returned.
+            operation: A database operation (query or command).
+            parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         return await (await self.cursor()).execute_map(
             row_type,
             operation,
@@ -146,6 +191,20 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> AsyncCursor[turu.core.cursor.GenericNewRowType]:
+        """Execute a database operation (query or command) against all parameter sequences or mappings.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+        but is simply a convenient shortcut to `.cursor().executemany_map()`.
+
+        Parameters:
+            operation: A database operation (query or command).
+            seq_of_parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         return await (await self.cursor()).executemany_map(
             row_type,
             operation,

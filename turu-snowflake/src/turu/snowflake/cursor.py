@@ -62,6 +62,17 @@ class Cursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[Tuple[Any]]":
+        """Prepare and execute a database operation (query or command).
+
+        Parameters:
+            operation: A database operation (query or command).
+            parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.execute(operation, parameters, **options)
         self._row_type = None
 
@@ -75,6 +86,18 @@ class Cursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[Tuple[Any]]":
+        """Prepare a database operation (query or command)
+        and then execute it against all parameter sequences or mappings.
+
+        Parameters:
+            operation: A database operation (query or command).
+            seq_of_parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
         self._row_type = None
 
@@ -89,6 +112,19 @@ class Cursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
+        """
+        Execute a database operation (query or command) and map each row to a `row_type`.
+
+        Parameters:
+            row_type: The type of the row that will be returned.
+            operation: A database operation (query or command).
+            parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.execute(operation, parameters, **options)
         self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
@@ -103,6 +139,17 @@ class Cursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
+        """Execute a database operation (query or command) against all parameter sequences or mappings.
+
+        Parameters:
+            operation: A database operation (query or command).
+            seq_of_parameters: Parameters may be provided as sequence or mapping and will be bound to variables in the operation.
+            options: snowflake connector options
+
+        Returns:
+            A cursor that holds a reference to an operation.
+        """
+
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
         self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
@@ -151,41 +198,53 @@ class Cursor(
         else:
             return next_row  # type: ignore[return-value]
 
+    def fetch_arrow_all(self):
+        """Fetches all Arrow Tables."""
+
+        return self._raw_cursor.fetch_arrow_all()
+
+    def fetch_arrow_batches(self):
+        """Fetches Arrow Tables in batches, where 'batch' refers to Snowflake Chunk."""
+
+        return self._raw_cursor.fetch_arrow_batches()
+
+    def fetch_pandas_all(self, **kwargs) -> "PandasDataFlame":
+        """Fetch Pandas dataframes."""
+
+        return self._raw_cursor.fetch_pandas_all(**kwargs)
+
+    def fetch_pandas_batches(self, **kwargs) -> "Iterator[PandasDataFlame]":
+        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
+
+        return self._raw_cursor.fetch_pandas_batches(**kwargs)
+
     def use_warehouse(self, warehouse: str, /) -> Self:
+        """Use a warehouse in cursor."""
+
         self._raw_cursor.execute(f"use warehouse {warehouse}")
 
         return self
 
     def use_database(self, database: str, /) -> Self:
+        """Use a database in cursor."""
+
         self._raw_cursor.execute(f"use database {database}")
 
         return self
 
     def use_schema(self, schema: str, /) -> Self:
+        """Use a schema in cursor."""
+
         self._raw_cursor.execute(f"use schema {schema}")
 
         return self
 
     def use_role(self, role: str, /) -> Self:
+        """Use a role in cursor."""
+
         self._raw_cursor.execute(f"use role {role}")
 
         return self
-
-    def fetch_arrow_all(self):
-        return self._raw_cursor.fetch_arrow_all()
-
-    def fetch_arrow_batches(self):
-        return self._raw_cursor.fetch_arrow_batches()
-
-    def fetch_pandas_all(self, **kwargs) -> "PandasDataFlame":
-        """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
-
-        return self._raw_cursor.fetch_pandas_all(**kwargs)
-
-    def fetch_pandas_batches(self, **kwargs) -> "Iterator[PandasDataFlame]":
-        """Fetches a single Arrow Table."""
-
-        return self._raw_cursor.fetch_pandas_batches(**kwargs)
 
     @property
     def _RecordCursor(self):
