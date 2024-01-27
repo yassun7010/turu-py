@@ -20,7 +20,7 @@ from .cursor import Cursor, ExecuteOptions, GenericArrowTable, GenericPandasData
 
 class MockCursor(  # type: ignore
     turu.core.mock.MockCursor[turu.core.cursor.GenericRowType, Any],  # type: ignore
-    Cursor[turu.core.cursor.GenericRowType, GenericArrowTable, GenericPandasDataFlame],  # type: ignore
+    Cursor[turu.core.cursor.GenericRowType, GenericPandasDataFlame, GenericArrowTable],  # type: ignore
 ):
     @override
     def execute(
@@ -45,12 +45,23 @@ class MockCursor(  # type: ignore
     @overload
     def execute_map(
         self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
         row_type: Type[PandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockCursor[Never, Never, PandasDataFlame]":
+    ) -> "MockCursor[Never, PandasDataFlame, Never]":
         ...
 
     @overload
@@ -61,18 +72,7 @@ class MockCursor(  # type: ignore
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockCursor[Never, PyArrowTable, Never]":
-        ...
-
-    @overload
-    def execute_map(
-        self,
-        row_type: Type[GenericNewRowType],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "MockCursor[GenericNewRowType, Never, Never]":
+    ) -> "MockCursor[Never, Never, PyArrowTable]":
         ...
 
     @override

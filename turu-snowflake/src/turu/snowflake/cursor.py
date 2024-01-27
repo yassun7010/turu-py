@@ -36,7 +36,7 @@ GenericPandasDataFlame = TypeVar("GenericPandasDataFlame", bound=PandasDataFlame
 
 
 class Cursor(
-    Generic[GenericRowType, GenericArrowTable, GenericPandasDataFlame],
+    Generic[GenericRowType, GenericPandasDataFlame, GenericArrowTable],
     turu.core.cursor.Cursor[GenericRowType, Any],
 ):
     def __init__(
@@ -116,12 +116,23 @@ class Cursor(
     @overload
     def execute_map(
         self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
         row_type: Type[PandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, Never, PandasDataFlame]":
+    ) -> "Cursor[Never, PandasDataFlame, Never]":
         ...
 
     @overload
@@ -132,18 +143,7 @@ class Cursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PyArrowTable, Never]":
-        ...
-
-    @overload
-    def execute_map(
-        self,
-        row_type: Type[GenericNewRowType],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[GenericNewRowType, Never, Never]":
+    ) -> "Cursor[Never,  Never, PyArrowTable]":
         ...
 
     @override
