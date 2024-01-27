@@ -41,6 +41,9 @@ try:
     GenericPanderaDataFrameModel = TypeVar(
         "GenericPanderaDataFrameModel", bound=pandera.DataFrameModel
     )
+    GenericNewPanderaDataFrameModel = TypeVar(
+        "GenericNewPanderaDataFrameModel", bound=pandera.DataFrameModel
+    )
 
 
 except ImportError:
@@ -49,4 +52,7 @@ except ImportError:
     PanderaDataFrameModel = _NotSupportFeature[T]  # type: ignore
     GenericPanderaDataFrameModel = TypeVar(
         "GenericPanderaDataFrameModel", bound=_NotSupportFeature
+    )
+    GenericNewPanderaDataFrameModel = TypeVar(
+        "GenericNewPanderaDataFrameModel", bound=_NotSupportFeature
     )

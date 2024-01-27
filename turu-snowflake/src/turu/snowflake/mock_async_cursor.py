@@ -20,7 +20,7 @@ from turu.snowflake.cursor import (
     GenericPyArrowTable,
 )
 from turu.snowflake.features import (
-    GenericPanderaDataFrameModel,
+    GenericNewPanderaDataFrameModel,
     PanderaDataFrame,
     PanderaDataFrameModel,
 )
@@ -69,14 +69,12 @@ class MockAsyncCursor(  # type: ignore
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> (
-        "MockAsyncCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]"
-    ):
+    ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -106,7 +104,7 @@ class MockAsyncCursor(  # type: ignore
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],

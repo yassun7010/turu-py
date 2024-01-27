@@ -14,7 +14,7 @@ import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType
 from turu.snowflake.features import (
-    GenericPanderaDataFrameModel,
+    GenericNewPanderaDataFrameModel,
     PanderaDataFrame,
     PanderaDataFrameModel,
 )
@@ -70,12 +70,12 @@ class MockCursor(  # type: ignore
     @overload
     def execute_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+    ) -> "MockCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -105,7 +105,7 @@ class MockCursor(  # type: ignore
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],

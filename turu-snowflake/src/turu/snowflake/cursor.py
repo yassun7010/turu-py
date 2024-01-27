@@ -18,7 +18,7 @@ import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType, GenericRowType
 from turu.snowflake.features import (
-    GenericPanderaDataFrameModel,
+    GenericNewPanderaDataFrameModel,
     PandasDataFlame,
     PanderaDataFrame,
     PanderaDataFrameModel,
@@ -136,12 +136,12 @@ class Cursor(
     @overload
     def execute_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+    ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -171,7 +171,7 @@ class Cursor(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],
@@ -212,12 +212,12 @@ class Cursor(
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+    ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -247,7 +247,7 @@ class Cursor(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],
