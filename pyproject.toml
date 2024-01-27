@@ -96,6 +96,7 @@ mkdocs-exclude = "^1.0.2"
 mkdocstrings = { extras = ["python"], version = "^0.24.0" }
 griffe = "^0.39.1"
 griffe-inherited-docstrings = "^1.0.0"
+mkdocs-awesome-pages-plugin = "^2.9.2"
 
 [tool.poetry-dynamic-versioning]
 enable = false

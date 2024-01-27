@@ -70,6 +70,17 @@ files = [
 dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
+name = "bracex"
+version = "2.4"
+description = "Bash style brace expander."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "bracex-2.4-py3-none-any.whl", hash = "sha256:efdc71eff95eaff5e0f8cfebe7d01adf2c8637c8c92edaf63ef348c241a82418"},
+    {file = "bracex-2.4.tar.gz", hash = "sha256:a27eaf1df42cf561fed58b7a8f3fdf129d1ea16a81e1fadd1d17989bc6384beb"},
+]
+
+[[package]]
 name = "cachetools"
 version = "5.3.2"
 description = "Extensible memoizing collections and decorators"
@@ -962,6 +973,22 @@ Markdown = ">=3.3"
 mkdocs = ">=1.1"
 
 [[package]]
+name = "mkdocs-awesome-pages-plugin"
+version = "2.9.2"
+description = "An MkDocs plugin that simplifies configuring page titles and their order"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mkdocs_awesome_pages_plugin-2.9.2-py3-none-any.whl", hash = "sha256:9c795587695bd1ee85a8b7e43293005418df5a8b9ef296a3e628be427b693b4d"},
+    {file = "mkdocs_awesome_pages_plugin-2.9.2.tar.gz", hash = "sha256:c3f7d366ecfe99b64524c49a84d8e13c576c19a918ea2e6f59bb486a259313af"},
+]
+
+[package.dependencies]
+mkdocs = ">=1"
+natsort = ">=8.1.0"
+wcmatch = ">=7"
+
+[[package]]
 name = "mkdocs-exclude"
 version = "1.0.2"
 description = "A mkdocs plugin that lets you exclude files or trees."
@@ -1084,6 +1111,21 @@ files = [
     {file = "mslex-1.1.0-py2.py3-none-any.whl", hash = "sha256:8826f4bb8d8c63402203d921dc8c2df0c7fec0d9c91d020ddf02fc9d0dce81bd"},
     {file = "mslex-1.1.0.tar.gz", hash = "sha256:7fe305fbdc9721283875e0b737fdb344374b761338a7f41af91875de278568e4"},
 ]
+
+[[package]]
+name = "natsort"
+version = "8.4.0"
+description = "Simple yet flexible natural sorting in Python."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "natsort-8.4.0-py3-none-any.whl", hash = "sha256:4732914fb471f56b5cce04d7bae6f164a592c7712e1c85f9ef585e197299521c"},
+    {file = "natsort-8.4.0.tar.gz", hash = "sha256:45312c4a0e5507593da193dedd04abb1469253b601ecaf63445ad80f0a1ea581"},
+]
+
+[package.extras]
+fast = ["fastnumbers (>=2.0.0)"]
+icu = ["PyICU (>=1.0.0)"]
 
 [[package]]
 name = "nodeenv"
@@ -2353,6 +2395,20 @@ files = [
 watchmedo = ["PyYAML (>=3.10)"]
 
 [[package]]
+name = "wcmatch"
+version = "8.5"
+description = "Wildcard/glob file name matcher."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "wcmatch-8.5-py3-none-any.whl", hash = "sha256:14554e409b142edeefab901dc68ad570b30a72a8ab9a79106c5d5e9a6d241bd5"},
+    {file = "wcmatch-8.5.tar.gz", hash = "sha256:86c17572d0f75cbf3bcb1a18f3bf2f9e72b39a9c08c9b4a74e991e1882a8efb3"},
+]
+
+[package.dependencies]
+bracex = ">=2.1.1"
+
+[[package]]
 name = "webencodings"
 version = "0.5.1"
 description = "Character encoding aliases for legacy web content"
@@ -2388,4 +2444,4 @@ sqlite3 = ["turu-sqlite3"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "52813e23c16840c77030f2792ce8855ff2733cb9a8e5ac89abc4d3b63b98bd85"
+content-hash = "0c9075fca29455ac5a09da0e8d55aff90cf4b19a0ee60e831ad825b2b833ba8e"
