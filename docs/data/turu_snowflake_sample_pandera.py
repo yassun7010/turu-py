@@ -4,7 +4,7 @@ import pytest
 import turu.snowflake
 from pandera import DataFrameModel, Field, Int64
 from pandera.errors import SchemaInitError
-from turu.snowflake.features import PanderaDataFrame
+from pandera.typing import DataFrame
 
 
 class User(DataFrameModel):
@@ -15,4 +15,4 @@ connection = turu.snowflake.connect_from_env()
 
 with pytest.raises(SchemaInitError):
     with connection.execute_map(User, "select 1 as id union all select 2 id") as cursor:
-        df: PanderaDataFrame[User] = cursor.fetch_pandas_all()
+        df: DataFrame[User] = cursor.fetch_pandas_all()
