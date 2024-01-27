@@ -14,6 +14,7 @@ from turu.snowflake.cursor import GenericPandasDataFlame, GenericPyArrowTable
 from turu.snowflake.features import (
     GenericPanderaDataFrameModel,
     PandasDataFlame,
+    PanderaDataFrameModel,
     PyArrowTable,
 )
 from typing_extensions import Never, Self, Unpack, override
@@ -81,6 +82,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         self,
         row_type: Union[
             Type[GenericRowType],
+            Type[GenericPanderaDataFrameModel],
             Type[GenericPandasDataFlame],
             Type[GenericPyArrowTable],
             None,
@@ -101,6 +103,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         self,
         row_type: Union[
             Type[GenericRowType],
+            Type[GenericPanderaDataFrameModel],
             Type[GenericPandasDataFlame],
             Type[GenericPyArrowTable],
         ],
@@ -108,7 +111,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         **options: Unpack[CSVOptions],
     ) -> Self:
         if row_type is not None:
-            if issubclass(row_type, PandasDataFlame):
+            if issubclass(row_type, (PandasDataFlame, PanderaDataFrameModel)):
                 import pandas
 
                 if options.get("header", True) is False:

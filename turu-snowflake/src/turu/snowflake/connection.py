@@ -8,7 +8,7 @@ import turu.core.mock
 import turu.snowflake.cursor
 from turu.core.cursor import GenericNewRowType
 from turu.snowflake.features import (
-    GenericPanderaDataFrameModel,
+    GenericNewPanderaDataFrameModel,
     PanderaDataFrame,
 )
 from typing_extensions import Never, Unpack, override
@@ -174,12 +174,12 @@ class Connection(turu.core.connection.Connection):
     @overload
     def execute_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]:
+    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
         ...
 
     @overload
@@ -209,7 +209,7 @@ class Connection(turu.core.connection.Connection):
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],
@@ -269,12 +269,12 @@ class Connection(turu.core.connection.Connection):
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]:
+    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
         ...
 
     @overload
@@ -293,7 +293,7 @@ class Connection(turu.core.connection.Connection):
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],

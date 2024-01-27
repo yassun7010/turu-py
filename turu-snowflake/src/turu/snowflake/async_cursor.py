@@ -28,7 +28,7 @@ from turu.snowflake.cursor import (
     GenericRowType,
 )
 from turu.snowflake.features import (
-    GenericPanderaDataFrameModel,
+    GenericNewPanderaDataFrameModel,
     PanderaDataFrame,
     PanderaDataFrameModel,
 )
@@ -139,12 +139,12 @@ class AsyncCursor(
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -174,7 +174,7 @@ class AsyncCursor(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],

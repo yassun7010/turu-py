@@ -13,6 +13,7 @@ from turu.snowflake.cursor import GenericPandasDataFlame, GenericPyArrowTable
 from turu.snowflake.features import (
     GenericPanderaDataFrameModel,
     PandasDataFlame,
+    PanderaDataFrameModel,
     PyArrowTable,
 )
 from typing_extensions import Never, Self, Unpack, override
@@ -100,6 +101,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         self,
         row_type: Union[
             Type[GenericRowType],
+            Type[GenericPanderaDataFrameModel],
             Type[GenericPandasDataFlame],
             Type[GenericPyArrowTable],
         ],
@@ -107,7 +109,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         **options: Unpack[CSVOptions],
     ) -> Self:
         if row_type is not None:
-            if issubclass(row_type, PandasDataFlame):
+            if issubclass(row_type, (PandasDataFlame, PanderaDataFrameModel)):
                 import pandas
 
                 pd_options = {}

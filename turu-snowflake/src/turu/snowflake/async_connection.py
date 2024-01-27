@@ -8,7 +8,7 @@ import turu.core.mock
 from turu.core.cursor import GenericNewRowType
 from turu.snowflake.cursor import GenericNewPandasDataFlame, GenericNewPyArrowTable
 from turu.snowflake.features import (
-    GenericPanderaDataFrameModel,
+    GenericNewPanderaDataFrameModel,
     PanderaDataFrame,
 )
 from typing_extensions import Never, Self, Unpack, override
@@ -181,12 +181,12 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -205,7 +205,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFlame],
             Type[GenericNewPyArrowTable],
         ],
