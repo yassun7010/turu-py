@@ -1,10 +1,9 @@
-from typing import Annotated
-
 import pytest
 import turu.snowflake
 from pandera import DataFrameModel, Field, Int64
 from pandera.errors import SchemaInitError
 from pandera.typing import DataFrame
+from typing_extensions import Annotated
 
 
 class User(DataFrameModel):
