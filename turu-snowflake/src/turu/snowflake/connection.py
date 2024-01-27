@@ -1,18 +1,23 @@
 import os
 from pathlib import Path
-from typing import Any, Optional, Sequence, Tuple, Type, overload
+from typing import Any, Optional, Sequence, Tuple, Type, cast, overload
 
 import turu.core.connection
 import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
 from turu.core.cursor import GenericNewRowType
-from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Unpack, override
 
 import snowflake.connector
 
-from .cursor import Cursor, ExecuteOptions, Self
+from .cursor import (
+    Cursor,
+    ExecuteOptions,
+    GenericNewPandasDataFlame,
+    GenericNewPyArrowTable,
+    Self,
+)
 
 
 class Connection(turu.core.connection.Connection):
@@ -165,23 +170,23 @@ class Connection(turu.core.connection.Connection):
     @overload
     def execute_map(
         self,
-        row_type: Type[PandasDataFlame],
+        row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PandasDataFlame, Never]":
+    ) -> "Cursor[Never, GenericNewPandasDataFlame, Never]":
         ...
 
     @overload
     def execute_map(
         self,
-        row_type: Type[PyArrowTable],
+        row_type: Type[GenericNewPyArrowTable],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never,  Never, PyArrowTable]":
+    ) -> "Cursor[Never,  Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -209,11 +214,14 @@ class Connection(turu.core.connection.Connection):
             A cursor that holds a reference to an operation.
         """
 
-        return self.cursor().execute_map(
-            row_type,
-            operation,
-            parameters,
-            **options,
+        return cast(
+            Cursor,
+            self.cursor().execute_map(
+                row_type,
+                operation,
+                parameters,
+                **options,
+            ),
         )
 
     @overload
@@ -230,23 +238,23 @@ class Connection(turu.core.connection.Connection):
     @overload
     def executemany_map(
         self,
-        row_type: Type[PandasDataFlame],
+        row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PandasDataFlame, Never]:
+    ) -> Cursor[Never, GenericNewPandasDataFlame, Never]:
         ...
 
     @overload
     def executemany_map(
         self,
-        row_type: Type[PyArrowTable],
+        row_type: Type[GenericNewPyArrowTable],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, Never, PyArrowTable]:
+    ) -> Cursor[Never, Never, GenericNewPyArrowTable]:
         ...
 
     @override
@@ -272,6 +280,9 @@ class Connection(turu.core.connection.Connection):
             A cursor that holds a reference to an operation.
         """
 
-        return self.cursor().executemany_map(
-            row_type, operation, seq_of_parameters, **options
+        return cast(
+            Cursor,
+            self.cursor().executemany_map(
+                row_type, operation, seq_of_parameters, **options
+            ),
         )
