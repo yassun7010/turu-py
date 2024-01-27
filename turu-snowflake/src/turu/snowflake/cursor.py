@@ -280,7 +280,7 @@ class Cursor(
             return next_row  # type: ignore[return-value]
 
     def fetch_arrow_all(self) -> GenericPyArrowTable:
-        """Fetches all Arrow Tables."""
+        """Fetches a single Arrow Table."""
 
         return cast(
             GenericPyArrowTable,
@@ -293,7 +293,7 @@ class Cursor(
         return self._raw_cursor.fetch_arrow_batches()
 
     def fetch_pandas_all(self, **kwargs) -> "GenericPandasDataFlame":
-        """Fetch Pandas dataframes."""
+        """Fetch a single Pandas dataframe."""
 
         return cast(GenericPandasDataFlame, self._raw_cursor.fetch_pandas_all(**kwargs))
 
