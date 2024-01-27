@@ -258,23 +258,23 @@ class Connection(turu.core.connection.Connection):
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericNewPandasDataFlame],
-        operation: str,
-        seq_of_parameters: Sequence[Any],
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, GenericNewPandasDataFlame, Never]:
-        ...
-
-    @overload
-    def executemany_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
     ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
+        ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[GenericNewPandasDataFlame],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> Cursor[Never, GenericNewPandasDataFlame, Never]:
         ...
 
     @overload

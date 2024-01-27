@@ -254,6 +254,17 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def executemany_map(
         self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
         row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         seq_of_parameters: Sequence[Any],
@@ -276,7 +287,12 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @override
     async def executemany_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericNewPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
