@@ -124,7 +124,9 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         except StopIteration as e:
             raise StopAsyncIteration from e
 
-    def _make_new_cursor(self, row_type: Optional[Type]) -> "MockAsyncCursor":
+    def _make_new_cursor(
+        self, row_type: Optional[Type[GenericNewRowType]]
+    ) -> "MockAsyncCursor":
         responses = self._turu_mock_store.provide_response(row_type)
 
         if responses is None:

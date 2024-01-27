@@ -19,10 +19,10 @@ try:
 
     USE_PYARROW = True
     if TYPE_CHECKING:
-        PyArrowTable = _NotSupportFeature
+        PyArrowTable: TypeAlias = _NotSupportFeature
 
     else:
-        PyArrowTable = pyarrow.Table
+        PyArrowTable: TypeAlias = pyarrow.Table
 
 except ImportError:
     USE_PYARROW = False

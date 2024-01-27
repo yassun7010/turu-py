@@ -1,16 +1,27 @@
-from typing import Any, Iterator, Optional, Sequence, Tuple, Type, cast
+from typing import (
+    Any,
+    Iterator,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    cast,
+    overload,
+)
 
 import turu.core.async_cursor
 import turu.core.mock
-from turu.snowflake.features import PandasDataFlame
-from typing_extensions import Self, Unpack, override
+from turu.core.cursor import GenericNewRowType, GenericRowType
+from turu.snowflake.cursor import GenericArrowTable, GenericPandasDataFlame
+from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from typing_extensions import Never, Self, Unpack, override
 
 from .async_cursor import AsyncCursor, ExecuteOptions
 
 
 class MockAsyncCursor(  # type: ignore
-    turu.core.mock.MockAsyncCursor[turu.core.async_cursor.GenericRowType, Any],  # type: ignore
-    AsyncCursor[turu.core.async_cursor.GenericRowType],  # type: ignore
+    turu.core.mock.MockAsyncCursor[GenericRowType, Any],  # type: ignore
+    AsyncCursor[GenericRowType, GenericArrowTable, GenericPandasDataFlame],  # type: ignore
 ):
     @override
     async def execute(
@@ -19,7 +30,7 @@ class MockAsyncCursor(  # type: ignore
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Tuple[Any]]":
+    ) -> "MockAsyncCursor[Tuple[Any], Never, Never]":
         return cast(MockAsyncCursor, await super().execute(operation, parameters))
 
     @override
@@ -29,20 +40,53 @@ class MockAsyncCursor(  # type: ignore
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Tuple[Any]]":
+    ) -> "MockAsyncCursor[Tuple[Any], Never, Never]":
         return cast(
             MockAsyncCursor, await super().executemany(operation, seq_of_parameters)
         )
 
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockAsyncCursor[Never, Never, PandasDataFlame]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockAsyncCursor[Never, PyArrowTable, Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]":
+        ...
+
     @override
     async def execute_map(
         self,
-        row_type: Type[turu.core.async_cursor.GenericNewRowType],
+        row_type,
         operation: str,
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[turu.core.async_cursor.GenericNewRowType]":
+    ):
         return cast(
             MockAsyncCursor, await super().execute_map(row_type, operation, parameters)
         )
@@ -50,12 +94,12 @@ class MockAsyncCursor(  # type: ignore
     @override
     async def executemany_map(
         self,
-        row_type: Type[turu.core.async_cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[turu.core.async_cursor.GenericNewRowType]":
+    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]":
         return cast(
             MockAsyncCursor,
             await super().executemany_map(row_type, operation, seq_of_parameters),
