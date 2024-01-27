@@ -5,6 +5,7 @@ from typing import Any, Optional, Sequence, Tuple, Type, overload
 import turu.core.async_connection
 import turu.core.cursor
 import turu.core.mock
+from turu.core.cursor import GenericNewRowType
 from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Self, Unpack, override
 
@@ -154,12 +155,12 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def execute_map(
         self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[turu.core.cursor.GenericNewRowType, Never, Never]":
+    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
         ...
 
     @overload
@@ -216,15 +217,48 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             **options,
         )
 
-    @override
+    @overload
     async def executemany_map(
         self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[turu.core.cursor.GenericNewRowType, Never, Never]:
+    ) -> AsyncCursor[GenericNewRowType, Never, Never]:
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> AsyncCursor[Never, PandasDataFlame, Never]:
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> AsyncCursor[Never, Never, PyArrowTable]:
+        ...
+
+    @override
+    async def executemany_map(
+        self,
+        row_type,
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),

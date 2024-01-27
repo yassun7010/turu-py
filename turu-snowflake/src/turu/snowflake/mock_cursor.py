@@ -86,7 +86,7 @@ class MockCursor(  # type: ignore
     ):
         return cast(MockCursor, super().execute_map(row_type, operation, parameters))
 
-    @override
+    @overload
     def executemany_map(
         self,
         row_type: Type[GenericNewRowType],
@@ -95,6 +95,39 @@ class MockCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockCursor[GenericNewRowType, Never, Never]":
+        pass
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Never, PandasDataFlame, Never]":
+        pass
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Never, Never, PyArrowTable]":
+        pass
+
+    @override
+    def executemany_map(
+        self,
+        row_type,
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         return cast(
             MockCursor, super().executemany_map(row_type, operation, seq_of_parameters)
         )

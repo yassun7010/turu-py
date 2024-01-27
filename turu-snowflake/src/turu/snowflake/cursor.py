@@ -175,7 +175,7 @@ class Cursor(
 
         return cast(Cursor, self)
 
-    @override
+    @overload
     def executemany_map(
         self,
         row_type: Type[GenericNewRowType],
@@ -184,6 +184,39 @@ class Cursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[GenericNewRowType, Never, Never]":
+        pass
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, PandasDataFlame, Never]":
+        pass
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, Never, PyArrowTable]":
+        pass
+
+    @override
+    def executemany_map(
+        self,
+        row_type,
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         Parameters:

@@ -6,6 +6,7 @@ import turu.core.connection
 import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
+from turu.core.cursor import GenericNewRowType
 from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Unpack, override
 
@@ -153,12 +154,12 @@ class Connection(turu.core.connection.Connection):
     @overload
     def execute_map(
         self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[turu.core.cursor.GenericNewRowType, Never, Never]":
+    ) -> "Cursor[GenericNewRowType, Never, Never]":
         ...
 
     @overload
@@ -215,15 +216,48 @@ class Connection(turu.core.connection.Connection):
             **options,
         )
 
-    @override
+    @overload
     def executemany_map(
         self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[turu.core.cursor.GenericNewRowType, Never, Never]:
+    ) -> Cursor[GenericNewRowType, Never, Never]:
+        ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> Cursor[Never, PandasDataFlame, Never]:
+        ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> Cursor[Never, Never, PyArrowTable]:
+        ...
+
+    @override
+    def executemany_map(
+        self,
+        row_type,
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
