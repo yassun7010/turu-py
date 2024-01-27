@@ -130,7 +130,18 @@ class MockCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockCursor[GenericNewRowType, Never, Never]":
-        pass
+        ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
 
     @overload
     def executemany_map(
@@ -141,7 +152,7 @@ class MockCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockCursor[Never, GenericNewPandasDataFlame, Never]":
-        pass
+        ...
 
     @overload
     def executemany_map(
@@ -152,19 +163,29 @@ class MockCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockCursor[Never, Never, GenericNewPyArrowTable]":
-        pass
+        ...
 
     @override
     def executemany_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericNewPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
     ):
         return cast(
-            MockCursor, super().executemany_map(row_type, operation, seq_of_parameters)
+            MockCursor,
+            super().executemany_map(
+                cast(Type[GenericNewRowType], row_type),
+                operation,
+                seq_of_parameters,
+            ),
         )
 
     def use_warehouse(self, warehouse: str, /) -> Self:
