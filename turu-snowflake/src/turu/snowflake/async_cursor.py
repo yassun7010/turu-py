@@ -9,6 +9,7 @@ from typing import (
     Tuple,
     Type,
     TypedDict,
+    Union,
     cast,
     overload,
 )
@@ -171,12 +172,17 @@ class AsyncCursor(
     @override
     async def execute_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ):
+    ) -> "AsyncCursor":
         """
         Execute a database operation (query or command) and map each row to a `row_type`.
 
@@ -236,7 +242,7 @@ class AsyncCursor(
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ):
+    ) -> "AsyncCursor":
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         Caution:

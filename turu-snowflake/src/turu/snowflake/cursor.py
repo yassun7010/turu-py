@@ -9,6 +9,7 @@ from typing import (
     Type,
     TypedDict,
     TypeVar,
+    Union,
     cast,
     overload,
 )
@@ -168,12 +169,17 @@ class Cursor(
     @override
     def execute_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ):
+    ) -> "Cursor":
         """
         Execute a database operation (query or command) and map each row to a `row_type`.
 
@@ -206,6 +212,17 @@ class Cursor(
     @overload
     def executemany_map(
         self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    def executemany_map(
+        self,
         row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
@@ -228,12 +245,17 @@ class Cursor(
     @override
     def executemany_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ):
+    ) -> "Cursor":
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         Parameters:

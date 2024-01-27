@@ -69,3 +69,10 @@ pip install "turu[snowflake]"
 !!! tip
     `AsyncCursor.use_*` methods are not async.
     This is intentionally done in sync because of the short processing time of those methods and the deteriorating readability caused by method chaining.
+
+### Pandas DataFrame Validation using Pandera
+You can use [Pandera](https://pandera.readthedocs.io/en/stable/) to validate the `pandas.DataFrame`.
+
+```python
+--8<-- "docs/data/turu_snowflake_sample_pandera.py"
+```
