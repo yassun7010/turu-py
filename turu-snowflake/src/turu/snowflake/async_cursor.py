@@ -178,7 +178,7 @@ class AsyncCursor(
 
         return cast(AsyncCursor, self)
 
-    @override
+    @overload
     async def executemany_map(
         self,
         row_type: Type[GenericNewRowType],
@@ -187,6 +187,39 @@ class AsyncCursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PandasDataFlame, Never]":
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, Never, PyArrowTable]":
+        ...
+
+    @override
+    async def executemany_map(
+        self,
+        row_type,
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         Caution:
