@@ -253,7 +253,7 @@ class TestTuruSnowflakeMockConnection:
                 .inject_response_from_csv(PyArrowTable, file.name)
                 .execute_map(PyArrowTable, "select 1 as ID union all select 2 as ID")
             ) as cursor:
-                assert cursor.fetch_pandas_all().equals(expected)
+                assert cursor.fetch_arrow_all().equals(expected)
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_inject_pandas_response_from_csv(
