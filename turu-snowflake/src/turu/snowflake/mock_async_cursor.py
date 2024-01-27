@@ -5,6 +5,7 @@ from typing import (
     Sequence,
     Tuple,
     Type,
+    Union,
     cast,
     overload,
 )
@@ -18,7 +19,11 @@ from turu.snowflake.cursor import (
     GenericPandasDataFlame,
     GenericPyArrowTable,
 )
-from turu.snowflake.features import PanderaDataFrameModel
+from turu.snowflake.features import (
+    GenericPanderaDataFrameModel,
+    PanderaDataFrame,
+    PanderaDataFrameModel,
+)
 from typing_extensions import Never, Self, Unpack, override
 
 from .async_cursor import AsyncCursor, ExecuteOptions
@@ -64,6 +69,19 @@ class MockAsyncCursor(  # type: ignore
     @overload
     async def execute_map(
         self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> (
+        "MockAsyncCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]"
+    ):
+        ...
+
+    @overload
+    async def execute_map(
+        self,
         row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
@@ -86,14 +104,22 @@ class MockAsyncCursor(  # type: ignore
     @override
     async def execute_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ):
+    ) -> "MockAsyncCursor":
         return cast(
-            MockAsyncCursor, await super().execute_map(row_type, operation, parameters)
+            MockAsyncCursor,
+            await super().execute_map(
+                cast(Type[GenericNewRowType], row_type), operation, parameters
+            ),
         )
 
     @overload
@@ -137,7 +163,7 @@ class MockAsyncCursor(  # type: ignore
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ):
+    ) -> "MockAsyncCursor":
         return cast(
             MockAsyncCursor,
             await super().executemany_map(row_type, operation, seq_of_parameters),

@@ -5,6 +5,7 @@ from typing import (
     Sequence,
     Tuple,
     Type,
+    Union,
     cast,
     overload,
 )
@@ -102,13 +103,23 @@ class MockCursor(  # type: ignore
     @override
     def execute_map(
         self,
-        row_type,
+        row_type: Union[
+            Type[GenericNewRowType],
+            Type[GenericPanderaDataFrameModel],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
+        ],
         operation: str,
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ):
-        return cast(MockCursor, super().execute_map(row_type, operation, parameters))
+    ) -> "MockCursor":
+        return cast(
+            MockCursor,
+            super().execute_map(
+                cast(Type[GenericNewRowType], row_type), operation, parameters
+            ),
+        )
 
     @overload
     def executemany_map(
