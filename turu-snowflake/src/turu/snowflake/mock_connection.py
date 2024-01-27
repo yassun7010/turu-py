@@ -61,7 +61,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     def inject_response(  # type: ignore[override]
         self,
         row_type: Union[
-            Type[GenericRowType], Type[PyArrowTable], Type[PandasDataFlame], None
+            Type[GenericRowType], Type[PandasDataFlame], Type[PyArrowTable], None
         ],
         response: Union[Sequence[Any], Any, Exception] = None,
     ) -> Self:
@@ -78,7 +78,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     def inject_response_from_csv(  # type: ignore[override]
         self,
         row_type: Union[
-            Type[GenericRowType], Type[PyArrowTable], Type[PandasDataFlame]
+            Type[GenericRowType], Type[PandasDataFlame], Type[PyArrowTable]
         ],
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],

@@ -38,7 +38,7 @@ class ExecuteOptions(TypedDict, total=False):
 
 
 class AsyncCursor(
-    Generic[GenericRowType, GenericArrowTable, GenericPandasDataFlame],
+    Generic[GenericRowType, GenericPandasDataFlame, GenericArrowTable],
     turu.core.async_cursor.AsyncCursor[GenericRowType, Any],
 ):
     def __init__(
@@ -121,12 +121,23 @@ class AsyncCursor(
     @overload
     async def execute_map(
         self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
         row_type: Type[PandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, PandasDataFlame]":
+    ) -> "AsyncCursor[Never, PandasDataFlame, Never]":
         ...
 
     @overload
@@ -137,18 +148,7 @@ class AsyncCursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PyArrowTable, Never]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
-        row_type: Type[GenericNewRowType],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
+    ) -> "AsyncCursor[Never, Never, PyArrowTable]":
         ...
 
     @override

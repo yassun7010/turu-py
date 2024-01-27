@@ -21,7 +21,7 @@ from .async_cursor import AsyncCursor, ExecuteOptions
 
 class MockAsyncCursor(  # type: ignore
     turu.core.mock.MockAsyncCursor[GenericRowType, Any],  # type: ignore
-    AsyncCursor[GenericRowType, GenericArrowTable, GenericPandasDataFlame],  # type: ignore
+    AsyncCursor[GenericRowType, GenericPandasDataFlame, GenericArrowTable],  # type: ignore
 ):
     @override
     async def execute(
@@ -48,12 +48,23 @@ class MockAsyncCursor(  # type: ignore
     @overload
     async def execute_map(
         self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
         row_type: Type[PandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, Never, PandasDataFlame]":
+    ) -> "MockAsyncCursor[Never, PandasDataFlame, Never]":
         ...
 
     @overload
@@ -64,18 +75,7 @@ class MockAsyncCursor(  # type: ignore
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, PyArrowTable, Never]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
-        row_type: Type[GenericNewRowType],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]":
+    ) -> "MockAsyncCursor[Never, Never, PyArrowTable]":
         ...
 
     @override

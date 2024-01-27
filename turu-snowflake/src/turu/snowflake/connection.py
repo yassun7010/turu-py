@@ -169,7 +169,7 @@ class Connection(turu.core.connection.Connection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, Never, PandasDataFlame]":
+    ) -> "Cursor[Never, PandasDataFlame, Never]":
         ...
 
     @overload
@@ -180,7 +180,7 @@ class Connection(turu.core.connection.Connection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PyArrowTable, Never]":
+    ) -> "Cursor[Never,  Never, PyArrowTable]":
         ...
 
     @override

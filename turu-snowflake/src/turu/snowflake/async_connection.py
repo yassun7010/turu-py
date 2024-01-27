@@ -170,7 +170,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, PandasDataFlame]":
+    ) -> "AsyncCursor[Never, PandasDataFlame, Never]":
         ...
 
     @overload
@@ -181,7 +181,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PyArrowTable, Never]":
+    ) -> "AsyncCursor[Never, Never, PyArrowTable]":
         ...
 
     @override
