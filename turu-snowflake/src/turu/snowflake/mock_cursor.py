@@ -12,6 +12,11 @@ from typing import (
 import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType
+from turu.snowflake.features import (
+    GenericPanderaDataFrameModel,
+    PanderaDataFrame,
+    PanderaDataFrameModel,
+)
 from typing_extensions import Never, Self, Unpack, override
 
 from .cursor import (
@@ -59,6 +64,17 @@ class MockCursor(  # type: ignore
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -159,7 +175,16 @@ class MockCursor(  # type: ignore
         return iter([self.fetch_arrow_all()])
 
     def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFlame:
-        return cast(GenericPandasDataFlame, self.fetchone())
+        df = self.fetchone()
+
+        if (
+            self._row_type
+            and df is not None
+            and issubclass(self._row_type, PanderaDataFrameModel)
+        ):
+            self._row_type.validate(df)  # type: ignore
+
+        return cast(GenericPandasDataFlame, df)
 
     def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFlame]:
         """Fetches a single Arrow Table."""

@@ -9,7 +9,6 @@ from typing import (
     Type,
     TypedDict,
     TypeVar,
-    Union,
     cast,
     overload,
 )
@@ -17,7 +16,13 @@ from typing import (
 import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType, GenericRowType
-from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from turu.snowflake.features import (
+    GenericPanderaDataFrameModel,
+    PandasDataFlame,
+    PanderaDataFrame,
+    PanderaDataFrameModel,
+    PyArrowTable,
+)
 from typing_extensions import Never, Self, Unpack, override
 
 import snowflake.connector
@@ -130,6 +135,17 @@ class Cursor(
     @overload
     def execute_map(
         self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
         row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
@@ -152,11 +168,7 @@ class Cursor(
     @override
     def execute_map(
         self,
-        row_type: Union[
-            Type[GenericNewRowType],
-            Type[GenericNewPandasDataFlame],
-            Type[GenericNewPyArrowTable],
-        ],
+        row_type,
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
@@ -294,8 +306,12 @@ class Cursor(
 
     def fetch_pandas_all(self, **kwargs) -> "GenericPandasDataFlame":
         """Fetch a single Pandas dataframe."""
+        df = self._raw_cursor.fetch_pandas_all(**kwargs)
 
-        return cast(GenericPandasDataFlame, self._raw_cursor.fetch_pandas_all(**kwargs))
+        if self._row_type and issubclass(self._row_type, PanderaDataFrameModel):
+            df = self._row_type.validate(df)  # type: ignore[assignment]
+
+        return cast(GenericPandasDataFlame, df)
 
     def fetch_pandas_batches(self, **kwargs) -> "Iterator[GenericPandasDataFlame]":
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""

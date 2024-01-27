@@ -18,6 +18,7 @@ from turu.snowflake.cursor import (
     GenericPandasDataFlame,
     GenericPyArrowTable,
 )
+from turu.snowflake.features import PanderaDataFrameModel
 from typing_extensions import Never, Self, Unpack, override
 
 from .async_cursor import AsyncCursor, ExecuteOptions
@@ -161,7 +162,16 @@ class MockAsyncCursor(  # type: ignore
         return iter([await self.fetch_arrow_all()])
 
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFlame:
-        return cast(GenericPandasDataFlame, await self.fetchone())
+        df = await self.fetchone()
+
+        if (
+            self._row_type
+            and df is not None
+            and issubclass(self._row_type, PanderaDataFrameModel)
+        ):
+            df = self._row_type.validate(df)  # type: ignore
+
+        return cast(GenericPandasDataFlame, df)
 
     async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFlame]:
         """Fetches a single Arrow Table."""

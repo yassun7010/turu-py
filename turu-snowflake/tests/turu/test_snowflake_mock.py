@@ -1,12 +1,13 @@
 import tempfile
 from pathlib import Path
 from textwrap import dedent
-from typing import NamedTuple
+from typing import Annotated, NamedTuple
 
 import pytest
 import turu.snowflake
 from turu.snowflake.features import (
     USE_PANDAS,
+    USE_PANDERA,
     USE_PYARROW,
     PandasDataFlame,
     PyArrowTable,
@@ -279,3 +280,39 @@ class TestTuruSnowflakeMockConnection:
                 .execute_map(pd.DataFrame, "select 1 as ID union all select 2 as ID")
             ) as cursor:
                 assert cursor.fetch_pandas_all().equals(expected)
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PANDERA), reason="pandas or pandera is not installed"
+    )
+    def test_fetch_pandas_all_using_pandera_model(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pandera as pa  # type: ignore[import]
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int64
+
+        with mock_connection.inject_response(
+            RowModel, pd.DataFrame({"ID": [1, 2]})
+        ).execute_map(RowModel, "select 1 as ID union all select 2 ID") as cursor:
+            assert cursor.fetch_pandas_all().to_dict() == {"ID": {0: 1, 1: 2}}
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PANDERA), reason="pandas or pandera is not installed"
+    )
+    def test_fetch_pandas_all_using_pandera_model_raise_validation_error(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pandera as pa  # type: ignore[import]
+        import pandera.errors  # type: ignore[import]
+
+        class RowModel(pa.DataFrameModel):
+            uuid: Annotated[pa.Int64, pa.Field(le=5)]
+
+        with mock_connection.inject_response(
+            RowModel, pd.DataFrame({"ID": [1, 2]})
+        ).execute_map(RowModel, "select 1 as ID union all select 2 ID") as cursor:
+            with pytest.raises(pandera.errors.SchemaInitError):
+                cursor.fetch_pandas_all()
