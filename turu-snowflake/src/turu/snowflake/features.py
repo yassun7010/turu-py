@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar
+from typing import TypeVar
 
 from turu.core.features import _NotSupportFeature
 from typing_extensions import Never, TypeAlias
@@ -20,11 +20,8 @@ try:
     import pyarrow  # type: ignore[import]  # noqa: F401
 
     USE_PYARROW = True
-    if TYPE_CHECKING:
-        PyArrowTable: TypeAlias = _NotSupportFeature  # type: ignore
+    PyArrowTable = pyarrow.Table  # type: ignore
 
-    else:
-        PyArrowTable: TypeAlias = pyarrow.Table
 
 except ImportError:
     USE_PYARROW = False

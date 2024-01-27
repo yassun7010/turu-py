@@ -153,10 +153,10 @@ class TestTuruSnowflake:
     def test_fetch_arrow_all(self, connection: turu.snowflake.Connection):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
             schema=pa.schema([pa.field("ID", pa.int8(), False)]),
-        )
+        )  # type: ignore
 
         with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
             assert cursor.fetch_arrow_all() == expected

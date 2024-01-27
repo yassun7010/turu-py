@@ -173,10 +173,10 @@ class TestTuruSnowflakeMockConnection:
     def test_fetch_arrow_all(self, mock_connection: turu.snowflake.MockConnection):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
             schema=pa.schema([pa.field("ID", pa.int8(), False)]),
-        )
+        )  # type: ignore
 
         mock_connection.inject_response(PyArrowTable, expected)
 
@@ -192,10 +192,10 @@ class TestTuruSnowflakeMockConnection:
     def test_fetch_arrow_batches(self, mock_connection: turu.snowflake.MockConnection):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
             schema=pa.schema([pa.field("ID", pa.int8(), False)]),
-        )
+        )  # type: ignore
 
         with mock_connection.inject_response(PyArrowTable, expected).execute_map(
             PyArrowTable, "select 1 as ID union all select 2 as ID"
@@ -232,10 +232,10 @@ class TestTuruSnowflakeMockConnection:
     ):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int64())],
             schema=pa.schema([pa.field("ID", pa.int64())]),
-        )
+        )  # type: ignore
 
         with tempfile.NamedTemporaryFile() as file:
             Path(file.name).write_text(

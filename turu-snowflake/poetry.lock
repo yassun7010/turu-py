@@ -721,6 +721,16 @@ files = [
 numpy = ">=1.16.6"
 
 [[package]]
+name = "pyarrow-stubs"
+version = "10.0.1.7"
+description = "Type annotations for pyarrow"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "pyarrow_stubs-10.0.1.7-py3-none-any.whl", hash = "sha256:cccc7a46eddeea4e3cb85330eb8972c116a615da6188b8ae1f7a44cb724b21ac"},
+]
+
+[[package]]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
@@ -1397,4 +1407,4 @@ pandera = ["pandera"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "9cece060ada9cd12ca95cbed78bd207f94e040ed992a379c09a69f81577555b1"
+content-hash = "e14044263fd564ecd343c7814b2fed46ba6606094b1689208bd85ee065dbbd34"
