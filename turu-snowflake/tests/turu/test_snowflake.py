@@ -2,12 +2,12 @@ import os
 import tempfile
 from pathlib import Path
 from textwrap import dedent
-from typing import NamedTuple
+from typing import Annotated, NamedTuple
 
 import pytest
 import turu.snowflake
 from turu.core.record import record_to_csv
-from turu.snowflake.features import USE_PANDAS, USE_PYARROW
+from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW
 
 
 def test_version():
@@ -219,3 +219,37 @@ class TestTuruSnowflake:
                     """
                 ).lstrip()
             )
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PANDERA), reason="pandas or pandera is not installed"
+    )
+    def test_fetch_pandas_all_using_pandera_model(
+        self, connection: turu.snowflake.Connection
+    ):
+        import pandera as pa  # type: ignore[import]
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int8
+
+        with connection.execute_map(
+            RowModel, "select 1 as ID union all select 2 ID"
+        ) as cursor:
+            assert cursor.fetch_pandas_all().to_dict() == {"ID": {0: 1, 1: 2}}
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PANDERA), reason="pandas or pandera is not installed"
+    )
+    def test_fetch_pandas_all_using_pandera_model_raise_validation_error(
+        self, connection: turu.snowflake.Connection
+    ):
+        import pandera as pa  # type: ignore[import]
+        import pandera.errors  # type: ignore[import]
+
+        class RowModel(pa.DataFrameModel):
+            uuid: Annotated[pa.Int64, pa.Field(le=5)]
+
+        with connection.execute_map(
+            RowModel, "select 1 as ID union all select 2 ID"
+        ) as cursor:
+            with pytest.raises(pandera.errors.SchemaInitError):
+                cursor.fetch_pandas_all()

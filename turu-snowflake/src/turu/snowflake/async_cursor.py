@@ -26,6 +26,11 @@ from turu.snowflake.cursor import (
     GenericPyArrowTable,
     GenericRowType,
 )
+from turu.snowflake.features import (
+    GenericPanderaDataFrameModel,
+    PanderaDataFrame,
+    PanderaDataFrameModel,
+)
 from typing_extensions import Never, Self, Unpack, override
 
 import snowflake.connector
@@ -128,6 +133,17 @@ class AsyncCursor(
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
         ...
 
     @overload
@@ -278,10 +294,12 @@ class AsyncCursor(
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFlame:
         """Fetch Pandas dataframes."""
 
-        return cast(
-            GenericPandasDataFlame,
-            self._raw_cursor.fetch_pandas_all(**kwargs),
-        )
+        df = self._raw_cursor.fetch_pandas_all(**kwargs)
+
+        if self._row_type and issubclass(self._row_type, PanderaDataFrameModel):
+            df = self._row_type.validate(df)  # type: ignore[union-attr]
+
+        return cast(GenericPandasDataFlame, df)
 
     async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFlame]:
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""

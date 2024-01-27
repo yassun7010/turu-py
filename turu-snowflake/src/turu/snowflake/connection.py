@@ -7,6 +7,10 @@ import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
 from turu.core.cursor import GenericNewRowType
+from turu.snowflake.features import (
+    GenericPanderaDataFrameModel,
+    PanderaDataFrame,
+)
 from typing_extensions import Never, Unpack, override
 
 import snowflake.connector
@@ -165,6 +169,17 @@ class Connection(turu.core.connection.Connection):
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, PanderaDataFrame[GenericPanderaDataFrameModel], Never]":
         ...
 
     @overload

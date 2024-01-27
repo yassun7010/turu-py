@@ -11,7 +11,11 @@ from turu.core.cursor import GenericRowType
 from turu.core.mock.connection import CSVOptions
 from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
 from turu.snowflake.cursor import GenericPandasDataFlame, GenericPyArrowTable
-from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from turu.snowflake.features import (
+    GenericPanderaDataFrameModel,
+    PandasDataFlame,
+    PyArrowTable,
+)
 from typing_extensions import Never, Self, Unpack, override
 
 from .async_connection import AsyncConnection
@@ -47,6 +51,16 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
     @overload
     def inject_response(
         self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        response: Union[
+            Sequence[GenericPandasDataFlame], GenericPandasDataFlame, Exception
+        ],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response(
+        self,
         row_type: Type[GenericPandasDataFlame],
         response: Union[
             Sequence[GenericPandasDataFlame], GenericPandasDataFlame, Exception
@@ -73,6 +87,9 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         ],
         response: Union[Sequence[Any], Any, Exception] = None,
     ) -> Self:
+        if row_type is not None and isinstance(response, PandasDataFlame):
+            response = (response,)
+
         self._turu_mock_store.inject_response(
             row_type,
             response,
