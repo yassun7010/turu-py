@@ -31,12 +31,15 @@ class ExecuteOptions(TypedDict, total=False):
     """number of statements"""
 
 
-GenericArrowTable = TypeVar("GenericArrowTable", bound=PyArrowTable)
+GenericPyArrowTable = TypeVar("GenericPyArrowTable", bound=PyArrowTable)
+GenericNewPyArrowTable = TypeVar("GenericNewPyArrowTable", bound=PyArrowTable)
+
 GenericPandasDataFlame = TypeVar("GenericPandasDataFlame", bound=PandasDataFlame)
+GenericNewPandasDataFlame = TypeVar("GenericNewPandasDataFlame", bound=PandasDataFlame)
 
 
 class Cursor(
-    Generic[GenericRowType, GenericPandasDataFlame, GenericArrowTable],
+    Generic[GenericRowType, GenericPandasDataFlame, GenericPyArrowTable],
     turu.core.cursor.Cursor[GenericRowType, Any],
 ):
     def __init__(
@@ -127,30 +130,32 @@ class Cursor(
     @overload
     def execute_map(
         self,
-        row_type: Type[PandasDataFlame],
+        row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PandasDataFlame, Never]":
+    ) -> "Cursor[Never, GenericNewPandasDataFlame, Never]":
         ...
 
     @overload
     def execute_map(
         self,
-        row_type: Type[PyArrowTable],
+        row_type: Type[GenericNewPyArrowTable],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never,  Never, PyArrowTable]":
+    ) -> "Cursor[Never,  Never, GenericNewPyArrowTable]":
         ...
 
     @override
     def execute_map(
         self,
         row_type: Union[
-            Type[PandasDataFlame], Type[PyArrowTable], Type[GenericNewRowType]
+            Type[GenericNewRowType],
+            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPyArrowTable],
         ],
         operation: str,
         parameters: "Optional[Any]" = None,
@@ -189,23 +194,23 @@ class Cursor(
     @overload
     def executemany_map(
         self,
-        row_type: Type[PandasDataFlame],
+        row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PandasDataFlame, Never]":
+    ) -> "Cursor[Never, GenericNewPandasDataFlame, Never]":
         pass
 
     @overload
     def executemany_map(
         self,
-        row_type: Type[PyArrowTable],
+        row_type: Type[GenericNewPyArrowTable],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, Never, PyArrowTable]":
+    ) -> "Cursor[Never, Never, GenericNewPyArrowTable]":
         pass
 
     @override
@@ -274,12 +279,15 @@ class Cursor(
         else:
             return next_row  # type: ignore[return-value]
 
-    def fetch_arrow_all(self) -> GenericArrowTable:
+    def fetch_arrow_all(self) -> GenericPyArrowTable:
         """Fetches all Arrow Tables."""
 
-        return cast(GenericArrowTable, self._raw_cursor.fetch_arrow_all())
+        return cast(
+            GenericPyArrowTable,
+            self._raw_cursor.fetch_arrow_all(force_return_table=True),
+        )
 
-    def fetch_arrow_batches(self) -> "Iterator[GenericArrowTable]":
+    def fetch_arrow_batches(self) -> "Iterator[GenericPyArrowTable]":
         """Fetches Arrow Tables in batches, where 'batch' refers to Snowflake Chunk."""
 
         return self._raw_cursor.fetch_arrow_batches()

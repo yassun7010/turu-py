@@ -1,12 +1,12 @@
 import os
 from pathlib import Path
-from typing import Any, Optional, Sequence, Tuple, Type, overload
+from typing import Any, Optional, Sequence, Tuple, Type, cast, overload
 
 import turu.core.async_connection
 import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType
-from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from turu.snowflake.cursor import GenericNewPandasDataFlame, GenericNewPyArrowTable
 from typing_extensions import Never, Self, Unpack, override
 
 import snowflake.connector
@@ -166,23 +166,23 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def execute_map(
         self,
-        row_type: Type[PandasDataFlame],
+        row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PandasDataFlame, Never]":
+    ) -> "AsyncCursor[Never, GenericNewPandasDataFlame, Never]":
         ...
 
     @overload
     async def execute_map(
         self,
-        row_type: Type[PyArrowTable],
+        row_type: Type[GenericNewPyArrowTable],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, PyArrowTable]":
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -210,11 +210,14 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             A cursor that holds a reference to an operation.
         """
 
-        return await (await self.cursor()).execute_map(
-            row_type,
-            operation,
-            parameters,
-            **options,
+        return cast(
+            AsyncCursor,
+            await (await self.cursor()).execute_map(
+                row_type,
+                operation,
+                parameters,
+                **options,
+            ),
         )
 
     @overload
@@ -231,23 +234,23 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def executemany_map(
         self,
-        row_type: Type[PandasDataFlame],
+        row_type: Type[GenericNewPandasDataFlame],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Never, PandasDataFlame, Never]:
+    ) -> AsyncCursor[Never, GenericNewPandasDataFlame, Never]:
         ...
 
     @overload
     async def executemany_map(
         self,
-        row_type: Type[PyArrowTable],
+        row_type: Type[GenericNewPyArrowTable],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Never, Never, PyArrowTable]:
+    ) -> AsyncCursor[Never, Never, GenericNewPyArrowTable]:
         ...
 
     @override
@@ -273,9 +276,12 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             A cursor that holds a reference to an operation.
         """
 
-        return await (await self.cursor()).executemany_map(
-            row_type,
-            operation,
-            seq_of_parameters,
-            **options,
+        return cast(
+            AsyncCursor,
+            await (await self.cursor()).executemany_map(
+                row_type,
+                operation,
+                seq_of_parameters,
+                **options,
+            ),
         )
