@@ -127,7 +127,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
 
                 self.inject_response(
                     row_type,
-                    cast(Any, pyarrow.csv.read_csv(filepath, **options)),
+                    pyarrow.csv.read_csv(filepath, **options),  # type: ignore
                 )
 
             else:

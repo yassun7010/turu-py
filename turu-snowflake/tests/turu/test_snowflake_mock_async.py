@@ -229,10 +229,10 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
             schema=pa.schema([pa.field("ID", pa.int8(), False)]),
-        )
+        )  # type: ignore
 
         mock_async_connection.inject_response(PyArrowTable, expected)
 
@@ -251,10 +251,10 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
             schema=pa.schema([pa.field("ID", pa.int8(), False)]),
-        )
+        )  # type: ignore
 
         async with await mock_async_connection.inject_response(
             PyArrowTable, expected
@@ -344,10 +344,10 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         import pyarrow as pa
 
-        expected = pa.table(
+        expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int64())],
             schema=pa.schema([pa.field("ID", pa.int64())]),
-        )
+        )  # type: ignore
 
         with tempfile.NamedTemporaryFile() as file:
             Path(file.name).write_text(

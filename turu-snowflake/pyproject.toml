@@ -63,6 +63,7 @@ pytest-cov = "^4.1.0"
 pytest-asyncio = "^0.23.2"
 pandas = "^2.1.4"
 pyarrow = "^14.0.2"
+pyarrow-stubs = "^10.0.1.7"
 numpy = "^1.26.3"
 
 [tool.taskipy.tasks]

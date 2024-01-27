@@ -290,12 +290,17 @@ class AsyncCursor(
     async def fetch_arrow_all(self) -> GenericPyArrowTable:
         """Fetches a single Arrow Table."""
 
-        return self._raw_cursor.fetch_arrow_all(force_return_table=True)
+        return cast(
+            GenericPyArrowTable,
+            self._raw_cursor.fetch_arrow_all(force_return_table=True),
+        )
 
     async def fetch_arrow_batches(self) -> Iterator[GenericPyArrowTable]:
         """Fetches Arrow Tables in batches, where 'batch' refers to Snowflake Chunk."""
 
-        return self._raw_cursor.fetch_arrow_batches()
+        return cast(
+            Iterator[GenericPyArrowTable], self._raw_cursor.fetch_arrow_batches()
+        )
 
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFlame:
         """Fetch Pandas dataframes."""
