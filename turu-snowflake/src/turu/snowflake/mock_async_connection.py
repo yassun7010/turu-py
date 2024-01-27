@@ -117,7 +117,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
                 if options.get("header", True) is False:
                     raise TuruCsvHeaderOptionRequiredError(row_type)
 
-                self._turu_mock_store.inject_response(
+                self.inject_response(
                     row_type,
                     cast(Any, pandas.read_csv(filepath, **options)),
                 )
@@ -125,7 +125,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
             elif issubclass(row_type, PyArrowTable):
                 import pyarrow.csv
 
-                self._turu_mock_store.inject_response(
+                self.inject_response(
                     row_type,
                     cast(Any, pyarrow.csv.read_csv(filepath, **options)),
                 )

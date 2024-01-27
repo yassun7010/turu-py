@@ -116,7 +116,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
                 if not options.get("header", True):
                     pd_options["header"] = None
 
-                self._turu_mock_store.inject_response(
+                self.inject_response(
                     row_type,  # type: ignore
                     pandas.read_csv(filepath, **pd_options),
                 )  # type: ignore
@@ -127,7 +127,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
                 if not options.get("header", True):
                     raise TuruCsvHeaderOptionRequiredError(row_type)
 
-                self._turu_mock_store.inject_response(
+                self.inject_response(
                     row_type,
                     cast(Any, pyarrow.csv.read_csv(filepath)),
                 )
