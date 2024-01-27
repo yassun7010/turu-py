@@ -81,11 +81,7 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
         if self._rows_iter is None:
             return None
 
-        try:
-            return next(self._rows_iter)
-
-        except StopIteration:
-            return None
+        return next(self._rows_iter, None)
 
     @override
     def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:

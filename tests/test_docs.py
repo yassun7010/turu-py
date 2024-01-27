@@ -17,4 +17,4 @@ class TestTuruDocs:
         DOCS_DATA_DIR.glob("turu_*.py"),
     )
     def test_turu_docs_sample(self, script_file: Path):
-        exec(script_file.read_text())
+        exec(script_file.read_text(), globals())
