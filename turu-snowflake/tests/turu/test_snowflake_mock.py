@@ -282,6 +282,38 @@ class TestTuruSnowflakeMockConnection:
                 assert cursor.fetch_pandas_all().equals(expected)
 
     @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PANDERA), reason="pandas is not installed"
+    )
+    def test_inject_pandas_response_from_csv_with_pandera_validation(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd
+        import pandera as pa
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int64
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        with tempfile.NamedTemporaryFile() as file:
+            Path(file.name).write_text(
+                dedent(
+                    """
+                    ID
+                    1
+                    2
+                    """.lstrip()
+                )
+            )
+
+            with (
+                mock_connection.chain()
+                .inject_response_from_csv(RowModel, file.name)
+                .execute_map(RowModel, "select 1 as ID union all select 2 as ID")
+            ) as cursor:
+                assert cursor.fetch_pandas_all().equals(expected)
+
+    @pytest.mark.skipif(
         not (USE_PANDAS and USE_PANDERA), reason="pandas or pandera is not installed"
     )
     def test_fetch_pandas_all_using_pandera_model(

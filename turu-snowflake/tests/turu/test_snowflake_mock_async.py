@@ -394,3 +394,34 @@ class TestTuruSnowflakeMockAsyncConnection:
                 .execute_map(pd.DataFrame, "select 1 as ID union all select 2 as ID")
             ) as cursor:
                 assert (await cursor.fetch_pandas_all()).equals(expected)
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_inject_pandas_response_from_csv_with_pandera_validation(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd
+        import pandera as pa
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int64
+
+        expected = pd.DataFrame({"ID": [1, 2]})
+
+        with tempfile.NamedTemporaryFile() as file:
+            Path(file.name).write_text(
+                dedent(
+                    """
+                    ID
+                    1
+                    2
+                    """.lstrip()
+                )
+            )
+
+            async with (
+                await mock_async_connection.chain()
+                .inject_response_from_csv(RowModel, file.name)
+                .execute_map(RowModel, "select 1 as ID union all select 2 as ID")
+            ) as cursor:
+                assert (await cursor.fetch_pandas_all()).equals(expected)
