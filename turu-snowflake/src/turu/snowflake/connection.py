@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
-from typing import Any, Optional, Sequence, Tuple, Type
+from typing import Any, Optional, Sequence, Tuple, Type, overload
 
 import turu.core.connection
 import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
+from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Unpack, override
 
 import snowflake.connector
@@ -97,7 +98,7 @@ class Connection(turu.core.connection.Connection):
         self._raw_connection.rollback()
 
     @override
-    def cursor(self) -> Cursor[Never]:
+    def cursor(self) -> Cursor[Never, Never, Never]:
         return Cursor(self._raw_connection.cursor())
 
     @override
@@ -107,7 +108,7 @@ class Connection(turu.core.connection.Connection):
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Tuple[Any]]:
+    ) -> Cursor[Tuple[Any], Never, Never]:
         """Prepare and execute a database operation (query or command).
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
@@ -131,7 +132,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Tuple[Any]]:
+    ) -> Cursor[Tuple[Any], Never, Never]:
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -149,15 +150,48 @@ class Connection(turu.core.connection.Connection):
 
         return self.cursor().executemany(operation, seq_of_parameters, **options)
 
-    @override
+    @overload
     def execute_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
-        parameters: Optional[Any] = None,
+        parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[turu.core.cursor.GenericNewRowType]:
+    ) -> "Cursor[turu.core.cursor.GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, Never, PandasDataFlame]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, PyArrowTable, Never]":
+        ...
+
+    @override
+    def execute_map(
+        self,
+        row_type,
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """
         Execute a database operation (query or command) and map each row to a `row_type`.
 
@@ -189,7 +223,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[turu.core.cursor.GenericNewRowType]:
+    ) -> Cursor[turu.core.cursor.GenericNewRowType, Never, Never]:
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),

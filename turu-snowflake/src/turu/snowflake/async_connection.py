@@ -1,10 +1,11 @@
 import os
 from pathlib import Path
-from typing import Any, Optional, Sequence, Tuple, Type
+from typing import Any, Optional, Sequence, Tuple, Type, overload
 
 import turu.core.async_connection
 import turu.core.cursor
 import turu.core.mock
+from turu.snowflake.features import PandasDataFlame, PyArrowTable
 from typing_extensions import Never, Self, Unpack, override
 
 import snowflake.connector
@@ -96,7 +97,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         self._raw_connection.rollback()
 
     @override
-    async def cursor(self) -> AsyncCursor[Never]:
+    async def cursor(self) -> AsyncCursor[Never, Never, Never]:
         return AsyncCursor(self._raw_connection.cursor())
 
     @override
@@ -106,7 +107,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Tuple[Any]]:
+    ) -> AsyncCursor[Tuple[Any], Never, Never]:
         """Prepare and execute a database operation (query or command).
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
@@ -130,7 +131,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Tuple[Any]]:
+    ) -> AsyncCursor[Tuple[Any], Never, Never]:
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -150,15 +151,48 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
             operation, seq_of_parameters, **options
         )
 
-    @override
+    @overload
     async def execute_map(
         self,
         row_type: Type[turu.core.cursor.GenericNewRowType],
         operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[turu.core.cursor.GenericNewRowType, Never, Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[PandasDataFlame],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, Never, PandasDataFlame]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PyArrowTable, Never]":
+        ...
+
+    @override
+    async def execute_map(
+        self,
+        row_type,
+        operation: str,
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[turu.core.cursor.GenericNewRowType]:
+    ):
         """
         Execute a database operation (query or command) and map each row to a `row_type`.
 
@@ -190,7 +224,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[turu.core.cursor.GenericNewRowType]:
+    ) -> AsyncCursor[turu.core.cursor.GenericNewRowType, Never, Never]:
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),

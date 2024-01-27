@@ -121,7 +121,9 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
 
         return next(self._rows_iter)
 
-    def _make_new_mock_cursor(self, row_type: Optional[Type]) -> "MockCursor":
+    def _make_new_mock_cursor(
+        self, row_type: Optional[Type[GenericNewRowType]]
+    ) -> "MockCursor":
         responses = self._turu_mock_store.provide_response(row_type)
 
         if responses is None:

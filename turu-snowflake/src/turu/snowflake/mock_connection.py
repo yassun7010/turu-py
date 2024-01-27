@@ -6,6 +6,7 @@ import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.cursor
 import turu.snowflake.mock_cursor
+from turu.core.cursor import GenericRowType
 from turu.core.mock.connection import CSVOptions
 from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
 from turu.snowflake.features import PandasDataFlame, PyArrowTable
@@ -19,7 +20,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         turu.core.mock.MockConnection.__init__(self)
 
     @override
-    def cursor(self) -> "turu.snowflake.mock_cursor.MockCursor[Never]":
+    def cursor(self) -> "turu.snowflake.mock_cursor.MockCursor[Never, Never, Never]":
         return turu.snowflake.mock_cursor.MockCursor(self._turu_mock_store)
 
     @overload
@@ -27,9 +28,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         self,
         row_type: None,
         response: Union[
-            Sequence[turu.core.cursor.GenericRowType],
-            Optional[turu.core.cursor.GenericRowType],
-            Exception,
+            Sequence[GenericRowType], Optional[GenericRowType], Exception
         ] = None,
     ) -> Self:
         ...
@@ -37,26 +36,36 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     @overload
     def inject_response(
         self,
-        row_type: Type[turu.core.cursor.GenericRowType],
-        response: Union[
-            Sequence[turu.core.cursor.GenericRowType],
-            turu.core.cursor.GenericRowType,
-            Exception,
-        ],
+        row_type: Type[PandasDataFlame],
+        response: Union[Sequence[PandasDataFlame], PandasDataFlame, Exception],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[PyArrowTable],
+        response: Union[Sequence[PyArrowTable], PyArrowTable, Exception],
+    ) -> Self:
+        ...
+
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[GenericRowType],
+        response: Union[Sequence[GenericRowType], GenericRowType, Exception],
     ) -> Self:
         ...
 
     @override
-    def inject_response(
+    def inject_response(  # type: ignore[override]
         self,
-        row_type: Optional[Type[turu.core.cursor.GenericRowType]],  # type: ignore
-        response: Union[
-            Sequence[Any],
-            Any,
-            Exception,
-        ] = None,
+        row_type: Union[
+            Type[GenericRowType], Type[PyArrowTable], Type[PandasDataFlame], None
+        ],
+        response: Union[Sequence[Any], Any, Exception] = None,
     ) -> Self:
-        if row_type is not None and isinstance(response, row_type):
+        if row_type is not None and isinstance(response, row_type):  # type: ignore
             response = (response,)
 
         self._turu_mock_store.inject_response(
@@ -66,9 +75,11 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
 
         return self
 
-    def inject_response_from_csv(
+    def inject_response_from_csv(  # type: ignore[override]
         self,
-        row_type: Optional[Type[turu.core.cursor.GenericRowType]],  # type: ignore
+        row_type: Union[
+            Type[GenericRowType], Type[PyArrowTable], Type[PandasDataFlame]
+        ],
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
     ) -> Self:
@@ -81,9 +92,9 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
                     pd_options["header"] = None
 
                 self._turu_mock_store.inject_response(
-                    row_type,
+                    row_type,  # type: ignore
                     pandas.read_csv(filepath, **pd_options),
-                )
+                )  # type: ignore
 
             elif issubclass(row_type, PyArrowTable):
                 import pyarrow.csv

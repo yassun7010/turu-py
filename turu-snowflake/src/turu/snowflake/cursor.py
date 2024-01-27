@@ -1,5 +1,6 @@
 from typing import (
     Any,
+    Generic,
     Iterator,
     List,
     Optional,
@@ -7,13 +8,17 @@ from typing import (
     Tuple,
     Type,
     TypedDict,
+    TypeVar,
+    Union,
     cast,
+    overload,
 )
 
 import turu.core.cursor
 import turu.core.mock
-from turu.snowflake.features import PandasDataFlame
-from typing_extensions import Self, Unpack, override
+from turu.core.cursor import GenericNewRowType, GenericRowType
+from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from typing_extensions import Never, Self, Unpack, override
 
 import snowflake.connector
 
@@ -26,17 +31,22 @@ class ExecuteOptions(TypedDict, total=False):
     """number of statements"""
 
 
+GenericArrowTable = TypeVar("GenericArrowTable", bound=PyArrowTable)
+GenericPandasDataFlame = TypeVar("GenericPandasDataFlame", bound=PandasDataFlame)
+
+
 class Cursor(
-    turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Any],
+    Generic[GenericRowType, GenericArrowTable, GenericPandasDataFlame],
+    turu.core.cursor.Cursor[GenericRowType, Any],
 ):
     def __init__(
         self,
         cursor: snowflake.connector.cursor.SnowflakeCursor,
         *,
-        row_type: Optional[Type[turu.core.cursor.GenericRowType]] = None,
+        row_type: Optional[Type[GenericRowType]] = None,
     ) -> None:
         self._raw_cursor = cursor
-        self._row_type: Optional[Type[turu.core.cursor.GenericRowType]] = row_type
+        self._row_type: Optional[Type[GenericRowType]] = row_type
 
     @property
     def rowcount(self) -> int:
@@ -61,7 +71,7 @@ class Cursor(
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Tuple[Any]]":
+    ) -> "Cursor[Tuple[Any], Never, Never]":
         """Prepare and execute a database operation (query or command).
 
         Parameters:
@@ -85,7 +95,7 @@ class Cursor(
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Tuple[Any]]":
+    ) -> "Cursor[Tuple[Any], Never, Never]":
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -103,15 +113,50 @@ class Cursor(
 
         return cast(Cursor, self)
 
-    @override
+    @overload
     def execute_map(
         self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
+        row_type: Type[PandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
+    ) -> "Cursor[Never, Never, PandasDataFlame]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, PyArrowTable, Never]":
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @override
+    def execute_map(
+        self,
+        row_type: Union[
+            Type[PandasDataFlame], Type[PyArrowTable], Type[GenericNewRowType]
+        ],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """
         Execute a database operation (query or command) and map each row to a `row_type`.
 
@@ -126,19 +171,19 @@ class Cursor(
         """
 
         self._raw_cursor.execute(operation, parameters, **options)
-        self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
+        self._row_type = cast(Type[GenericRowType], row_type)
 
         return cast(Cursor, self)
 
     @override
     def executemany_map(
         self,
-        row_type: Type[turu.core.cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[turu.core.cursor.GenericNewRowType]":
+    ) -> "Cursor[GenericNewRowType, Never, Never]":
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         Parameters:
@@ -151,12 +196,12 @@ class Cursor(
         """
 
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
-        self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
+        self._row_type = cast(Type[GenericRowType], row_type)
 
         return cast(Cursor, self)
 
     @override
-    def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
+    def fetchone(self) -> Optional[GenericRowType]:
         row = self._raw_cursor.fetchone()
         if row is None:
             return None
@@ -168,9 +213,7 @@ class Cursor(
             return row  # type: ignore[return-value]
 
     @override
-    def fetchmany(
-        self, size: Optional[int] = None
-    ) -> List[turu.core.cursor.GenericRowType]:
+    def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in self._raw_cursor.fetchmany(
@@ -179,14 +222,14 @@ class Cursor(
         ]
 
     @override
-    def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
+    def fetchall(self) -> List[GenericRowType]:
         return [
             turu.core.cursor.map_row(self._row_type, row)
             for row in self._raw_cursor.fetchall()
         ]
 
     @override
-    def __next__(self) -> turu.core.cursor.GenericRowType:
+    def __next__(self) -> GenericRowType:
         next_row = self._raw_cursor.fetchone()
 
         if next_row is None:
@@ -198,25 +241,28 @@ class Cursor(
         else:
             return next_row  # type: ignore[return-value]
 
-    def fetch_arrow_all(self):
+    def fetch_arrow_all(self) -> GenericArrowTable:
         """Fetches all Arrow Tables."""
 
-        return self._raw_cursor.fetch_arrow_all()
+        return cast(GenericArrowTable, self._raw_cursor.fetch_arrow_all())
 
-    def fetch_arrow_batches(self):
+    def fetch_arrow_batches(self) -> "Iterator[GenericArrowTable]":
         """Fetches Arrow Tables in batches, where 'batch' refers to Snowflake Chunk."""
 
         return self._raw_cursor.fetch_arrow_batches()
 
-    def fetch_pandas_all(self, **kwargs) -> "PandasDataFlame":
+    def fetch_pandas_all(self, **kwargs) -> "GenericPandasDataFlame":
         """Fetch Pandas dataframes."""
 
-        return self._raw_cursor.fetch_pandas_all(**kwargs)
+        return cast(GenericPandasDataFlame, self._raw_cursor.fetch_pandas_all(**kwargs))
 
-    def fetch_pandas_batches(self, **kwargs) -> "Iterator[PandasDataFlame]":
+    def fetch_pandas_batches(self, **kwargs) -> "Iterator[GenericPandasDataFlame]":
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
-        return self._raw_cursor.fetch_pandas_batches(**kwargs)
+        return cast(
+            Iterator[GenericPandasDataFlame],
+            self._raw_cursor.fetch_pandas_batches(**kwargs),
+        )
 
     def use_warehouse(self, warehouse: str, /) -> Self:
         """Use a warehouse in cursor."""

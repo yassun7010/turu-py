@@ -1,12 +1,31 @@
 import asyncio
-from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, TypedDict, cast
+from typing import (
+    Any,
+    Generic,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypedDict,
+    cast,
+    overload,
+)
 
 import turu.core.async_cursor
+import turu.core.cursor
 import turu.core.mock
 import turu.snowflake.record.async_record_cursor
 from turu.core.cursor import map_row
-from turu.snowflake.features import PandasDataFlame
-from typing_extensions import Self, Unpack, override
+from turu.snowflake.cursor import (
+    GenericArrowTable,
+    GenericNewRowType,
+    GenericPandasDataFlame,
+    GenericRowType,
+)
+from turu.snowflake.features import PandasDataFlame, PyArrowTable
+from typing_extensions import Never, Self, Unpack, override
 
 import snowflake.connector
 
@@ -19,16 +38,17 @@ class ExecuteOptions(TypedDict, total=False):
 
 
 class AsyncCursor(
-    turu.core.async_cursor.AsyncCursor[turu.core.async_cursor.GenericRowType, Any],
+    Generic[GenericRowType, GenericArrowTable, GenericPandasDataFlame],
+    turu.core.async_cursor.AsyncCursor[GenericRowType, Any],
 ):
     def __init__(
         self,
         cursor: snowflake.connector.cursor.SnowflakeCursor,
         *,
-        row_type: Optional[Type[turu.core.async_cursor.GenericRowType]] = None,
+        row_type: Optional[Type[GenericRowType]] = None,
     ) -> None:
         self._raw_cursor = cursor
-        self._row_type: Optional[Type[turu.core.async_cursor.GenericRowType]] = row_type
+        self._row_type: Optional[Type[GenericRowType]] = row_type
 
     @property
     def rowcount(self) -> int:
@@ -53,7 +73,7 @@ class AsyncCursor(
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Tuple[Any]]":
+    ) -> "AsyncCursor[Tuple[Any], Never, Never]":
         """Prepare and execute a database operation (query or command).
 
         Parameters:
@@ -77,7 +97,7 @@ class AsyncCursor(
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Tuple[Any]]":
+    ) -> "AsyncCursor[Tuple[Any], Never, Never]":
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -98,15 +118,48 @@ class AsyncCursor(
 
         return cast(AsyncCursor, self)
 
-    @override
+    @overload
     async def execute_map(
         self,
-        row_type: Type[turu.core.async_cursor.GenericNewRowType],
+        row_type: Type[PandasDataFlame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
+    ) -> "AsyncCursor[Never, Never, PandasDataFlame]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[PyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PyArrowTable, Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewRowType],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
+        ...
+
+    @override
+    async def execute_map(
+        self,
+        row_type,
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ):
         """
         Execute a database operation (query or command) and map each row to a `row_type`.
 
@@ -121,19 +174,19 @@ class AsyncCursor(
         """
 
         self._raw_cursor.execute(operation, parameters, **options)
-        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
+        self._row_type = cast(Type[GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 
     @override
     async def executemany_map(
         self,
-        row_type: Type[turu.core.async_cursor.GenericNewRowType],
+        row_type: Type[GenericNewRowType],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[turu.core.async_cursor.GenericNewRowType]":
+    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
         """Execute a database operation (query or command) against all parameter sequences or mappings.
 
         Caution:
@@ -149,12 +202,12 @@ class AsyncCursor(
         """
 
         self._raw_cursor.executemany(operation, seq_of_parameters, **options)
-        self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
+        self._row_type = cast(Type[GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
 
     @override
-    async def fetchone(self) -> Optional[turu.core.async_cursor.GenericRowType]:
+    async def fetchone(self) -> Optional[GenericRowType]:
         row = self._raw_cursor.fetchone()
         if row is None:
             return None
@@ -166,9 +219,7 @@ class AsyncCursor(
             return row  # type: ignore[return-value]
 
     @override
-    async def fetchmany(
-        self, size: Optional[int] = None
-    ) -> List[turu.core.async_cursor.GenericRowType]:
+    async def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
         return [
             map_row(self._row_type, row)
             for row in self._raw_cursor.fetchmany(
@@ -177,7 +228,7 @@ class AsyncCursor(
         ]
 
     @override
-    async def fetchall(self) -> List[turu.core.async_cursor.GenericRowType]:
+    async def fetchall(self) -> List[GenericRowType]:
         return [map_row(self._row_type, row) for row in self._raw_cursor.fetchall()]
 
     async def fetch_arrow_all(self):
@@ -201,7 +252,7 @@ class AsyncCursor(
         return self._raw_cursor.fetch_pandas_batches(**kwargs)
 
     @override
-    async def __anext__(self) -> turu.core.async_cursor.GenericRowType:
+    async def __anext__(self) -> GenericRowType:
         next_row = self._raw_cursor.fetchone()
 
         if next_row is None:
