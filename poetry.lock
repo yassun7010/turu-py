@@ -2686,4 +2686,4 @@ sqlite3 = ["turu-sqlite3"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "c9b5e5469fc0b18119fd899019a353c634de100bc9aa38429bb9d9403f3afc85"
+content-hash = "9fd6db42f5536c8df458448a780e71f474cd7867552ad4f9db8506bc2cc8e0cf"

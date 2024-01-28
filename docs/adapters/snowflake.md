@@ -73,6 +73,14 @@ pip install "turu[snowflake]"
 ### Pandas DataFrame Validation using Pandera
 You can use [Pandera](https://pandera.readthedocs.io/en/stable/) to validate the `pandas.DataFrame`.
 
+!!! note
+
+    Pandera is optional feature. If you want to use Pandera, you need to install pandera like this:
+
+    ```sh
+    pip install turu[snowflake,pandera]
+    ```
+
 ```python
 --8<-- "docs/data/turu_snowflake_sample_pandera.py"
 ```
