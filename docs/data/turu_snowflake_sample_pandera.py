@@ -1,13 +1,13 @@
+import pandera as pa
 import pytest
 import turu.snowflake
-from pandera import DataFrameModel, Field, Int64
 from pandera.errors import SchemaInitError
 from pandera.typing import DataFrame
 from typing_extensions import Annotated
 
 
-class User(DataFrameModel):
-    id: Annotated[Int64, Field(ge=5)]
+class User(pa.DataFrameModel):
+    id: Annotated[pa.Int64, pa.Field(ge=5)]
 
 
 connection = turu.snowflake.connect_from_env()
