@@ -78,7 +78,7 @@ You can use [Pandera](https://pandera.readthedocs.io/en/stable/) to validate the
     Pandera is optional feature. If you want to use Pandera, you need to install pandera like this:
 
     ```sh
-    pip install turu[snowflake,pandera]
+    pip install pandera
     ```
 
 ```python
