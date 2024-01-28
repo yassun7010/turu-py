@@ -41,9 +41,9 @@ class TestTuruSnowflakeMockAsyncConnection:
     ):
         expected = [Row(1), Row(2)]
         (
-            mock_async_connection.inject_response(Row, expected).inject_response(
-                Row, expected
-            )
+            mock_async_connection.chain()
+            .inject_response(Row, expected)
+            .inject_response(Row, expected)
         )
 
         cursor = await mock_async_connection.execute_map(
