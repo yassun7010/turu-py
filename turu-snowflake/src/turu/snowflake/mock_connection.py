@@ -87,7 +87,11 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         ],
         response: Union[Sequence[Any], Any, Exception] = None,
     ) -> Self:
-        if row_type is not None and isinstance(response, PandasDataFlame):
+        if (
+            row_type is not None
+            and PandasDataFlame is not Never
+            and isinstance(response, PandasDataFlame)
+        ):
             response = (response,)
 
         self._turu_mock_store.inject_response(
