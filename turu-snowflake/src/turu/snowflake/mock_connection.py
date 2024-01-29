@@ -133,6 +133,8 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
                 )
 
             else:
-                super().inject_response_from_csv(row_type, filepath, **options)
+                super().inject_response_from_csv(
+                    cast(Optional[Type[GenericRowType]], row_type), filepath, **options
+                )
 
         return self

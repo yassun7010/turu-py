@@ -131,6 +131,8 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
                 )
 
             else:
-                super().inject_response_from_csv(row_type, filepath, **options)
+                super().inject_response_from_csv(
+                    cast(Optional[Type[GenericRowType]], row_type), filepath, **options
+                )
 
         return self

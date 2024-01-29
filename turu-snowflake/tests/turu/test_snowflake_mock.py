@@ -288,7 +288,7 @@ class TestTuruSnowflakeMockConnection:
         self, mock_connection: turu.snowflake.MockConnection
     ):
         import pandas as pd
-        import pandera as pa
+        import pandera as pa  # type: ignore[import]
 
         class RowModel(pa.DataFrameModel):
             ID: pa.Int64
