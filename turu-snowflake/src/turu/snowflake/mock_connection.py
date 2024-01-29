@@ -1,5 +1,5 @@
 import pathlib
-from typing import Any, Optional, Sequence, Type, Union, cast, overload
+from typing import Any, Optional, Sequence, Type, Union, overload
 
 import turu.core.connection
 import turu.core.cursor
@@ -117,9 +117,9 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
                     pd_options["header"] = None
 
                 self.inject_response(
-                    row_type,  # type: ignore
-                    pandas.read_csv(filepath, **pd_options),
-                )  # type: ignore
+                    row_type,
+                    pandas.read_csv(filepath, **pd_options),  # type: ignore
+                )
 
             elif issubclass(row_type, PyArrowTable):
                 import pyarrow.csv
@@ -129,12 +129,14 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
 
                 self.inject_response(
                     row_type,
-                    cast(Any, pyarrow.csv.read_csv(filepath)),
+                    pyarrow.csv.read_csv(filepath),  # type: ignore
                 )
 
             else:
                 super().inject_response_from_csv(
-                    cast(Optional[Type[GenericRowType]], row_type), filepath, **options
+                    row_type,  # type: ignore
+                    filepath,
+                    **options,
                 )
 
         return self
