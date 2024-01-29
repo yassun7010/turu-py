@@ -1,5 +1,5 @@
 import pathlib
-from typing import Any, Optional, Sequence, Type, Union, cast, overload
+from typing import Any, Optional, Sequence, Type, Union, overload
 
 import turu.core.async_connection
 import turu.core.connection
@@ -119,7 +119,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
 
                 self.inject_response(
                     row_type,
-                    cast(Any, pandas.read_csv(filepath, **options)),
+                    pandas.read_csv(filepath, **options),  # type: ignore
                 )
 
             elif issubclass(row_type, PyArrowTable):
@@ -132,7 +132,9 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
 
             else:
                 super().inject_response_from_csv(
-                    cast(Optional[Type[GenericRowType]], row_type), filepath, **options
+                    row_type,  # type: ignore
+                    filepath,
+                    **options,
                 )
 
         return self
