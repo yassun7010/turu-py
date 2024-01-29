@@ -1,9 +1,14 @@
-from typing import TypeVar
+from typing import Generic, TypeVar
 
 from turu.core.features import _NotSupportFeature
 from typing_extensions import Never, TypeAlias
 
 T = TypeVar("T")
+
+
+class _NotSupportFeatureT(Generic[T]):
+    pass
+
 
 try:
     import pandas  # type: ignore[import]  # noqa: F401
@@ -45,8 +50,8 @@ try:
 
 except ImportError:
     USE_PANDERA = False
-    PanderaDataFrame: TypeAlias = _NotSupportFeature[T]  # type: ignore
-    PanderaDataFrameModel = _NotSupportFeature[T]  # type: ignore
+    PanderaDataFrame: TypeAlias = _NotSupportFeatureT[T]  # type: ignore
+    PanderaDataFrameModel = _NotSupportFeature  # type: ignore
     GenericPanderaDataFrameModel = TypeVar(
         "GenericPanderaDataFrameModel", bound=_NotSupportFeature
     )
