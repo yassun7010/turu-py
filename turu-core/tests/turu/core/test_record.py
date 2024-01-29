@@ -1,17 +1,18 @@
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from textwrap import dedent
 from typing import Any, Literal
 
 import pytest
 import turu.core.mock
-from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
 from turu.core.record import RecordCursor, record_to_csv
 from typing_extensions import Never, Self
 
 
-class RowPydantic(BaseModel):
+@dataclass
+class Row:
     id: int
     name: str
 
@@ -63,13 +64,13 @@ class TestRecord:
     def test_record_to_csv_execute_map(
         self, mock_connection: turu.core.mock.MockConnection
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             with record_to_csv(
                 file.name,
-                mock_connection.execute_map(RowPydantic, "select 1, 'name"),
+                mock_connection.execute_map(Row, "select 1, 'name"),
             ) as cursor:
                 assert cursor.fetchall() == expected
 
@@ -90,13 +91,13 @@ class TestRecord:
     def test_record_to_csv_execute_map_without_header_options(
         self, mock_connection: turu.core.mock.MockConnection
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             with record_to_csv(
                 file.name,
-                mock_connection.execute_map(RowPydantic, "select 1, 'name"),
+                mock_connection.execute_map(Row, "select 1, 'name"),
                 header=False,
             ) as cursor:
                 assert cursor.fetchall() == expected
@@ -117,13 +118,13 @@ class TestRecord:
     def test_record_to_csv_execute_map_with_limit_options(
         self, mock_connection: turu.core.mock.MockConnection
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             with record_to_csv(
                 file.name,
-                mock_connection.execute_map(RowPydantic, "select 1, 'name"),
+                mock_connection.execute_map(Row, "select 1, 'name"),
                 limit=3,
             ) as cursor:
                 assert cursor.fetchall() == expected
@@ -146,13 +147,13 @@ class TestRecord:
         mock_connection: turu.core.mock.MockConnection,
         enable: Literal["true", True],
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             with record_to_csv(
                 file.name,
-                mock_connection.execute_map(RowPydantic, "select 1, 'name"),
+                mock_connection.execute_map(Row, "select 1, 'name"),
                 enable=enable,
             ) as cursor:
                 assert isinstance(cursor, RecordCursor)
@@ -178,13 +179,13 @@ class TestRecord:
         mock_connection: turu.core.mock.MockConnection,
         enable: Literal["false", False, None],
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             with record_to_csv(
                 file.name,
-                mock_connection.execute_map(RowPydantic, "select 1, 'name"),
+                mock_connection.execute_map(Row, "select 1, 'name"),
                 enable=enable,
             ) as cursor:
                 assert not isinstance(cursor, RecordCursor)

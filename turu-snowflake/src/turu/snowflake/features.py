@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar
 
 from turu.core.features import _NotSupportFeature
-from typing_extensions import Never, TypeAlias
+from typing_extensions import TypeAlias
 
 T = TypeVar("T")
 
@@ -18,7 +18,7 @@ try:
 
 except ImportError:
     USE_PANDAS = False
-    PandasDataFlame: TypeAlias = Never  # type: ignore
+    PandasDataFlame: TypeAlias = _NotSupportFeature  # type: ignore
 
 
 try:

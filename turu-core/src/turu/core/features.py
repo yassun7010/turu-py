@@ -1,14 +1,17 @@
+from typing_extensions import TypeAlias
+
+
 class _NotSupportFeature:
     pass
 
 
 try:
-    import pydantic  # noqa: F401
+    import pydantic  # type: ignore[import]
 
     USE_PYDANTIC = True
-    PydanticModel = pydantic.BaseModel
+    PydanticModel: TypeAlias = pydantic.BaseModel  # type: ignore
 
 except ImportError:
     USE_PYDANTIC = False
 
-    PydanticModel = _NotSupportFeature
+    PydanticModel: TypeAlias = _NotSupportFeature  # type: ignore
