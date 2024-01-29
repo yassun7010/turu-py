@@ -1,17 +1,18 @@
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from textwrap import dedent
 from typing import Any, Literal
 
 import pytest
 import turu.core.mock
-from pydantic import BaseModel
 from turu.core.exception import TuruRowTypeNotSupportedError
 from turu.core.record import RecordCursor, record_to_csv
 from typing_extensions import Never
 
 
-class RowPydantic(BaseModel):
+@dataclass
+class Row:
     id: int
     name: str
 
@@ -68,13 +69,13 @@ class TestRecord:
     async def test_record_to_csv_execute_map(
         self, mock_async_connection: turu.core.mock.MockAsyncConnection
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_async_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_async_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             async with record_to_csv(
                 file.name,
-                await mock_async_connection.execute_map(RowPydantic, "select 1, 'name"),
+                await mock_async_connection.execute_map(Row, "select 1, 'name"),
             ) as cursor:
                 assert await cursor.fetchall() == expected
 
@@ -96,13 +97,13 @@ class TestRecord:
     async def test_record_to_csv_execute_map_without_header_options(
         self, mock_async_connection: turu.core.mock.MockAsyncConnection
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_async_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_async_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             async with record_to_csv(
                 file.name,
-                await mock_async_connection.execute_map(RowPydantic, "select 1, 'name"),
+                await mock_async_connection.execute_map(Row, "select 1, 'name"),
                 header=False,
             ) as cursor:
                 assert await cursor.fetchall() == expected
@@ -124,13 +125,13 @@ class TestRecord:
     async def test_record_to_csv_execute_map_with_limit_options(
         self, mock_async_connection: turu.core.mock.MockAsyncConnection
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_async_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_async_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             async with record_to_csv(
                 file.name,
-                await mock_async_connection.execute_map(RowPydantic, "select 1, 'name"),
+                await mock_async_connection.execute_map(Row, "select 1, 'name"),
                 limit=3,
             ) as cursor:
                 assert await cursor.fetchall() == expected
@@ -154,15 +155,15 @@ class TestRecord:
         mock_async_connection: turu.core.mock.MockAsyncConnection,
         enable: Literal["true", True],
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
 
         with tempfile.NamedTemporaryFile() as file:
             async with record_to_csv(
                 file.name,
                 (
                     await mock_async_connection.chain()
-                    .inject_response(RowPydantic, expected)
-                    .execute_map(RowPydantic, "select 1, 'name")
+                    .inject_response(Row, expected)
+                    .execute_map(Row, "select 1, 'name")
                 ),
                 enable=enable,
             ) as cursor:
@@ -189,13 +190,13 @@ class TestRecord:
         mock_async_connection: turu.core.mock.MockAsyncConnection,
         enable: Literal["false", False, None],
     ):
-        expected = [RowPydantic(id=i, name=f"name{i}") for i in range(5)]
-        mock_async_connection.inject_response(RowPydantic, expected)
+        expected = [Row(id=i, name=f"name{i}") for i in range(5)]
+        mock_async_connection.inject_response(Row, expected)
 
         with tempfile.NamedTemporaryFile() as file:
             async with record_to_csv(
                 file.name,
-                await mock_async_connection.execute_map(RowPydantic, "select 1, 'name"),
+                await mock_async_connection.execute_map(Row, "select 1, 'name"),
                 enable=enable,
             ) as cursor:
                 assert not isinstance(cursor, RecordCursor)

@@ -28,6 +28,9 @@ jobs:
           - turu-snowflake
           - turu-bigquery
           - .
+        install-flags:
+          - ""
+          - "--all-extras"
     defaults:
       run:
         working-directory: ${{ matrix.package }}
@@ -44,7 +47,7 @@ jobs:
           poetry --version
       - name: Poetry Install Dependencies
         run: |
-          poetry install --no-interaction --all-extras
+          poetry install --no-interaction ${{ matrix.install-flags }}
       - name: Lint
         run: |
           poetry run task format --diff

@@ -3,7 +3,7 @@ from typing import Any, NamedTuple
 
 import pytest
 import turu.core.mock
-from pydantic import BaseModel
+from turu.core.features import USE_PYDANTIC
 from turu.core.mock.exception import (
     TuruMockStoreDataNotFoundError,
     TuruMockUnexpectedFetchError,
@@ -21,8 +21,16 @@ class RowDataclass:
     id: int
 
 
-class RowPydantic(BaseModel):
-    id: int
+if USE_PYDANTIC:
+    from pydantic import BaseModel  # type: ignore[import]
+
+    class RowPydantic(BaseModel):
+        id: int
+
+    ROW_TYPE_LIST = [RowNamedTuple, RowDataclass, RowPydantic]
+
+else:
+    ROW_TYPE_LIST = [RowNamedTuple, RowDataclass]
 
 
 class TestTuruMock:
@@ -57,10 +65,10 @@ class TestTuruMock:
     def test_mock_execute_map_fetchone(
         self, mock_connection: turu.core.mock.MockConnection, rowsize: int
     ):
-        expected = [RowPydantic(id=i) for i in range(rowsize)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [RowDataclass(id=i) for i in range(rowsize)]
+        mock_connection.inject_response(RowDataclass, expected)
 
-        cursor = mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(RowDataclass, "SELECT 1")
         for i in range(rowsize):
             assert cursor.fetchone() == expected[i]
 
@@ -72,10 +80,10 @@ class TestTuruMock:
         mock_connection: turu.core.mock.MockConnection,
         rowsize: int,
     ):
-        expected = [RowPydantic(id=i) for i in range(rowsize)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [RowDataclass(id=i) for i in range(rowsize)]
+        mock_connection.inject_response(RowDataclass, expected)
 
-        cursor = mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(RowDataclass, "SELECT 1")
 
         assert list(cursor.fetchmany(rowsize)) == expected
         assert cursor.fetchone() is None
@@ -84,17 +92,15 @@ class TestTuruMock:
     def test_mock_execute_map_fetchall(
         self, mock_connection: turu.core.mock.MockConnection, rowsize: int
     ):
-        expected = [RowPydantic(id=i) for i in range(rowsize)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [RowDataclass(id=i) for i in range(rowsize)]
+        mock_connection.inject_response(RowDataclass, expected)
 
-        cursor = mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+        cursor = mock_connection.cursor().execute_map(RowDataclass, "SELECT 1")
 
         assert list(cursor.fetchall()) == expected
         assert cursor.fetchall() == []
 
-    @pytest.mark.parametrize(
-        "GenericRowType", [RowNamedTuple, RowDataclass, RowPydantic]
-    )
+    @pytest.mark.parametrize("GenericRowType", ROW_TYPE_LIST)
     def test_execute_map_by_rowtype(
         self, GenericRowType: Any, mock_connection: turu.core.mock.MockConnection
     ):
@@ -109,17 +115,17 @@ class TestTuruMock:
         self, mock_connection: turu.core.mock.MockConnection
     ):
         expected_array = [
-            [RowPydantic(id=1), RowPydantic(id=2), RowPydantic(id=3)],
-            [RowPydantic(id=4), RowPydantic(id=5), RowPydantic(id=6)],
-            [RowPydantic(id=7), RowPydantic(id=8), RowPydantic(id=9)],
+            [RowDataclass(id=1), RowDataclass(id=2), RowDataclass(id=3)],
+            [RowDataclass(id=4), RowDataclass(id=5), RowDataclass(id=6)],
+            [RowDataclass(id=7), RowDataclass(id=8), RowDataclass(id=9)],
         ]
 
         for expected in expected_array:
-            mock_connection.inject_response(RowPydantic, expected)
+            mock_connection.inject_response(RowDataclass, expected)
 
         cursor = mock_connection.cursor()
         for expected in expected_array:
-            assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
+            assert cursor.execute_map(RowDataclass, "SELECT 1").fetchall() == expected
 
         assert cursor.fetchone() is None
 
@@ -127,12 +133,12 @@ class TestTuruMock:
     def test_execute_map_each_inject_and_execute(
         self, execition_time: int, mock_connection: turu.core.mock.MockConnection
     ):
-        expected = [RowPydantic(id=i) for i in range(3)]
+        expected = [RowDataclass(id=i) for i in range(3)]
         for _ in range(execition_time):
-            mock_connection.inject_response(RowPydantic, expected)
+            mock_connection.inject_response(RowDataclass, expected)
             cursor = mock_connection.cursor()
 
-            assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
+            assert cursor.execute_map(RowDataclass, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
 
     def test_executemany(self, mock_connection: turu.core.mock.MockConnection):
@@ -141,42 +147,45 @@ class TestTuruMock:
             assert cursor.fetchall() == [(1,), (1,)]
 
     def test_executemany_map(self, mock_connection: turu.core.mock.MockConnection):
-        expected = [RowPydantic(id=i) for i in range(3)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [RowDataclass(id=i) for i in range(3)]
+        mock_connection.inject_response(RowDataclass, expected)
 
         with mock_connection.executemany_map(
-            RowPydantic, "SELECT 1", [(), ()]
+            RowDataclass, "SELECT 1", [(), ()]
         ) as cursor:
             assert cursor.fetchall() == expected
             assert cursor.fetchone() is None
 
     def test_multi_injection(self, mock_connection: turu.core.mock.MockConnection):
-        expected = [RowPydantic(id=i) for i in range(3)]
+        expected = [RowDataclass(id=i) for i in range(3)]
         (
             mock_connection.chain()
-            .inject_response(RowPydantic, expected)
-            .inject_response(RowPydantic, expected)
-            .inject_response(RowPydantic, expected)
-            .inject_response(RowPydantic, expected)
+            .inject_response(RowDataclass, expected)
+            .inject_response(RowDataclass, expected)
+            .inject_response(RowDataclass, expected)
+            .inject_response(RowDataclass, expected)
         )
 
         cursor = mock_connection.cursor()
         for _ in range(4):
-            assert cursor.execute_map(RowPydantic, "SELECT 1").fetchall() == expected
+            assert cursor.execute_map(RowDataclass, "SELECT 1").fetchall() == expected
             assert cursor.fetchone() is None
 
     def test_cursor_iterator(self, mock_connection: turu.core.mock.MockConnection):
-        expected = [RowPydantic(id=i) for i in range(3)]
-        mock_connection.inject_response(RowPydantic, expected)
+        expected = [RowDataclass(id=i) for i in range(3)]
+        mock_connection.inject_response(RowDataclass, expected)
 
         for i, row in enumerate(
-            mock_connection.cursor().execute_map(RowPydantic, "SELECT 1")
+            mock_connection.cursor().execute_map(RowDataclass, "SELECT 1")
         ):
             assert row == expected[i]
 
+    @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
     def test_inject_response_from_csv(
         self, mock_connection: turu.core.mock.MockConnection
     ):
+        from pydantic import BaseModel  # type: ignore[import]
+
         class Row(BaseModel):
             id: int
             name: str
@@ -194,16 +203,16 @@ class TestTuruMock:
         ]
 
     def test_with_statement(self, mock_connection: turu.core.mock.MockConnection):
-        expected = [RowPydantic(id=i) for i in range(3)]
+        expected = [RowDataclass(id=i) for i in range(3)]
 
-        mock_connection.inject_response(RowPydantic, expected)
+        mock_connection.inject_response(RowDataclass, expected)
 
-        with mock_connection.execute_map(RowPydantic, "SELECT 1") as cursor:
+        with mock_connection.execute_map(RowDataclass, "SELECT 1") as cursor:
             assert cursor.fetchall() == expected
             assert cursor.fetchone() is None
 
     def test_inject_execption(self, mock_connection: turu.core.mock.MockConnection):
-        mock_connection.inject_response(RowPydantic, ValueError("test"))
+        mock_connection.inject_response(RowDataclass, ValueError("test"))
 
         with pytest.raises(ValueError):
-            mock_connection.execute_map(RowPydantic, "SELECT 1")
+            mock_connection.execute_map(RowDataclass, "SELECT 1")

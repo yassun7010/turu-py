@@ -89,11 +89,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         ],
         response: Union[Sequence[Any], Any, Exception] = None,
     ) -> Self:
-        if (
-            row_type is not None
-            and PandasDataFlame is not Never
-            and isinstance(response, PandasDataFlame)
-        ):
+        if row_type is not None and isinstance(response, PandasDataFlame):
             response = (response,)
 
         self._turu_mock_store.inject_response(
@@ -135,6 +131,8 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
                 )
 
             else:
-                super().inject_response_from_csv(row_type, filepath, **options)
+                super().inject_response_from_csv(
+                    cast(Optional[Type[GenericRowType]], row_type), filepath, **options
+                )
 
         return self

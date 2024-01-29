@@ -10,6 +10,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 
 from turu.core.exception import TuruRowTypeMismatchError
@@ -140,13 +141,17 @@ def map_row(row_type: Optional[Type[GenericRowType]], row: Any) -> GenericRowTyp
             }
         )  # type: ignore
 
-    if issubclass(row_type, tuple):
+    elif issubclass(row_type, tuple):
         return row_type._make(row)  # type: ignore
 
-    if USE_PYDANTIC:
-        if issubclass(row_type, PydanticModel):
-            return row_type(
-                **{key: data for key, data in zip(row_type.model_fields.keys(), row)}
-            )
+    elif USE_PYDANTIC and issubclass(row_type, PydanticModel):
+        return row_type(
+            **{
+                key: data
+                for key, data in zip(
+                    cast(PydanticModel, row_type).model_fields.keys(), row
+                )
+            }
+        )  # type: ignore
 
     raise TuruRowTypeMismatchError(row_type, row.__class__)
