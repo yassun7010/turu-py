@@ -14,18 +14,18 @@ try:
     import pandas  # type: ignore[import]  # noqa: F401
 
     USE_PANDAS = True
-    PandasDataFlame: TypeAlias = pandas.DataFrame  # type: ignore
+    PandasDataFrame: TypeAlias = pandas.DataFrame  # type: ignore
 
 except ImportError:
     USE_PANDAS = False
-    PandasDataFlame: TypeAlias = _NotSupportFeature  # type: ignore
+    PandasDataFrame: TypeAlias = _NotSupportFeature  # type: ignore
 
 
 try:
     import pyarrow  # type: ignore[import]  # noqa: F401
 
     USE_PYARROW = True
-    PyArrowTable = pyarrow.Table  # type: ignore
+    PyArrowTable: TypeAlias = pyarrow.Table  # type: ignore
 
 
 except ImportError:

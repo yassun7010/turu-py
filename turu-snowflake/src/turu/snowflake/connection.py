@@ -9,7 +9,9 @@ import turu.snowflake.cursor
 from turu.core.cursor import GenericNewRowType
 from turu.snowflake.features import (
     GenericNewPanderaDataFrameModel,
+    PandasDataFrame,
     PanderaDataFrame,
+    PyArrowTable,
 )
 from typing_extensions import Never, Unpack, override
 
@@ -18,7 +20,7 @@ import snowflake.connector
 from .cursor import (
     Cursor,
     ExecuteOptions,
-    GenericNewPandasDataFlame,
+    GenericNewPandasDataFrame,
     GenericNewPyArrowTable,
     Self,
 )
@@ -108,7 +110,7 @@ class Connection(turu.core.connection.Connection):
         self._raw_connection.rollback()
 
     @override
-    def cursor(self) -> Cursor[Never, Never, Never]:
+    def cursor(self) -> Cursor[Never, PandasDataFrame, PyArrowTable]:
         return Cursor(self._raw_connection.cursor())
 
     @override
@@ -118,7 +120,7 @@ class Connection(turu.core.connection.Connection):
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Tuple[Any], Never, Never]:
+    ) -> Cursor[Tuple[Any], PandasDataFrame, PyArrowTable]:
         """Prepare and execute a database operation (query or command).
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
@@ -142,7 +144,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Tuple[Any], Never, Never]:
+    ) -> Cursor[Tuple[Any], PandasDataFrame, PyArrowTable]:
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -185,12 +187,12 @@ class Connection(turu.core.connection.Connection):
     @overload
     def execute_map(
         self,
-        row_type: Type[GenericNewPandasDataFlame],
+        row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, GenericNewPandasDataFlame, Never]:
+    ) -> Cursor[Never, GenericNewPandasDataFrame, Never]:
         ...
 
     @overload
@@ -210,7 +212,7 @@ class Connection(turu.core.connection.Connection):
         row_type: Union[
             Type[GenericNewRowType],
             Type[GenericNewPanderaDataFrameModel],
-            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
         ],
         operation: str,
@@ -269,12 +271,12 @@ class Connection(turu.core.connection.Connection):
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericNewPandasDataFlame],
+        row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, GenericNewPandasDataFlame, Never]:
+    ) -> Cursor[Never, GenericNewPandasDataFrame, Never]:
         ...
 
     @overload
@@ -294,7 +296,7 @@ class Connection(turu.core.connection.Connection):
         row_type: Union[
             Type[GenericNewRowType],
             Type[GenericNewPanderaDataFrameModel],
-            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
         ],
         operation: str,
