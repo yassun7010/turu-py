@@ -9,9 +9,10 @@ from turu.snowflake.features import (
     USE_PANDAS,
     USE_PANDERA,
     USE_PYARROW,
-    PandasDataFlame,
+    PandasDataFrame,
     PyArrowTable,
 )
+from typing_extensions import Never
 
 
 class Row(NamedTuple):
@@ -24,6 +25,73 @@ class TestTuruSnowflakeMockConnection:
         cursor = mock_connection.cursor().execute("select 1")
         assert cursor.fetchone() == (1,)
         assert cursor.fetchone() is None
+
+    def test_execute_map_named_tuple_type(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        class Row(NamedTuple):
+            id: int
+
+        _cursor: turu.snowflake.Cursor[
+            Row, Never, Never
+        ] = mock_connection.inject_response(Row, Row(1)).execute_map(Row, "select 1")
+
+    def test_execute_map_dataclass_type(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        from dataclasses import dataclass
+
+        @dataclass
+        class Row:
+            id: int
+
+        _cursor: turu.snowflake.Cursor[
+            Row, Never, Never
+        ] = mock_connection.inject_response(Row, Row(id=1)).execute_map(Row, "select 1")
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_execute_map_pandas_type(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd
+
+        _cursor: turu.snowflake.Cursor[
+            Never, pd.DataFrame, Never
+        ] = mock_connection.inject_response(
+            pd.DataFrame, pd.DataFrame({"id": [1]})
+        ).execute_map(pd.DataFrame, "select 1")
+
+    @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
+    def test_execute_pyarrow_type(self, mock_connection: turu.snowflake.MockConnection):
+        import pyarrow as pa  # type: ignore[import]
+
+        expected: pa.Table = pa.table(
+            data=[pa.array([1], type=pa.int64())],
+            schema=pa.schema([pa.field("ID", pa.int64())]),
+        )  # type: ignore
+        _cursor: turu.snowflake.Cursor[
+            Never, Never, pa.Table
+        ] = mock_connection.inject_response(
+            pa.Table,
+            expected,
+        ).execute_map(pa.Table, "select 1")
+
+    @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
+    def test_execute_map_pandera_type(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pandera as pa  # type: ignore[import]
+        from turu.snowflake.features import PanderaDataFrame
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int8
+
+        _cursor: turu.snowflake.Cursor[
+            Never, PanderaDataFrame[RowModel], Never
+        ] = mock_connection.inject_response(
+            RowModel, pd.DataFrame({"id": [1]})
+        ).execute_map(RowModel, "select 1 as ID")
 
     def test_execute_map_fetchone(self, mock_connection: turu.snowflake.MockConnection):
         expected = [Row(1), Row(2)]
@@ -208,10 +276,10 @@ class TestTuruSnowflakeMockConnection:
 
         expected = pd.DataFrame({"ID": [1, 2]})
 
-        mock_connection.inject_response(PandasDataFlame, expected)
+        mock_connection.inject_response(PandasDataFrame, expected)
 
         with mock_connection.execute_map(
-            PandasDataFlame, "select 1 as ID union all select 2 as ID"
+            PandasDataFrame, "select 1 as ID union all select 2 as ID"
         ) as cursor:
             assert cursor.fetch_pandas_all().equals(expected)
 
@@ -221,8 +289,8 @@ class TestTuruSnowflakeMockConnection:
 
         expected = pd.DataFrame({"ID": [1, 2]})
 
-        with mock_connection.inject_response(PandasDataFlame, expected).execute_map(
-            PandasDataFlame, "select 1 as ID union all select 2 as ID"
+        with mock_connection.inject_response(PandasDataFrame, expected).execute_map(
+            PandasDataFrame, "select 1 as ID union all select 2 as ID"
         ) as cursor:
             assert list(cursor.fetch_pandas_batches()) == [expected]
 

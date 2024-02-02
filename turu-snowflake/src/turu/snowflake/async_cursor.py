@@ -20,17 +20,19 @@ import turu.core.mock
 import turu.snowflake.record.async_record_cursor
 from turu.core.cursor import map_row
 from turu.snowflake.cursor import (
-    GenericNewPandasDataFlame,
+    GenericNewPandasDataFrame,
     GenericNewPyArrowTable,
     GenericNewRowType,
-    GenericPandasDataFlame,
+    GenericPandasDataFrame,
     GenericPyArrowTable,
     GenericRowType,
 )
 from turu.snowflake.features import (
     GenericNewPanderaDataFrameModel,
+    PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
+    PyArrowTable,
 )
 from typing_extensions import Never, Self, Unpack, override
 
@@ -45,7 +47,7 @@ class ExecuteOptions(TypedDict, total=False):
 
 
 class AsyncCursor(
-    Generic[GenericRowType, GenericPandasDataFlame, GenericPyArrowTable],
+    Generic[GenericRowType, GenericPandasDataFrame, GenericPyArrowTable],
     turu.core.async_cursor.AsyncCursor[GenericRowType, Any],
 ):
     def __init__(
@@ -80,7 +82,7 @@ class AsyncCursor(
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Tuple[Any], Never, Never]":
+    ) -> "AsyncCursor[Tuple[Any], PandasDataFrame, PyArrowTable]":
         """Prepare and execute a database operation (query or command).
 
         Parameters:
@@ -104,7 +106,7 @@ class AsyncCursor(
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Tuple[Any], Never, Never]":
+    ) -> "AsyncCursor[Tuple[Any], PandasDataFrame, PyArrowTable]":
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -139,23 +141,12 @@ class AsyncCursor(
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
+        row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
-        row_type: Type[GenericNewPandasDataFlame],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, GenericNewPandasDataFlame, Never]":
+    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]":
         ...
 
     @overload
@@ -169,14 +160,25 @@ class AsyncCursor(
     ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
     @override
     async def execute_map(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericNewPanderaDataFrameModel],
-            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
+            Type[GenericNewPanderaDataFrameModel],
         ],
         operation: str,
         parameters: "Optional[Any]" = None,
@@ -215,23 +217,12 @@ class AsyncCursor(
     @overload
     async def executemany_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
+        row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
-
-    @overload
-    async def executemany_map(
-        self,
-        row_type: Type[GenericNewPandasDataFlame],
-        operation: str,
-        seq_of_parameters: "Sequence[Any]",
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, GenericNewPandasDataFlame, Never]":
+    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]":
         ...
 
     @overload
@@ -245,14 +236,25 @@ class AsyncCursor(
     ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
     @override
     async def executemany_map(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericNewPanderaDataFrameModel],
-            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
+            Type[GenericNewPanderaDataFrameModel],
         ],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
@@ -318,7 +320,7 @@ class AsyncCursor(
             Iterator[GenericPyArrowTable], self._raw_cursor.fetch_arrow_batches()
         )
 
-    async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFlame:
+    async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
         """Fetch Pandas dataframes."""
 
         df = self._raw_cursor.fetch_pandas_all(**kwargs)
@@ -326,13 +328,13 @@ class AsyncCursor(
         if self._row_type and issubclass(self._row_type, PanderaDataFrameModel):
             df = self._row_type.validate(df)  # type: ignore[union-attr]
 
-        return cast(GenericPandasDataFlame, df)
+        return cast(GenericPandasDataFrame, df)
 
-    async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFlame]:
+    async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFrame]:
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
         return cast(
-            Iterator[GenericPandasDataFlame],
+            Iterator[GenericPandasDataFrame],
             self._raw_cursor.fetch_pandas_batches(**kwargs),
         )
 

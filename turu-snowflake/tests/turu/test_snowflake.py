@@ -2,12 +2,17 @@ import os
 import tempfile
 from pathlib import Path
 from textwrap import dedent
-from typing import Annotated, NamedTuple
+from typing import Annotated, NamedTuple, cast
 
 import pytest
 import turu.snowflake
 from turu.core.record import record_to_csv
-from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW
+from turu.snowflake.features import (
+    USE_PANDAS,
+    USE_PANDERA,
+    USE_PYARROW,
+)
+from typing_extensions import Never
 
 
 def test_version():
@@ -29,6 +34,53 @@ class TestTuruSnowflake:
 
     def test_execute_fetchone(self, connection: turu.snowflake.Connection):
         assert connection.execute("select 1").fetchone() == (1,)
+
+    def test_execute_map_named_tuple_type(self, connection: turu.snowflake.Connection):
+        class Row(NamedTuple):
+            pass
+
+        _cursor: turu.snowflake.Cursor[Row, Never, Never] = connection.execute_map(
+            Row, "select 1"
+        )
+
+    def test_execute_map_dataclass_type(self, connection: turu.snowflake.Connection):
+        from dataclasses import dataclass
+
+        @dataclass
+        class Row(NamedTuple):
+            pass
+
+        _cursor: turu.snowflake.Cursor[Row, Never, Never] = connection.execute_map(
+            Row, "select 1"
+        )
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_execute_map_pandas_type(self, connection: turu.snowflake.Connection):
+        import pandas as pd
+
+        _cursor: turu.snowflake.Cursor[
+            Never, pd.DataFrame, Never
+        ] = connection.execute_map(pd.DataFrame, "select 1")
+
+    @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
+    def test_execute_pyarrow_type(self, connection: turu.snowflake.Connection):
+        from turu.snowflake.features import PyArrowTable
+
+        _cursor: turu.snowflake.Cursor[
+            Never, Never, PyArrowTable
+        ] = connection.execute_map(PyArrowTable, "select 1")
+
+    @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
+    def test_execute_map_pandera_type(self, connection: turu.snowflake.Connection):
+        import pandera as pa  # type: ignore[import]
+        from turu.snowflake.features import PanderaDataFrame
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int8
+
+        _cursor: turu.snowflake.Cursor[
+            Never, PanderaDataFrame[RowModel], Never
+        ] = connection.execute_map(RowModel, "select 1 as ID")
 
     def test_execute_map_fetchone(self, connection: turu.snowflake.Connection):
         cursor = connection.execute_map(Row, "select 1")
@@ -169,7 +221,7 @@ class TestTuruSnowflake:
         with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
             for row in cursor.fetch_arrow_batches():
                 assert_frame_equal(
-                    row.to_pandas(),
+                    cast(DataFrame, row.to_pandas()),
                     DataFrame({"ID": [1, 2]}, dtype="int8"),
                 )
 
