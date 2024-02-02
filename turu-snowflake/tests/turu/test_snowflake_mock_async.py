@@ -6,6 +6,7 @@ from typing import Annotated, NamedTuple
 import pytest
 import turu.snowflake
 from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW, PyArrowTable
+from typing_extensions import Never
 
 
 class Row(NamedTuple):
@@ -21,6 +22,84 @@ class TestTuruSnowflakeMockAsyncConnection:
         cursor = await mock_async_connection.execute("select 1")
         assert await cursor.fetchone() == (1,)
         assert await cursor.fetchone() is None
+
+    @pytest.mark.asyncio
+    async def test_execute_map_named_tuple_type(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        class Row(NamedTuple):
+            id: int
+
+        _cursor: turu.snowflake.AsyncCursor[
+            Row, Never, Never
+        ] = await mock_async_connection.inject_response(Row, Row(1)).execute_map(
+            Row, "select 1"
+        )
+
+    @pytest.mark.asyncio
+    async def test_execute_map_dataclass_type(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        from dataclasses import dataclass
+
+        @dataclass
+        class Row:
+            id: int
+
+        _cursor: turu.snowflake.AsyncCursor[
+            Row, Never, Never
+        ] = await mock_async_connection.inject_response(Row, Row(id=1)).execute_map(
+            Row, "select 1"
+        )
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_execute_map_pandas_type(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd
+
+        _cursor: turu.snowflake.AsyncCursor[
+            Never, pd.DataFrame, Never
+        ] = await mock_async_connection.inject_response(
+            pd.DataFrame, pd.DataFrame({"id": [1]})
+        ).execute_map(pd.DataFrame, "select 1")
+
+    @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
+    @pytest.mark.asyncio
+    async def test_execute_pyarrow_type(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pyarrow as pa  # type: ignore[import]
+
+        expected: pa.Table = pa.table(
+            data=[pa.array([1], type=pa.int64())],
+            schema=pa.schema([pa.field("ID", pa.int64())]),
+        )  # type: ignore
+        _cursor: turu.snowflake.AsyncCursor[
+            Never, Never, pa.Table
+        ] = await mock_async_connection.inject_response(
+            pa.Table,
+            expected,
+        ).execute_map(pa.Table, "select 1")
+
+    @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
+    @pytest.mark.asyncio
+    async def test_execute_map_pandera_type(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pandera as pa  # type: ignore[import]
+        from turu.snowflake.features import PanderaDataFrame
+
+        class RowModel(pa.DataFrameModel):
+            ID: pa.Int8
+
+        _cursor: turu.snowflake.AsyncCursor[
+            Never, PanderaDataFrame[RowModel], Never
+        ] = await mock_async_connection.inject_response(
+            RowModel, pd.DataFrame({"id": [1]})
+        ).execute_map(RowModel, "select 1 as ID")
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchone(

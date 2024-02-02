@@ -6,10 +6,12 @@ import turu.core.async_connection
 import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType
-from turu.snowflake.cursor import GenericNewPandasDataFlame, GenericNewPyArrowTable
+from turu.snowflake.cursor import GenericNewPandasDataFrame, GenericNewPyArrowTable
 from turu.snowflake.features import (
     GenericNewPanderaDataFrameModel,
+    PandasDataFrame,
     PanderaDataFrame,
+    PyArrowTable,
 )
 from typing_extensions import Never, Self, Unpack, override
 
@@ -112,7 +114,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         parameters: Optional[Any] = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Tuple[Any], Never, Never]:
+    ) -> AsyncCursor[Tuple[Any], PandasDataFrame, PyArrowTable]:
         """Prepare and execute a database operation (query or command).
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
@@ -136,7 +138,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Tuple[Any], Never, Never]:
+    ) -> AsyncCursor[Tuple[Any], PandasDataFrame, PyArrowTable]:
         """Prepare a database operation (query or command)
         and then execute it against all parameter sequences or mappings.
 
@@ -170,23 +172,12 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericNewPandasDataFlame],
+        row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, GenericNewPandasDataFlame, Never]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]":
         ...
 
     @overload
@@ -200,14 +191,25 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
     @override
     async def execute_map(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericNewPanderaDataFrameModel],
-            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
+            Type[GenericNewPanderaDataFrameModel],
         ],
         operation: str,
         parameters: Optional[Any] = None,
@@ -254,23 +256,12 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     @overload
     async def executemany_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
+        row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
-
-    @overload
-    async def executemany_map(
-        self,
-        row_type: Type[GenericNewPandasDataFlame],
-        operation: str,
-        seq_of_parameters: Sequence[Any],
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> AsyncCursor[Never, GenericNewPandasDataFlame, Never]:
+    ) -> AsyncCursor[Never, GenericNewPandasDataFrame, Never]:
         ...
 
     @overload
@@ -284,14 +275,25 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
     ) -> AsyncCursor[Never, Never, GenericNewPyArrowTable]:
         ...
 
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
     @override
     async def executemany_map(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericNewPanderaDataFrameModel],
-            Type[GenericNewPandasDataFlame],
+            Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
+            Type[GenericNewPanderaDataFrameModel],
         ],
         operation: str,
         seq_of_parameters: Sequence[Any],
