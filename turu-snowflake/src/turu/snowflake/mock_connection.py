@@ -52,16 +52,6 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     @overload
     def inject_response(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
-        response: Union[
-            Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
-        ],
-    ) -> Self:
-        ...
-
-    @overload
-    def inject_response(
-        self,
         row_type: Type[GenericPandasDataFrame],
         response: Union[
             Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
@@ -77,14 +67,24 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     ) -> Self:
         ...
 
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        response: Union[
+            Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
+        ],
+    ) -> Self:
+        ...
+
     @override
     def inject_response(  # type: ignore[override]
         self,
         row_type: Union[
             Type[GenericRowType],
-            Type[GenericPanderaDataFrameModel],
             Type[GenericPandasDataFrame],
             Type[GenericPyArrowTable],
+            Type[GenericPanderaDataFrameModel],
             None,
         ],
         response: Union[Sequence[Any], Any, Exception] = None,
@@ -103,9 +103,9 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         self,
         row_type: Union[
             Type[GenericRowType],
-            Type[GenericPanderaDataFrameModel],
             Type[GenericPandasDataFrame],
             Type[GenericPyArrowTable],
+            Type[GenericPanderaDataFrameModel],
         ],
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],

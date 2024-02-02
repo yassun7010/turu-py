@@ -72,17 +72,6 @@ class MockCursor(  # type: ignore
     @overload
     def execute_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "MockCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
-
-    @overload
-    def execute_map(
-        self,
         row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         parameters: "Optional[Any]" = None,
@@ -102,14 +91,25 @@ class MockCursor(  # type: ignore
     ) -> "MockCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
     @override
     def execute_map(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
+            Type[GenericNewPanderaDataFrameModel],
         ],
         operation: str,
         parameters: Optional[Any] = None,
@@ -137,17 +137,6 @@ class MockCursor(  # type: ignore
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
-        operation: str,
-        seq_of_parameters: Sequence[Any],
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "MockCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
-
-    @overload
-    def executemany_map(
-        self,
         row_type: Type[GenericNewPandasDataFrame],
         operation: str,
         seq_of_parameters: Sequence[Any],
@@ -167,14 +156,25 @@ class MockCursor(  # type: ignore
     ) -> "MockCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
     @override
     def executemany_map(
         self,
         row_type: Union[
             Type[GenericNewRowType],
-            Type[GenericNewPanderaDataFrameModel],
             Type[GenericNewPandasDataFrame],
             Type[GenericNewPyArrowTable],
+            Type[GenericNewPanderaDataFrameModel],
         ],
         operation: str,
         seq_of_parameters: Sequence[Any],

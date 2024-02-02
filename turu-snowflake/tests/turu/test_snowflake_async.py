@@ -72,11 +72,11 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_execute_pyarrow_type(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        from turu.snowflake.features import PyArrowTable
+        import pyarrow as pa  # type: ignore[import]
 
         _cursor: turu.snowflake.AsyncCursor[
-            Never, Never, PyArrowTable
-        ] = await async_connection.execute_map(PyArrowTable, "select 1")
+            Never, Never, pa.Table
+        ] = await async_connection.execute_map(pa.Table, "select 1")
 
     @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
     @pytest.mark.asyncio
