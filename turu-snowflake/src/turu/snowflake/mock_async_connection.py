@@ -10,10 +10,10 @@ import turu.snowflake.mock_cursor
 from turu.core.cursor import GenericRowType
 from turu.core.mock.connection import CSVOptions
 from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
-from turu.snowflake.cursor import GenericPandasDataFlame, GenericPyArrowTable
+from turu.snowflake.cursor import GenericPandasDataFrame, GenericPyArrowTable
 from turu.snowflake.features import (
     GenericPanderaDataFrameModel,
-    PandasDataFlame,
+    PandasDataFrame,
     PanderaDataFrameModel,
     PyArrowTable,
 )
@@ -52,19 +52,9 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
     @overload
     def inject_response(
         self,
-        row_type: Type[GenericPanderaDataFrameModel],
+        row_type: Type[GenericPandasDataFrame],
         response: Union[
-            Sequence[GenericPandasDataFlame], GenericPandasDataFlame, Exception
-        ],
-    ) -> Self:
-        ...
-
-    @overload
-    def inject_response(
-        self,
-        row_type: Type[GenericPandasDataFlame],
-        response: Union[
-            Sequence[GenericPandasDataFlame], GenericPandasDataFlame, Exception
+            Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
         ],
     ) -> Self:
         ...
@@ -77,19 +67,29 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
     ) -> Self:
         ...
 
+    @overload
+    def inject_response(
+        self,
+        row_type: Type[GenericPanderaDataFrameModel],
+        response: Union[
+            Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
+        ],
+    ) -> Self:
+        ...
+
     @override
     def inject_response(  # type: ignore[override]
         self,
         row_type: Union[
             Type[GenericRowType],
-            Type[GenericPanderaDataFrameModel],
-            Type[GenericPandasDataFlame],
+            Type[GenericPandasDataFrame],
             Type[GenericPyArrowTable],
+            Type[GenericPanderaDataFrameModel],
             None,
         ],
         response: Union[Sequence[Any], Any, Exception] = None,
     ) -> Self:
-        if row_type is not None and isinstance(response, PandasDataFlame):
+        if row_type is not None and isinstance(response, PandasDataFrame):
             response = (response,)
 
         self._turu_mock_store.inject_response(
@@ -103,15 +103,15 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         self,
         row_type: Union[
             Type[GenericRowType],
-            Type[GenericPanderaDataFrameModel],
-            Type[GenericPandasDataFlame],
+            Type[GenericPandasDataFrame],
             Type[GenericPyArrowTable],
+            Type[GenericPanderaDataFrameModel],
         ],
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
     ) -> Self:
         if row_type is not None:
-            if issubclass(row_type, (PandasDataFlame, PanderaDataFrameModel)):
+            if issubclass(row_type, (PandasDataFrame, PanderaDataFrameModel)):
                 import pandas
 
                 if options.get("header", True) is False:
