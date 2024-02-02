@@ -110,7 +110,7 @@ class Connection(turu.core.connection.Connection):
         self._raw_connection.rollback()
 
     @override
-    def cursor(self) -> Cursor[Never, PandasDataFrame, PyArrowTable]:
+    def cursor(self) -> Cursor[Never, Never, Never]:
         return Cursor(self._raw_connection.cursor())
 
     @override

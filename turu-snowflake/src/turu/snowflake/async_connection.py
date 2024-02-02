@@ -104,7 +104,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
         self._raw_connection.rollback()
 
     @override
-    async def cursor(self) -> AsyncCursor[Never, PandasDataFrame, PyArrowTable]:
+    async def cursor(self) -> AsyncCursor[Never, Never, Never]:
         return AsyncCursor(self._raw_connection.cursor())
 
     @override

@@ -28,7 +28,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     @override
     def cursor(
         self,
-    ) -> "turu.snowflake.mock_cursor.MockCursor[Never, PandasDataFrame, PyArrowTable]":
+    ) -> "turu.snowflake.mock_cursor.MockCursor[Never, Never, Never]":
         return turu.snowflake.mock_cursor.MockCursor(self._turu_mock_store)
 
     @overload

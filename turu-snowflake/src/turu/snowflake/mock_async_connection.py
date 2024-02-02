@@ -28,7 +28,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         turu.core.mock.MockAsyncConnection.__init__(self)
 
     @override
-    async def cursor(self) -> "MockAsyncCursor[Never, PandasDataFrame, PyArrowTable]":
+    async def cursor(self) -> "MockAsyncCursor[Never, Never, Never]":
         return MockAsyncCursor(self._turu_mock_store)
 
     @overload
