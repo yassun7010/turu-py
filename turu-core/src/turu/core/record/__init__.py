@@ -15,6 +15,15 @@ from turu.core.record.csv_recorder import CsvRecorder, CsvRecorderOptions
 from turu.core.record.record_cursor import RecordCursor
 from typing_extensions import Unpack, deprecated
 
+__all__ = [
+    "record_to_csv",
+    "record_as_csv",
+    "CsvRecorder",
+    "CsvRecorderOptions",
+    "RecordCursor",
+    "AsyncRecordCursor",
+]
+
 
 @overload
 def record_to_csv(
