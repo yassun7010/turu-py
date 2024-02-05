@@ -56,7 +56,7 @@ class TestTuruSnowflake:
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_execute_map_pandas_type(self, connection: turu.snowflake.Connection):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
 
         _cursor: turu.snowflake.Cursor[
             Never, pd.DataFrame, Never
@@ -203,7 +203,7 @@ class TestTuruSnowflake:
         reason="pyarrow is not installed",
     )
     def test_fetch_arrow_all(self, connection: turu.snowflake.Connection):
-        import pyarrow as pa
+        import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
@@ -215,8 +215,8 @@ class TestTuruSnowflake:
 
     @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
     def test_fetch_arrow_batches(self, connection: turu.snowflake.Connection):
-        from pandas import DataFrame
-        from pandas.testing import assert_frame_equal
+        from pandas import DataFrame  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
 
         with connection.execute("select 1 as ID union all select 2 as ID") as cursor:
             for row in cursor.fetch_arrow_batches():
@@ -232,8 +232,8 @@ class TestTuruSnowflake:
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_fetch_pandas_batches(self, connection: turu.snowflake.Connection):
-        from pandas import DataFrame
-        from pandas.testing import assert_frame_equal
+        from pandas import DataFrame  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
 
         with connection.execute("select 1 as ID union all select 2 AS ID") as cursor:
             for df in cursor.fetch_pandas_batches():
@@ -241,8 +241,8 @@ class TestTuruSnowflake:
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_record_pandas_dataframe(self, connection: turu.snowflake.Connection):
-        import pandas as pd
-        from pandas.testing import assert_frame_equal
+        import pandas as pd  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
 
         with tempfile.NamedTemporaryFile() as file:
             with record_to_csv(

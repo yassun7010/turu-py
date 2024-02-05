@@ -57,7 +57,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_execute_map_pandas_type(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
 
         _cursor: turu.snowflake.AsyncCursor[
             Never, pd.DataFrame, Never
@@ -306,7 +306,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_fetch_arrow_all(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pyarrow as pa
+        import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
@@ -328,7 +328,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_fetch_arrow_batches(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pyarrow as pa
+        import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int8())],
@@ -347,7 +347,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_fetch_pandas_all(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
 
         expected = pd.DataFrame({"ID": [1, 2]})
 
@@ -363,7 +363,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_fetch_pandas_batches(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
 
         expected = pd.DataFrame({"ID": [1, 2]})
 
@@ -421,7 +421,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_inject_pyarrow_response_from_csv(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pyarrow as pa
+        import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
             data=[pa.array([1, 2], type=pa.int64())],
@@ -452,7 +452,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_inject_pandas_response_from_csv(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
 
         expected = pd.DataFrame({"ID": [1, 2]})
 
@@ -481,7 +481,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     async def test_inject_pandas_response_from_csv_with_pandera_validation(
         self, mock_async_connection: turu.snowflake.MockAsyncConnection
     ):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
 
         class RowModel(pa.DataFrameModel):
