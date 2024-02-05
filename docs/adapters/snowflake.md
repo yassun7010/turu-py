@@ -9,6 +9,13 @@
 pip install "turu[snowflake]"
 ```
 
+!!! warning
+    If you have any dependencies on [pyarrow](https://arrow.apache.org/), please install the following stubs in your development environment to avoid errors due to `Unknown` types.
+
+    ```sh
+    pip install --dev pyarrow-stubs
+    ```
+
 ## Usage
 ### Basic Usage
 
