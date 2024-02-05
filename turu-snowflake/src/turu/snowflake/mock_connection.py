@@ -11,6 +11,8 @@ from turu.core.mock.connection import CSVOptions
 from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
 from turu.snowflake.cursor import GenericPandasDataFrame, GenericPyArrowTable
 from turu.snowflake.features import (
+    USE_PANDAS,
+    USE_PYARROW,
     GenericPanderaDataFrameModel,
     PandasDataFrame,
     PanderaDataFrameModel,
@@ -111,8 +113,10 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
         **options: Unpack[CSVOptions],
     ) -> Self:
         if row_type is not None:
-            if issubclass(row_type, (PandasDataFrame, PanderaDataFrameModel)):
-                import pandas
+            if USE_PANDAS and issubclass(
+                row_type, (PandasDataFrame, PanderaDataFrameModel)
+            ):
+                import pandas  # type: ignore[import]
 
                 pd_options = {}
                 if not options.get("header", True):
@@ -123,8 +127,8 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
                     pandas.read_csv(filepath, **pd_options),  # type: ignore
                 )
 
-            elif issubclass(row_type, PyArrowTable):
-                import pyarrow.csv
+            elif USE_PYARROW and issubclass(row_type, PyArrowTable):
+                import pyarrow.csv  # type: ignore[import]
 
                 if not options.get("header", True):
                     raise TuruCsvHeaderOptionRequiredError(row_type)
