@@ -45,7 +45,10 @@ class TuruMockStore:
 
         _row_type, _response = self._data.pop(0)
 
-        if _row_type is not row_type:
+        if _row_type is not row_type and not (
+            row_type.__module__ == _row_type.__module__
+            and row_type.__name__ == _row_type.__name__
+        ):
             raise TuruMockResponseTypeMismatchError(row_type, _row_type, self._counter)
 
         if isinstance(_response, Exception):
