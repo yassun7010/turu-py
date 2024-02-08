@@ -102,7 +102,7 @@ class MockAsyncCursor(  # type: ignore
         ...
 
     @override
-    async def execute_map(
+    async def execute_map(  # type: ignore[override]
         self,
         row_type: Union[
             Type[GenericNewRowType],
@@ -167,7 +167,7 @@ class MockAsyncCursor(  # type: ignore
         ...
 
     @override
-    async def executemany_map(
+    async def executemany_map(  # type: ignore[override]
         self,
         row_type: Union[
             Type[GenericNewRowType],

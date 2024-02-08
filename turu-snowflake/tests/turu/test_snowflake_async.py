@@ -61,7 +61,7 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_execute_map_pandas_type(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        import pandas as pd
+        import pandas as pd  # type: ignore[import]
 
         _cursor: turu.snowflake.AsyncCursor[
             Never, pd.DataFrame, Never
@@ -301,7 +301,7 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_arrow_all(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        import pyarrow
+        import pyarrow  # type: ignore[import]
 
         async with await async_connection.execute_map(
             pyarrow.Table, "select 1 as ID union all select 2 as ID"
@@ -318,9 +318,9 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_arrow_batches(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        import pyarrow
-        from pandas import DataFrame
-        from pandas.testing import assert_frame_equal
+        import pyarrow  # type: ignore[import]
+        from pandas import DataFrame  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
 
         async with await async_connection.execute_map(
             pyarrow.Table, "select 1 as ID union all select 2 as ID"
@@ -339,7 +339,7 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_pandas_all(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        from pandas import DataFrame
+        from pandas import DataFrame  # type: ignore[import]
 
         async with await async_connection.execute_map(
             DataFrame, "select 1 as ID union all select 2 ID"
@@ -354,8 +354,8 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_fetch_pandas_batches(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        from pandas import DataFrame
-        from pandas.testing import assert_frame_equal
+        from pandas import DataFrame  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
 
         async with await async_connection.execute_map(
             DataFrame, "select 1 as ID union all select 2 AS ID"
@@ -368,8 +368,8 @@ class TestTuruSnowflakeAsyncConnection:
     async def test_record_pandas_dataframe(
         self, async_connection: turu.snowflake.AsyncConnection
     ):
-        import pandas as pd
-        from pandas.testing import assert_frame_equal
+        import pandas as pd  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
 
         with tempfile.NamedTemporaryFile() as file:
             async with record_to_csv(
