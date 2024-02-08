@@ -9,7 +9,7 @@ from turu.core.mock.exception import (
 
 class TuruMockStore:
     def __init__(self):
-        self._data: List[Tuple[Optional[Type], Sequence | None | Exception]] = []
+        self._data: List[Tuple[Optional[Type], Union[Sequence, None, Exception]]] = []
         self._counter = 0
 
     @overload
@@ -37,7 +37,7 @@ class TuruMockStore:
     def provide_response(
         self,
         row_type: Optional[Type],
-    ) -> "Sequence[Any] | None":
+    ) -> "Optional[Sequence[Any]]":
         self._counter += 1
 
         if len(self._data) == 0:
