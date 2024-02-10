@@ -9,7 +9,7 @@ from turu.core.mock.exception import (
 
 class TuruMockStore:
     def __init__(self):
-        self._data: List[Tuple[Optional[Type], Sequence | None | Exception]] = []
+        self._data: List[Tuple[Optional[Type], Union[Sequence, None, Exception]]] = []
         self._counter = 0
 
     @overload
@@ -37,7 +37,7 @@ class TuruMockStore:
     def provide_response(
         self,
         row_type: Optional[Type],
-    ) -> "Sequence[Any] | None":
+    ) -> "Optional[Sequence[Any]]":
         self._counter += 1
 
         if len(self._data) == 0:
@@ -45,7 +45,10 @@ class TuruMockStore:
 
         _row_type, _response = self._data.pop(0)
 
-        if _row_type is not row_type:
+        if _row_type is not row_type and not (
+            row_type.__module__ == _row_type.__module__
+            and row_type.__name__ == _row_type.__name__
+        ):
             raise TuruMockResponseTypeMismatchError(row_type, _row_type, self._counter)
 
         if isinstance(_response, Exception):
