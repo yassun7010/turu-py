@@ -267,6 +267,35 @@ class TestTuruSnowflake:
             )
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_record_pandas_dataframe_without_header_option(
+        self, connection: turu.snowflake.Connection
+    ):
+        import pandas as pd  # type: ignore[import]
+        from pandas.testing import assert_frame_equal  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            with record_to_csv(
+                file.name,
+                connection.execute_map(
+                    pd.DataFrame, "select 1 as ID union all select 2 AS ID"
+                ),
+                header=False,
+            ) as cursor:
+                expected = pd.DataFrame({"ID": [1, 2]}, dtype="int8")
+
+                assert_frame_equal(cursor.fetch_pandas_all(), expected)
+
+            assert (
+                Path(file.name).read_text()
+                == dedent(
+                    """
+                    1
+                    2
+                    """
+                ).lstrip()
+            )
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     def test_record_pandas_dataframe_with_limit_option(
         self, connection: turu.snowflake.Connection
     ):
