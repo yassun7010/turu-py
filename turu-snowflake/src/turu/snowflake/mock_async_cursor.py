@@ -35,6 +35,10 @@ class MockAsyncCursor(  # type: ignore
     turu.core.mock.MockAsyncCursor[GenericRowType, Any],  # type: ignore
     AsyncCursor[GenericRowType, GenericPandasDataFrame, GenericPyArrowTable],  # type: ignore
 ):
+    """
+    A async cursor is a database object that is used to manage the context of a fetch operation.
+    """
+
     @override
     async def execute(
         self,

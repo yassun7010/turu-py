@@ -26,6 +26,14 @@ from .mock_async_cursor import MockAsyncCursor
 
 
 class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
+    """
+    A mock async connection to a Snowflake database.
+
+    When this class executes a query with the execute method,
+    it does not actually access the database,
+    but instead returns the mock data injected by `inject_repsponse`.
+    """
+
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockAsyncConnection.__init__(self)
 

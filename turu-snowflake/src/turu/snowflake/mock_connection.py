@@ -24,6 +24,14 @@ from .connection import Connection
 
 
 class MockConnection(turu.core.mock.MockConnection, Connection):
+    """
+    A mock connection to a Snowflake database.
+
+    When this class executes a query with the execute method,
+    it does not actually access the database,
+    but instead returns the mock data injected by `inject_repsponse`.
+    """
+
     def __init__(self, *args, **kwargs):
         turu.core.mock.MockConnection.__init__(self)
 

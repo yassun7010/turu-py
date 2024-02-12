@@ -48,6 +48,12 @@ class Cursor(
     Generic[GenericRowType, GenericPandasDataFrame, GenericPyArrowTable],
     turu.core.cursor.Cursor[GenericRowType, Any],
 ):
+    """
+    A cursor is a database object that is used to manage the context of a fetch operation.
+
+    This class is a wrapper around the `snowflake.connector.cursor.SnowflakeCursor` class.
+    """
+
     def __init__(
         self,
         cursor: snowflake.connector.cursor.SnowflakeCursor,
