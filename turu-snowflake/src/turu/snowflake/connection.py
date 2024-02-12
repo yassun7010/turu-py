@@ -27,6 +27,12 @@ from .cursor import (
 
 
 class Connection(turu.core.connection.Connection):
+    """
+    A connection to a Snowflake database.
+
+    This class is a wrapper around the `snowflake.connector.SnowflakeConnection` class.
+    """
+
     def __init__(self, connection: snowflake.connector.SnowflakeConnection):
         self._raw_connection = connection
 

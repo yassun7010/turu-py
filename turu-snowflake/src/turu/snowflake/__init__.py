@@ -1,3 +1,10 @@
+"""
+Turu Snowflake Adapter
+
+References:
+    https://yassun7010.github.io/turu-py/adapters/snowflake/index.html
+"""
+
 import importlib.metadata
 
 from .async_connection import AsyncConnection
