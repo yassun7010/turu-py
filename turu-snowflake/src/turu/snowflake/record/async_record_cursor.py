@@ -1,10 +1,24 @@
+from typing import AsyncIterator
+
 import turu.core.record
-from turu.snowflake.features import PandasDataFrame
+import turu.snowflake.async_cursor
+from turu.core.cursor import GenericRowType
+from turu.snowflake.features import (
+    GenericPandasDataFrame,
+    GenericPyArrowTable,
+)
 
 
-class AsyncRecordCursor(turu.core.record.AsyncRecordCursor):
-    async def fetch_pandas_all(self, **kwargs) -> "PandasDataFrame":
-        df: PandasDataFrame = self._raw_cursor.fetch_pandas_all(**kwargs)  # type: ignore
+class AsyncRecordCursor(  # type: ignore[override]
+    turu.core.record.AsyncRecordCursor,
+    turu.snowflake.async_cursor.AsyncCursor[
+        GenericRowType,
+        GenericPandasDataFrame,
+        GenericPyArrowTable,
+    ],
+):
+    async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
+        df = await super().fetch_pandas_all(**kwargs)
 
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
@@ -17,3 +31,19 @@ class AsyncRecordCursor(turu.core.record.AsyncRecordCursor):
             )
 
         return df
+
+    async def fetch_pandas_batches(
+        self, **kwargs
+    ) -> AsyncIterator[GenericPandasDataFrame]:
+        batches = super().fetch_pandas_batches(**kwargs)
+        if isinstance(self._recorder, turu.core.record.CsvRecorder):
+            if limit := self._recorder._options.get("limit"):
+                async for batch in batches:
+                    yield batch
+
+                    limit -= len(batch)
+                    if limit <= 0:
+                        return
+
+        async for batch in batches:
+            yield batch

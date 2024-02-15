@@ -1,6 +1,6 @@
 from typing import (
     Any,
-    Iterator,
+    AsyncIterator,
     Optional,
     Sequence,
     Tuple,
@@ -206,8 +206,8 @@ class MockAsyncCursor(  # type: ignore
     async def fetch_arrow_all(self) -> GenericPyArrowTable:
         return cast(GenericPyArrowTable, await self.fetchone())
 
-    async def fetch_arrow_batches(self) -> Iterator[GenericPyArrowTable]:
-        return iter([await self.fetch_arrow_all()])
+    async def fetch_arrow_batches(self) -> AsyncIterator[GenericPyArrowTable]:
+        yield await self.fetch_arrow_all()
 
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
         df = await self.fetchone()
@@ -221,7 +221,9 @@ class MockAsyncCursor(  # type: ignore
 
         return cast(GenericPandasDataFrame, df)
 
-    async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFrame]:
+    async def fetch_pandas_batches(
+        self, **kwargs
+    ) -> AsyncIterator[GenericPandasDataFrame]:
         """Fetches a single Arrow Table."""
 
-        return iter([await self.fetch_pandas_all(**kwargs)])
+        yield await self.fetch_pandas_all(**kwargs)
