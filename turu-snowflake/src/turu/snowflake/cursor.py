@@ -229,17 +229,6 @@ class Cursor(
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        seq_of_parameters: "Sequence[Any]",
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, Never, GenericNewPyArrowTable]":
-        pass
-
-    @overload
-    def executemany_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: Sequence[Any],
@@ -247,6 +236,17 @@ class Cursor(
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, Never, GenericNewPyArrowTable]":
+        pass
 
     @override
     def executemany_map(

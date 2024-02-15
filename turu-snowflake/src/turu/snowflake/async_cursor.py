@@ -152,23 +152,23 @@ class AsyncCursor(
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -228,23 +228,23 @@ class AsyncCursor(
     @overload
     async def executemany_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        seq_of_parameters: "Sequence[Any]",
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
-
-    @overload
-    async def executemany_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
