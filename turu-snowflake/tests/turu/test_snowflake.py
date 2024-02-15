@@ -311,7 +311,7 @@ class TestTuruSnowflake:
                 ),
                 limit=2,
             ) as cursor:
-                expected = pd.DataFrame({"ID": list(range(1, 10))}, dtype="object")
+                expected = pd.DataFrame({"ID": [1, 2]}, dtype="object")
 
                 assert_frame_equal(cursor.fetch_pandas_all(), expected)
 

@@ -8,12 +8,9 @@ class AsyncRecordCursor(turu.core.record.AsyncRecordCursor):
 
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
-                record_df = df.head(limit)
+                df = df.head(limit)
 
-            else:
-                record_df = df
-
-            record_df.to_csv(
+            df.to_csv(
                 self._recorder.file,
                 index=False,
                 header=self._recorder._options.get("header", True),
