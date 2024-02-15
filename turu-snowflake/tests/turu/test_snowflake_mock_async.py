@@ -5,6 +5,7 @@ from typing import Annotated, NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.core.record import record_to_csv
 from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW, PyArrowTable
 from typing_extensions import Never
 
@@ -508,3 +509,40 @@ class TestTuruSnowflakeMockAsyncConnection:
                 .execute_map(RowModel, "select 1 as ID union all select 2 as ID")
             ) as cursor:
                 assert (await cursor.fetch_pandas_all()).equals(expected)
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_record_to_csv_and_fetch_pandas_all_with_limit_options(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            async with record_to_csv(
+                file.name,
+                await mock_async_connection.inject_response(
+                    pd.DataFrame, pd.DataFrame({"ID": list(range(10))})
+                ).execute_map(pd.DataFrame, "select 1"),
+                limit=5,
+            ) as cursor:
+                assert (await cursor.fetch_pandas_all()).equals(
+                    pd.DataFrame({"ID": list(range(5))})
+                )
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.asyncio
+    async def test_record_to_csv_and_fetch_pandas_batches_with_limit_options(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            async with record_to_csv(
+                file.name,
+                await mock_async_connection.inject_response(
+                    pd.DataFrame, pd.DataFrame({"ID": list(range(10))})
+                ).execute_map(pd.DataFrame, "select 1"),
+                limit=5,
+            ) as cursor:
+                async for batch in cursor.fetch_pandas_batches():
+                    assert batch.equals(pd.DataFrame({"ID": list(range(5))}))
