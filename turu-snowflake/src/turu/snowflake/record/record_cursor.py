@@ -35,7 +35,7 @@ class RecordCursor(  # type: ignore[override]
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
                 for batch in batches:
-                    yield batch
+                    yield batch.head(limit)
 
                     limit -= len(batch)
                     if limit <= 0:
