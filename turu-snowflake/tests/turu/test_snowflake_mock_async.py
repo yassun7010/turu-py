@@ -340,7 +340,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         ).execute_map(
             PyArrowTable, "select 1 as ID union all select 2 as ID"
         ) as cursor:
-            assert list(await cursor.fetch_arrow_batches()) == [expected]
+            assert [batch async for batch in cursor.fetch_arrow_batches()] == [expected]
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
@@ -372,7 +372,9 @@ class TestTuruSnowflakeMockAsyncConnection:
         ).execute_map(
             pd.DataFrame, "select 1 as ID union all select 2 as ID"
         ) as cursor:
-            assert list(await cursor.fetch_pandas_batches()) == [expected]
+            assert [batch async for batch in cursor.fetch_pandas_batches()] == [
+                expected
+            ]
 
     @pytest.mark.skipif(
         not (USE_PANDAS and USE_PANDERA), reason="pandas or pandera is not installed"
