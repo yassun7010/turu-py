@@ -325,7 +325,7 @@ class TestTuruSnowflakeAsyncConnection:
         async with await async_connection.execute_map(
             pyarrow.Table, "select 1 as ID union all select 2 as ID"
         ) as cursor:
-            for row in await cursor.fetch_arrow_batches():
+            async for row in cursor.fetch_arrow_batches():
                 assert_frame_equal(
                     cast(DataFrame, row.to_pandas()),
                     DataFrame({"ID": [1, 2]}, dtype="int8"),
@@ -360,7 +360,7 @@ class TestTuruSnowflakeAsyncConnection:
         async with await async_connection.execute_map(
             DataFrame, "select 1 as ID union all select 2 AS ID"
         ) as cursor:
-            for df in await cursor.fetch_pandas_batches():
+            async for df in cursor.fetch_pandas_batches():
                 assert_frame_equal(df, DataFrame({"ID": [1, 2]}, dtype="int8"))
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
@@ -442,7 +442,7 @@ class TestTuruSnowflakeAsyncConnection:
                 ),
                 limit=2,
             ) as cursor:
-                expected = pd.DataFrame({"ID": list(range(1, 10))}, dtype="object")
+                expected = pd.DataFrame({"ID": [1, 2]}, dtype="object")
 
                 assert_frame_equal(await cursor.fetch_pandas_all(), expected)
 

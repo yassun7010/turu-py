@@ -1,6 +1,6 @@
 from typing import (
     Any,
-    Iterator,
+    AsyncIterator,
     Optional,
     Sequence,
     Tuple,
@@ -13,14 +13,12 @@ from typing import (
 import turu.core.async_cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType, GenericRowType
-from turu.snowflake.cursor import (
+from turu.snowflake.features import (
     GenericNewPandasDataFrame,
+    GenericNewPanderaDataFrameModel,
     GenericNewPyArrowTable,
     GenericPandasDataFrame,
     GenericPyArrowTable,
-)
-from turu.snowflake.features import (
-    GenericNewPanderaDataFrameModel,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
@@ -86,23 +84,23 @@ class MockAsyncCursor(  # type: ignore
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -151,23 +149,23 @@ class MockAsyncCursor(  # type: ignore
     @overload
     async def executemany_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        seq_of_parameters: Sequence[Any],
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
-
-    @overload
-    async def executemany_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -208,8 +206,8 @@ class MockAsyncCursor(  # type: ignore
     async def fetch_arrow_all(self) -> GenericPyArrowTable:
         return cast(GenericPyArrowTable, await self.fetchone())
 
-    async def fetch_arrow_batches(self) -> Iterator[GenericPyArrowTable]:
-        return iter([await self.fetch_arrow_all()])
+    async def fetch_arrow_batches(self) -> AsyncIterator[GenericPyArrowTable]:
+        yield await self.fetch_arrow_all()
 
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
         df = await self.fetchone()
@@ -223,7 +221,9 @@ class MockAsyncCursor(  # type: ignore
 
         return cast(GenericPandasDataFrame, df)
 
-    async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFrame]:
+    async def fetch_pandas_batches(
+        self, **kwargs
+    ) -> AsyncIterator[GenericPandasDataFrame]:
         """Fetches a single Arrow Table."""
 
-        return iter([await self.fetch_pandas_all(**kwargs)])
+        yield await self.fetch_pandas_all(**kwargs)

@@ -1,8 +1,8 @@
 import asyncio
 from typing import (
     Any,
+    AsyncIterator,
     Generic,
-    Iterator,
     List,
     Optional,
     Sequence,
@@ -17,18 +17,17 @@ from typing import (
 import turu.core.async_cursor
 import turu.core.cursor
 import turu.core.mock
-import turu.snowflake.record.async_record_cursor
 from turu.core.cursor import map_row
 from turu.snowflake.cursor import (
-    GenericNewPandasDataFrame,
-    GenericNewPyArrowTable,
     GenericNewRowType,
-    GenericPandasDataFrame,
-    GenericPyArrowTable,
     GenericRowType,
 )
 from turu.snowflake.features import (
+    GenericNewPandasDataFrame,
     GenericNewPanderaDataFrameModel,
+    GenericNewPyArrowTable,
+    GenericPandasDataFrame,
+    GenericPyArrowTable,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
@@ -152,23 +151,23 @@ class AsyncCursor(
     @overload
     async def execute_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
-
-    @overload
-    async def execute_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def execute_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -228,23 +227,23 @@ class AsyncCursor(
     @overload
     async def executemany_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        seq_of_parameters: "Sequence[Any]",
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
-
-    @overload
-    async def executemany_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
     ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
+        ...
+
+    @overload
+    async def executemany_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
         ...
 
     @override
@@ -313,12 +312,11 @@ class AsyncCursor(
             self._raw_cursor.fetch_arrow_all(force_return_table=True),
         )
 
-    async def fetch_arrow_batches(self) -> Iterator[GenericPyArrowTable]:
+    async def fetch_arrow_batches(self) -> AsyncIterator[GenericPyArrowTable]:
         """Fetches Arrow Tables in batches, where 'batch' refers to Snowflake Chunk."""
 
-        return cast(
-            Iterator[GenericPyArrowTable], self._raw_cursor.fetch_arrow_batches()
-        )
+        for batch in self._raw_cursor.fetch_arrow_batches():
+            yield cast(GenericPyArrowTable, batch)
 
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
         """Fetch Pandas dataframes."""
@@ -330,13 +328,16 @@ class AsyncCursor(
 
         return cast(GenericPandasDataFrame, df)
 
-    async def fetch_pandas_batches(self, **kwargs) -> Iterator[GenericPandasDataFrame]:
+    async def fetch_pandas_batches(
+        self, **kwargs
+    ) -> AsyncIterator[GenericPandasDataFrame]:
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
-        return cast(
-            Iterator[GenericPandasDataFrame],
-            self._raw_cursor.fetch_pandas_batches(**kwargs),
-        )
+        for batch in self._raw_cursor.fetch_pandas_batches(**kwargs):
+            yield cast(
+                GenericPandasDataFrame,
+                batch,
+            )
 
     @override
     async def __anext__(self) -> GenericRowType:
@@ -401,4 +402,6 @@ class AsyncCursor(
     def _AsyncRecordCursor(
         self,
     ):
+        import turu.snowflake.record.async_record_cursor
+
         return turu.snowflake.record.async_record_cursor.AsyncRecordCursor
