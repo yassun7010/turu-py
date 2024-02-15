@@ -9,11 +9,12 @@ import turu.snowflake.mock_cursor
 from turu.core.cursor import GenericRowType
 from turu.core.mock.connection import CSVOptions
 from turu.core.mock.exception import TuruCsvHeaderOptionRequiredError
-from turu.snowflake.cursor import GenericPandasDataFrame, GenericPyArrowTable
 from turu.snowflake.features import (
     USE_PANDAS,
     USE_PYARROW,
+    GenericPandasDataFrame,
     GenericPanderaDataFrameModel,
+    GenericPyArrowTable,
     PandasDataFrame,
     PanderaDataFrameModel,
     PyArrowTable,

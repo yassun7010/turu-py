@@ -8,7 +8,6 @@ from typing import (
     Tuple,
     Type,
     TypedDict,
-    TypeVar,
     Union,
     cast,
     overload,
@@ -18,7 +17,11 @@ import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType, GenericRowType
 from turu.snowflake.features import (
+    GenericNewPandasDataFrame,
     GenericNewPanderaDataFrameModel,
+    GenericNewPyArrowTable,
+    GenericPandasDataFrame,
+    GenericPyArrowTable,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
@@ -35,13 +38,6 @@ class ExecuteOptions(TypedDict, total=False):
 
     num_statements: int
     """number of statements"""
-
-
-GenericPyArrowTable = TypeVar("GenericPyArrowTable", bound=PyArrowTable)
-GenericNewPyArrowTable = TypeVar("GenericNewPyArrowTable", bound=PyArrowTable)
-
-GenericPandasDataFrame = TypeVar("GenericPandasDataFrame", bound=PandasDataFrame)
-GenericNewPandasDataFrame = TypeVar("GenericNewPandasDataFrame", bound=PandasDataFrame)
 
 
 class Cursor(

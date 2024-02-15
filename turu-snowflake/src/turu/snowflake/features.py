@@ -15,10 +15,18 @@ try:
 
     USE_PANDAS = True
     PandasDataFrame: TypeAlias = pandas.DataFrame  # type: ignore
+    GenericPandasDataFrame = TypeVar("GenericPandasDataFrame", bound=PandasDataFrame)
+    GenericNewPandasDataFrame = TypeVar(
+        "GenericNewPandasDataFrame", bound=PandasDataFrame
+    )
 
 except ImportError:
     USE_PANDAS = False
     PandasDataFrame: TypeAlias = _NotSupportFeature  # type: ignore
+    GenericPandasDataFrame = TypeVar("GenericPandasDataFrame", bound=_NotSupportFeature)
+    GenericNewPandasDataFrame = TypeVar(
+        "GenericNewPandasDataFrame", bound=_NotSupportFeature
+    )
 
 
 try:
@@ -26,11 +34,15 @@ try:
 
     USE_PYARROW = True
     PyArrowTable: TypeAlias = pyarrow.Table  # type: ignore
+    GenericPyArrowTable = TypeVar("GenericPyArrowTable", bound=PyArrowTable)
+    GenericNewPyArrowTable = TypeVar("GenericNewPyArrowTable", bound=PyArrowTable)
 
 
 except ImportError:
     USE_PYARROW = False
     PyArrowTable: TypeAlias = _NotSupportFeature  # type: ignore
+    GenericPyArrowTable = TypeVar("GenericPyArrowTable", bound=_NotSupportFeature)
+    GenericNewPyArrowTable = TypeVar("GenericNewPyArrowTable", bound=_NotSupportFeature)
 
 try:
     from typing import TypeVar

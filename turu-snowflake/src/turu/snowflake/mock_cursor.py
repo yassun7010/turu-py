@@ -14,7 +14,11 @@ import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType
 from turu.snowflake.features import (
+    GenericNewPandasDataFrame,
     GenericNewPanderaDataFrameModel,
+    GenericNewPyArrowTable,
+    GenericPandasDataFrame,
+    GenericPyArrowTable,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
@@ -25,10 +29,6 @@ from typing_extensions import Never, Self, Unpack, override
 from .cursor import (
     Cursor,
     ExecuteOptions,
-    GenericNewPandasDataFrame,
-    GenericNewPyArrowTable,
-    GenericPandasDataFrame,
-    GenericPyArrowTable,
 )
 
 

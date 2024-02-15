@@ -28,8 +28,7 @@ classifiers = [
 ]
 
 [tool.poetry.extras]
-pandas = ["pandas"]
-pyarrow = ["pyarrow", "pyarrow-stubs"]
+pandas = ["pandas", "pyarrow", "pandas-stubs"]
 pandera = ["pandera"]
 
 [tool.poetry.dependencies]

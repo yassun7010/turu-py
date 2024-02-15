@@ -13,14 +13,12 @@ from typing import (
 import turu.core.async_cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType, GenericRowType
-from turu.snowflake.cursor import (
+from turu.snowflake.features import (
     GenericNewPandasDataFrame,
+    GenericNewPanderaDataFrameModel,
     GenericNewPyArrowTable,
     GenericPandasDataFrame,
     GenericPyArrowTable,
-)
-from turu.snowflake.features import (
-    GenericNewPanderaDataFrameModel,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,

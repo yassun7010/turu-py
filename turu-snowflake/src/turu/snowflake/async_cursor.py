@@ -20,15 +20,15 @@ import turu.core.mock
 import turu.snowflake.record.async_record_cursor
 from turu.core.cursor import map_row
 from turu.snowflake.cursor import (
-    GenericNewPandasDataFrame,
-    GenericNewPyArrowTable,
     GenericNewRowType,
-    GenericPandasDataFrame,
-    GenericPyArrowTable,
     GenericRowType,
 )
 from turu.snowflake.features import (
+    GenericNewPandasDataFrame,
     GenericNewPanderaDataFrameModel,
+    GenericNewPyArrowTable,
+    GenericPandasDataFrame,
+    GenericPyArrowTable,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
