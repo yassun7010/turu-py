@@ -8,7 +8,6 @@ from typing import (
     Tuple,
     Type,
     TypedDict,
-    TypeVar,
     Union,
     cast,
     overload,
@@ -18,7 +17,11 @@ import turu.core.cursor
 import turu.core.mock
 from turu.core.cursor import GenericNewRowType, GenericRowType
 from turu.snowflake.features import (
+    GenericNewPandasDataFrame,
     GenericNewPanderaDataFrameModel,
+    GenericNewPyArrowTable,
+    GenericPandasDataFrame,
+    GenericPyArrowTable,
     PandasDataFrame,
     PanderaDataFrame,
     PanderaDataFrameModel,
@@ -35,13 +38,6 @@ class ExecuteOptions(TypedDict, total=False):
 
     num_statements: int
     """number of statements"""
-
-
-GenericPyArrowTable = TypeVar("GenericPyArrowTable", bound=PyArrowTable)
-GenericNewPyArrowTable = TypeVar("GenericNewPyArrowTable", bound=PyArrowTable)
-
-GenericPandasDataFrame = TypeVar("GenericPandasDataFrame", bound=PandasDataFrame)
-GenericNewPandasDataFrame = TypeVar("GenericNewPandasDataFrame", bound=PandasDataFrame)
 
 
 class Cursor(
@@ -229,17 +225,6 @@ class Cursor(
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericNewPyArrowTable],
-        operation: str,
-        seq_of_parameters: "Sequence[Any]",
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, Never, GenericNewPyArrowTable]":
-        pass
-
-    @overload
-    def executemany_map(
-        self,
         row_type: Type[GenericNewPanderaDataFrameModel],
         operation: str,
         seq_of_parameters: Sequence[Any],
@@ -247,6 +232,17 @@ class Cursor(
         **options: Unpack[ExecuteOptions],
     ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
         ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[GenericNewPyArrowTable],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> "Cursor[Never, Never, GenericNewPyArrowTable]":
+        pass
 
     @override
     def executemany_map(
