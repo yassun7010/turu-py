@@ -5,6 +5,7 @@ from typing import Annotated, NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.core.record import record_to_csv
 from turu.snowflake.features import (
     USE_PANDAS,
     USE_PANDERA,
@@ -416,3 +417,38 @@ class TestTuruSnowflakeMockConnection:
         ).execute_map(RowModel, "select 1 as ID union all select 2 ID") as cursor:
             with pytest.raises(pandera.errors.SchemaInitError):
                 cursor.fetch_pandas_all()
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_record_to_csv_and_fetch_pandas_all_with_limit_options(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            with record_to_csv(
+                file.name,
+                mock_connection.inject_response(
+                    pd.DataFrame, pd.DataFrame({"ID": list(range(10))})
+                ).execute_map(pd.DataFrame, "select 1"),
+                limit=5,
+            ) as cursor:
+                assert cursor.fetch_pandas_all().equals(
+                    pd.DataFrame({"ID": list(range(5))})
+                )
+
+    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    def test_record_to_csv_and_fetch_pandas_batches_with_limit_options(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            with record_to_csv(
+                file.name,
+                mock_connection.inject_response(
+                    pd.DataFrame, pd.DataFrame({"ID": list(range(10))})
+                ).execute_map(pd.DataFrame, "select 1"),
+                limit=5,
+            ) as cursor:
+                for batch in cursor.fetch_pandas_batches():
+                    assert batch.equals(pd.DataFrame({"ID": list(range(5))}))
