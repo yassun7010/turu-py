@@ -18,7 +18,7 @@ class AsyncRecordCursor(  # type: ignore[override]
     ],
 ):
     async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
-        df = cast(GenericPandasDataFrame, await self._cursor.fetch_pandas_all(**kwargs))  # type: ignore[assignment]
+        df = await self._sf_cursor.fetch_pandas_all(**kwargs)
 
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
@@ -35,10 +35,8 @@ class AsyncRecordCursor(  # type: ignore[override]
     async def fetch_pandas_batches(
         self, **kwargs
     ) -> AsyncIterator[GenericPandasDataFrame]:
-        batches = cast(
-            AsyncIterator[GenericPandasDataFrame],
-            self._cursor.fetch_pandas_batches(**kwargs),  # type: ignore[assignment]
-        )
+        batches = self._sf_cursor.fetch_pandas_batches(**kwargs)
+
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
                 async for batch in batches:
@@ -52,7 +50,7 @@ class AsyncRecordCursor(  # type: ignore[override]
             yield batch
 
     async def fetch_arrow_all(self) -> GenericPyArrowTable:
-        table = cast(GenericPyArrowTable, await self._cursor.fetch_arrow_all())  # type: ignore[assignment]
+        table = await self._sf_cursor.fetch_arrow_all()
 
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
@@ -67,10 +65,8 @@ class AsyncRecordCursor(  # type: ignore[override]
         return table
 
     async def fetch_arrow_batches(self) -> AsyncIterator[GenericPyArrowTable]:
-        batches = cast(
-            AsyncIterator[GenericPyArrowTable],
-            self._cursor.fetch_arrow_batches(),  # type: ignore[assignment]
-        )
+        batches = self._sf_cursor.fetch_arrow_batches()
+
         if isinstance(self._recorder, turu.core.record.CsvRecorder):
             if limit := self._recorder._options.get("limit"):
                 async for batch in batches:
@@ -82,3 +78,39 @@ class AsyncRecordCursor(  # type: ignore[override]
 
         async for batch in batches:
             yield batch
+
+    def use_warehouse(self, warehouse: str, /) -> "AsyncRecordCursor":
+        """Use a warehouse in cursor."""
+
+        self._sf_cursor.use_warehouse(warehouse)
+
+        return self
+
+    def use_database(self, database: str, /) -> "AsyncRecordCursor":
+        """Use a database in cursor."""
+
+        self._sf_cursor.use_database(database)
+
+        return self
+
+    def use_schema(self, schema: str, /) -> "AsyncRecordCursor":
+        """Use a schema in cursor."""
+
+        self._sf_cursor.use_schema(schema)
+
+        return self
+
+    def use_role(self, role: str, /) -> "AsyncRecordCursor":
+        """Use a role in cursor."""
+
+        self._sf_cursor.use_role(role)
+
+        return self
+
+    @property
+    def _sf_cursor(
+        self,
+    ) -> turu.snowflake.async_cursor.AsyncCursor[
+        GenericRowType, GenericPandasDataFrame, GenericPyArrowTable
+    ]:
+        return cast(turu.snowflake.async_cursor.AsyncCursor, self._cursor)
