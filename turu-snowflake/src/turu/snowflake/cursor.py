@@ -331,7 +331,7 @@ class Cursor(
             Iterator[GenericPyArrowTable], self._raw_cursor.fetch_arrow_batches()
         )
 
-    def fetch_pandas_all(self, **kwargs) -> "GenericPandasDataFrame":
+    def fetch_pandas_all(self, **kwargs: Any) -> "GenericPandasDataFrame":
         """Fetch a single Pandas dataframe."""
         df = self._raw_cursor.fetch_pandas_all(**kwargs)
 
@@ -340,7 +340,7 @@ class Cursor(
 
         return cast(GenericPandasDataFrame, df)
 
-    def fetch_pandas_batches(self, **kwargs) -> "Iterator[GenericPandasDataFrame]":
+    def fetch_pandas_batches(self, **kwargs: Any) -> "Iterator[GenericPandasDataFrame]":
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
         return cast(

@@ -318,7 +318,7 @@ class AsyncCursor(
         for batch in self._raw_cursor.fetch_arrow_batches():
             yield cast(GenericPyArrowTable, batch)
 
-    async def fetch_pandas_all(self, **kwargs) -> GenericPandasDataFrame:
+    async def fetch_pandas_all(self, **kwargs: Any) -> GenericPandasDataFrame:
         """Fetch Pandas dataframes."""
 
         df = self._raw_cursor.fetch_pandas_all(**kwargs)
@@ -329,7 +329,7 @@ class AsyncCursor(
         return cast(GenericPandasDataFrame, df)
 
     async def fetch_pandas_batches(
-        self, **kwargs
+        self, **kwargs: Any
     ) -> AsyncIterator[GenericPandasDataFrame]:
         """Fetch Pandas dataframes in batches, where 'batch' refers to Snowflake Chunk."""
 
