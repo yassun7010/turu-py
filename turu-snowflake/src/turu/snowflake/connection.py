@@ -193,23 +193,23 @@ class Connection(turu.core.connection.Connection):
     @overload
     def execute_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
-        operation: str,
-        parameters: "Optional[Any]" = None,
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
-        ...
-
-    @overload
-    def execute_map(
-        self,
         row_type: Type[GenericNewPyArrowTable],
         operation: str,
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
     ) -> Cursor[Never, Never, GenericNewPyArrowTable]:
+        ...
+
+    @overload
+    def execute_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
         ...
 
     @override
@@ -277,23 +277,23 @@ class Connection(turu.core.connection.Connection):
     @overload
     def executemany_map(
         self,
-        row_type: Type[GenericNewPanderaDataFrameModel],
-        operation: str,
-        seq_of_parameters: Sequence[Any],
-        /,
-        **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
-        ...
-
-    @overload
-    def executemany_map(
-        self,
         row_type: Type[GenericNewPyArrowTable],
         operation: str,
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
     ) -> Cursor[Never, Never, GenericNewPyArrowTable]:
+        ...
+
+    @overload
+    def executemany_map(
+        self,
+        row_type: Type[GenericNewPanderaDataFrameModel],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+        /,
+        **options: Unpack[ExecuteOptions],
+    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
         ...
 
     @override
