@@ -23,35 +23,39 @@ class AsyncRecordCursor(
         ],
     ):
         self._recorder = recorder
-        self._cursor: turu.core.async_cursor.AsyncCursor = cursor
+        self.__record_taregt_cursor: turu.core.async_cursor.AsyncCursor = cursor
 
     @property
     def rowcount(self) -> int:
-        return self._cursor.rowcount
+        return self.__record_taregt_cursor.rowcount
 
     @property
     def arraysize(self) -> int:
-        return self._cursor.arraysize
+        return self.__record_taregt_cursor.arraysize
 
     @arraysize.setter
     def arraysize(self, size: int) -> None:
-        self._cursor.arraysize = size
+        self.__record_taregt_cursor.arraysize = size
 
     async def close(self) -> None:
-        await self._cursor.close()
+        await self.__record_taregt_cursor.close()
         self._recorder.close()
 
     async def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> "AsyncRecordCursor[turu.core.cursor.GenericRowType, Parameters]":
-        self._cursor = await self._cursor.execute(operation, parameters)
+        self.__record_taregt_cursor = await self.__record_taregt_cursor.execute(
+            operation, parameters
+        )
 
         return self
 
     async def executemany(
         self, operation: str, seq_of_parameters: "Sequence[Parameters]", /
     ) -> "AsyncRecordCursor[turu.core.cursor.GenericRowType, Parameters]":
-        self._cursor = await self._cursor.executemany(operation, seq_of_parameters)
+        self.__record_taregt_cursor = await self.__record_taregt_cursor.executemany(
+            operation, seq_of_parameters
+        )
 
         return self
 
@@ -62,7 +66,9 @@ class AsyncRecordCursor(
         parameters: Optional[Parameters] = None,
         /,
     ) -> "AsyncRecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
-        self._cursor = await self._cursor.execute_map(row_type, operation, parameters)
+        self.__record_taregt_cursor = await self.__record_taregt_cursor.execute_map(
+            row_type, operation, parameters
+        )
 
         return cast(AsyncRecordCursor, self)
 
@@ -73,14 +79,14 @@ class AsyncRecordCursor(
         seq_of_parameters: Sequence[Parameters],
         /,
     ) -> "AsyncRecordCursor[turu.core.cursor.GenericNewRowType, Parameters]":
-        self._cursor = await self._cursor.executemany_map(
+        self.__record_taregt_cursor = await self.__record_taregt_cursor.executemany_map(
             row_type, operation, seq_of_parameters
         )
 
         return cast(AsyncRecordCursor, self)
 
     async def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
-        row = await self._cursor.fetchone()
+        row = await self.__record_taregt_cursor.fetchone()
         if row is not None:
             self._recorder.record([row])
 
@@ -89,14 +95,14 @@ class AsyncRecordCursor(
     async def fetchmany(
         self, size: Optional[int] = None
     ) -> List[turu.core.cursor.GenericRowType]:
-        rows = await self._cursor.fetchmany(size)
+        rows = await self.__record_taregt_cursor.fetchmany(size)
 
         self._recorder.record(rows)
 
         return rows
 
     async def fetchall(self) -> List[turu.core.cursor.GenericRowType]:
-        rows = await self._cursor.fetchall()
+        rows = await self.__record_taregt_cursor.fetchall()
 
         self._recorder.record(rows)
 
@@ -108,7 +114,7 @@ class AsyncRecordCursor(
         return self
 
     async def __anext__(self) -> turu.core.cursor.GenericRowType:
-        row = await self._cursor.__anext__()
+        row = await self.__record_taregt_cursor.__anext__()
 
         self._recorder.record([row])
 
@@ -118,4 +124,4 @@ class AsyncRecordCursor(
         def _method_missing(*args):
             return args
 
-        return getattr(self._cursor, name, _method_missing)
+        return getattr(self.__record_taregt_cursor, name, _method_missing)
