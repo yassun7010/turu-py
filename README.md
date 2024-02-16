@@ -21,7 +21,7 @@
 ## Installation
 
 ```bash
-pip install turu[snowflake]
+pip install "turu[snowflake]"
 ```
 
 <!-- --8<-- [start:why_turu] -->
