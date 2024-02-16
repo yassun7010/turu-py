@@ -546,3 +546,48 @@ class TestTuruSnowflakeMockAsyncConnection:
             ) as cursor:
                 async for batch in cursor.fetch_pandas_batches():
                     assert batch.equals(pd.DataFrame({"ID": list(range(5))}))
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PYARROW), reason="pandas or pyarrow is not installed"
+    )
+    @pytest.mark.asyncio
+    async def test_record_to_csv_and_fetch_arrow_all_with_limit_options(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pyarrow as pa  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            async with record_to_csv(
+                file.name,
+                await mock_async_connection.inject_response(
+                    PyArrowTable,
+                    pa.table(pd.DataFrame({"ID": list(range(10))})),
+                ).execute_map(PyArrowTable, "select 1"),
+                limit=5,
+            ) as cursor:
+                assert (await cursor.fetch_arrow_all()).equals(
+                    pa.table(pd.DataFrame({"ID": list(range(5))}))
+                )
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PYARROW), reason="pandas or pyarrow is not installed"
+    )
+    @pytest.mark.asyncio
+    async def test_record_to_csv_and_fetch_arrow_batches_with_limit_options(
+        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pyarrow as pa  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            async with record_to_csv(
+                file.name,
+                await mock_async_connection.inject_response(
+                    PyArrowTable,
+                    pa.table(pd.DataFrame({"ID": list(range(10))})),
+                ).execute_map(PyArrowTable, "select 1"),
+                limit=5,
+            ) as cursor:
+                async for batch in cursor.fetch_arrow_batches():
+                    assert batch.equals(pa.table(pd.DataFrame({"ID": list(range(5))})))

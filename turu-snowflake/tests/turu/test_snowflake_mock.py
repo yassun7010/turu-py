@@ -62,14 +62,16 @@ class TestTuruSnowflakeMockConnection:
             pd.DataFrame, pd.DataFrame({"id": [1]})
         ).execute_map(pd.DataFrame, "select 1")
 
-    @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PYARROW), reason="pandas or pyarrow are not installed"
+    )
     def test_execute_pyarrow_type(self, mock_connection: turu.snowflake.MockConnection):
+        import pandas as pd  # type: ignore[import]
         import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
-            data=[pa.array([1], type=pa.int64())],
-            schema=pa.schema([pa.field("ID", pa.int64())]),
-        )  # type: ignore
+            pd.DataFrame({"id": [1]}),
+        )
         _cursor: turu.snowflake.Cursor[
             Never, Never, pa.Table
         ] = mock_connection.inject_response(
@@ -240,11 +242,11 @@ class TestTuruSnowflakeMockConnection:
         reason="pyarrow is not installed",
     )
     def test_fetch_arrow_all(self, mock_connection: turu.snowflake.MockConnection):
+        import pandas as pd  # type: ignore[import]
         import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
-            data=[pa.array([1, 2], type=pa.int8())],
-            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+            pd.DataFrame({"ID": [1, 2]}),
         )  # type: ignore
 
         mock_connection.inject_response(PyArrowTable, expected)
@@ -259,11 +261,11 @@ class TestTuruSnowflakeMockConnection:
         reason="pyarrow is not installed",
     )
     def test_fetch_arrow_batches(self, mock_connection: turu.snowflake.MockConnection):
+        import pandas as pd  # type: ignore[import]
         import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
-            data=[pa.array([1, 2], type=pa.int8())],
-            schema=pa.schema([pa.field("ID", pa.int8(), False)]),
+            pd.DataFrame({"ID": [1, 2]}),
         )  # type: ignore
 
         with mock_connection.inject_response(PyArrowTable, expected).execute_map(
@@ -295,16 +297,18 @@ class TestTuruSnowflakeMockConnection:
         ) as cursor:
             assert list(cursor.fetch_pandas_batches()) == [expected]
 
-    @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PYARROW), reason="pandas or pyarrow are not installed"
+    )
     def test_inject_pyarrow_response_from_csv(
         self, mock_connection: turu.snowflake.MockConnection
     ):
+        import pandas as pd  # type: ignore[import]
         import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
-            data=[pa.array([1, 2], type=pa.int64())],
-            schema=pa.schema([pa.field("ID", pa.int64())]),
-        )  # type: ignore
+            pd.DataFrame({"ID": [1, 2]}),
+        )
 
         with tempfile.NamedTemporaryFile() as file:
             Path(file.name).write_text(
@@ -452,3 +456,48 @@ class TestTuruSnowflakeMockConnection:
             ) as cursor:
                 for batch in cursor.fetch_pandas_batches():
                     assert batch.equals(pd.DataFrame({"ID": list(range(5))}))
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PYARROW), reason="pyarrow is not installed"
+    )
+    def test_record_to_csv_and_fetch_arrow_all_with_limit_options(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pyarrow as pa  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            with record_to_csv(
+                file.name,
+                mock_connection.inject_response(
+                    pa.Table,
+                    pa.table(pd.DataFrame({"ID": list(range(10))})),
+                ).execute_map(pa.Table, "select 1 as ID"),
+                limit=5,
+            ) as cursor:
+                assert cursor.fetch_arrow_all().equals(
+                    pa.table(pd.DataFrame({"ID": list(range(5))}))
+                )
+
+    @pytest.mark.skipif(
+        not (USE_PANDAS and USE_PYARROW), reason="pyarrow is not installed"
+    )
+    def test_record_to_csv_and_fetch_arrow_batches_with_limit_options(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        import pandas as pd  # type: ignore[import]
+        import pyarrow as pa  # type: ignore[import]
+
+        with tempfile.NamedTemporaryFile() as file:
+            with record_to_csv(
+                file.name,
+                mock_connection.inject_response(
+                    pa.Table,
+                    pa.table(
+                        pd.DataFrame({"ID": list(range(10))}),
+                    ),
+                ).execute_map(pa.Table, "select 1 as ID"),
+                limit=5,
+            ) as cursor:
+                for batch in cursor.fetch_arrow_batches():
+                    assert batch.equals(pa.table(pd.DataFrame({"ID": list(range(5))})))

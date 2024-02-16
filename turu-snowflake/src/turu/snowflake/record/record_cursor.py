@@ -43,3 +43,34 @@ class RecordCursor(  # type: ignore[override]
                         return
 
         return batches
+
+    def fetch_arrow_all(self) -> GenericPyArrowTable:
+        table = cast(GenericPyArrowTable, self._cursor.fetch_arrow_all())  # type: ignore[assignment]
+
+        if isinstance(self._recorder, turu.core.record.CsvRecorder):
+            if limit := self._recorder._options.get("limit"):
+                table = table.slice(0, limit)
+
+            table.to_pandas().to_csv(
+                self._recorder.file,
+                index=False,
+                header=self._recorder._options.get("header", True),
+            )
+
+        return table
+
+    def fetch_arrow_batches(self) -> Iterator[GenericPyArrowTable]:
+        batches = cast(
+            Iterator[GenericPyArrowTable],
+            self._cursor.fetch_arrow_batches(),  # type: ignore[assignment]
+        )
+        if isinstance(self._recorder, turu.core.record.CsvRecorder):
+            if limit := self._recorder._options.get("limit"):
+                for batch in batches:
+                    yield batch.slice(0, limit)
+
+                    limit -= batch.num_rows
+                    if limit <= 0:
+                        return
+
+        return batches
