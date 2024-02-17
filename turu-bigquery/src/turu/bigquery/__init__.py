@@ -1,18 +1,10 @@
 import importlib.metadata
 
-from .connection import Connection
-from .cursor import Cursor
-from .mock_connection import MockConnection
-from .mock_cursor import MockCursor
+from .connection import Connection as Connection
+from .cursor import Cursor as Cursor
+from .mock_connection import MockConnection as MockConnection
+from .mock_cursor import MockCursor as MockCursor
 
 __version__ = importlib.metadata.version("turu-bigquery")
-
-__all__ = [
-    "connect",
-    "Connection",
-    "Cursor",
-    "MockConnection",
-    "MockCursor",
-]
 
 connect = Connection.connect
