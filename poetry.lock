@@ -744,13 +744,13 @@ grpc = ["grpcio (>=1.44.0,<2.0.0.dev0)"]
 
 [[package]]
 name = "griffe"
-version = "0.40.1"
+version = "0.42.0"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "griffe-0.40.1-py3-none-any.whl", hash = "sha256:5b8c023f366fe273e762131fe4bfd141ea56c09b3cb825aa92d06a82681cfd93"},
-    {file = "griffe-0.40.1.tar.gz", hash = "sha256:66c48a62e2ce5784b6940e603300fcfb807b6f099b94e7f753f1841661fd5c7c"},
+    {file = "griffe-0.42.0-py3-none-any.whl", hash = "sha256:384df6b802a60f70e65fdb7e83f5b27e2da869a12eac85b25b55250012dbc263"},
+    {file = "griffe-0.42.0.tar.gz", hash = "sha256:fb83ee602701ffdf99c9a6bf5f0a5a3bd877364b3bffb2c451dc8fbd9645b0cf"},
 ]
 
 [package.dependencies]
@@ -2671,4 +2671,4 @@ sqlite3 = ["turu-sqlite3"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "e3a2b725a61a4ae6012b035782e16113b6d200b163b13a4e8595756e5f3721e4"
+content-hash = "4370c56ea23c47bcbb534dd6ad34ccb5733a192378ebf6aa19e1d87fc051baa5"
