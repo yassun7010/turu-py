@@ -1303,17 +1303,17 @@ xml = ["lxml (>=4.9.2)"]
 
 [[package]]
 name = "pandera"
-version = "0.18.0"
+version = "0.18.3"
 description = "A light-weight and flexible data validation and testing tool for statistical data objects."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pandera-0.18.0-py3-none-any.whl", hash = "sha256:fe2da835a16df5a7e49fbfb828f1eeaea9d6f4534f124630957e64fef53e7e73"},
-    {file = "pandera-0.18.0.tar.gz", hash = "sha256:97ab33d884362c0bb99668a12be2855d15c1a71f4934c588a999947b47764bc1"},
+    {file = "pandera-0.18.3-py3-none-any.whl", hash = "sha256:376faf746db57517f7fd85f234fa193e34266e7bcd1781e5c5912befbc180b98"},
+    {file = "pandera-0.18.3.tar.gz", hash = "sha256:47dd2e10ed7d2a2bc9cfd154b76b8bcd065a9bf1413d00de902d31c7afeec014"},
 ]
 
 [package.dependencies]
-multimethod = "*"
+multimethod = "<=1.10.0"
 numpy = ">=1.19.0"
 packaging = ">=20.0"
 pandas = ">=1.2.0"
@@ -1323,7 +1323,7 @@ typing-inspect = ">=0.6.0"
 wrapt = "*"
 
 [package.extras]
-all = ["black", "dask", "fastapi", "frictionless (<=4.40.8)", "geopandas", "hypothesis (>=5.41.1)", "modin", "pandas-stubs", "pyspark (>=3.2.0)", "pyyaml (>=5.1)", "ray", "scipy", "shapely"]
+all = ["black", "dask", "fastapi", "frictionless (<=4.40.8)", "geopandas", "hypothesis (>=6.92.7)", "modin", "pandas-stubs", "pyspark (>=3.2.0)", "pyyaml (>=5.1)", "ray", "scipy", "shapely"]
 dask = ["dask"]
 fastapi = ["fastapi"]
 geopandas = ["geopandas", "shapely"]
@@ -1334,7 +1334,7 @@ modin-dask = ["dask", "modin"]
 modin-ray = ["modin", "ray"]
 mypy = ["pandas-stubs"]
 pyspark = ["pyspark (>=3.2.0)"]
-strategies = ["hypothesis (>=5.41.1)"]
+strategies = ["hypothesis (>=6.92.7)"]
 
 [[package]]
 name = "pathspec"
