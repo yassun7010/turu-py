@@ -41,16 +41,14 @@ class MockAsyncConnection(turu.core.async_connection.AsyncConnection):
         self,
         row_type: None,
         response: Union[Optional[Sequence[Any]], Exception] = None,
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response(
         self,
         row_type: Type[GenericRowType],
         response: Union[Sequence[GenericRowType], Exception],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     def inject_response(
         self,
@@ -66,8 +64,7 @@ class MockAsyncConnection(turu.core.async_connection.AsyncConnection):
         row_type: None,
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response_from_csv(
@@ -75,8 +72,7 @@ class MockAsyncConnection(turu.core.async_connection.AsyncConnection):
         row_type: Type[GenericRowType],
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     def inject_response_from_csv(
         self,
@@ -106,5 +102,4 @@ class MockAsyncConnection(turu.core.async_connection.AsyncConnection):
         pass
 
     @abstractmethod
-    async def cursor(self) -> MockAsyncCursor[Never, Any]:
-        ...
+    async def cursor(self) -> MockAsyncCursor[Never, Any]: ...

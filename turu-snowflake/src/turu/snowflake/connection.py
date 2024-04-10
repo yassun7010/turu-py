@@ -176,8 +176,7 @@ class Connection(turu.core.connection.Connection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[GenericNewRowType, Never, Never]:
-        ...
+    ) -> Cursor[GenericNewRowType, Never, Never]: ...
 
     @overload
     def execute_map(
@@ -187,8 +186,7 @@ class Connection(turu.core.connection.Connection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, GenericNewPandasDataFrame, Never]:
-        ...
+    ) -> Cursor[Never, GenericNewPandasDataFrame, Never]: ...
 
     @overload
     def execute_map(
@@ -198,8 +196,7 @@ class Connection(turu.core.connection.Connection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, Never, GenericNewPyArrowTable]:
-        ...
+    ) -> Cursor[Never, Never, GenericNewPyArrowTable]: ...
 
     @overload
     def execute_map(
@@ -209,8 +206,7 @@ class Connection(turu.core.connection.Connection):
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
-        ...
+    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]: ...
 
     @override
     def execute_map(
@@ -260,8 +256,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[GenericNewRowType, Never, Never]:
-        ...
+    ) -> Cursor[GenericNewRowType, Never, Never]: ...
 
     @overload
     def executemany_map(
@@ -271,8 +266,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, GenericNewPandasDataFrame, Never]:
-        ...
+    ) -> Cursor[Never, GenericNewPandasDataFrame, Never]: ...
 
     @overload
     def executemany_map(
@@ -282,8 +276,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, Never, GenericNewPyArrowTable]:
-        ...
+    ) -> Cursor[Never, Never, GenericNewPyArrowTable]: ...
 
     @overload
     def executemany_map(
@@ -293,8 +286,7 @@ class Connection(turu.core.connection.Connection):
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]:
-        ...
+    ) -> Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]: ...
 
     @override
     def executemany_map(

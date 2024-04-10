@@ -134,8 +134,7 @@ class AsyncCursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
-        ...
+    ) -> "AsyncCursor[GenericNewRowType, Never, Never]": ...
 
     @overload
     async def execute_map(
@@ -145,8 +144,7 @@ class AsyncCursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]":
-        ...
+    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]": ...
 
     @overload
     async def execute_map(
@@ -156,8 +154,7 @@ class AsyncCursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]": ...
 
     @overload
     async def execute_map(
@@ -167,8 +164,9 @@ class AsyncCursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
+    ) -> (
+        "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]"
+    ): ...
 
     @override
     async def execute_map(
@@ -210,8 +208,7 @@ class AsyncCursor(
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[GenericNewRowType, Never, Never]":
-        ...
+    ) -> "AsyncCursor[GenericNewRowType, Never, Never]": ...
 
     @overload
     async def executemany_map(
@@ -221,8 +218,7 @@ class AsyncCursor(
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]":
-        ...
+    ) -> "AsyncCursor[Never, GenericNewPandasDataFrame, Never]": ...
 
     @overload
     async def executemany_map(
@@ -232,8 +228,7 @@ class AsyncCursor(
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
+    ) -> "AsyncCursor[Never, Never, GenericNewPyArrowTable]": ...
 
     @overload
     async def executemany_map(
@@ -243,8 +238,9 @@ class AsyncCursor(
         seq_of_parameters: "Sequence[Any]",
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
+    ) -> (
+        "AsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]"
+    ): ...
 
     @override
     async def executemany_map(
