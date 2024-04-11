@@ -49,16 +49,14 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         response: Union[
             Sequence[GenericRowType], Optional[GenericRowType], Exception
         ] = None,
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response(
         self,
         row_type: Type[GenericRowType],
         response: Union[Sequence[GenericRowType], GenericRowType, Exception],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response(
@@ -67,16 +65,14 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         response: Union[
             Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
         ],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response(
         self,
         row_type: Type[GenericPyArrowTable],
         response: Union[Sequence[GenericPyArrowTable], GenericPyArrowTable, Exception],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response(
@@ -85,8 +81,7 @@ class MockAsyncConnection(turu.core.mock.MockAsyncConnection, AsyncConnection):
         response: Union[
             Sequence[GenericPandasDataFrame], GenericPandasDataFrame, Exception
         ],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @override
     def inject_response(  # type: ignore[override]

@@ -132,8 +132,7 @@ class Cursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[GenericNewRowType, Never, Never]":
-        ...
+    ) -> "Cursor[GenericNewRowType, Never, Never]": ...
 
     @overload
     def execute_map(
@@ -143,8 +142,7 @@ class Cursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, GenericNewPandasDataFrame, Never]":
-        ...
+    ) -> "Cursor[Never, GenericNewPandasDataFrame, Never]": ...
 
     @overload
     def execute_map(
@@ -154,8 +152,7 @@ class Cursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never,  Never, GenericNewPyArrowTable]":
-        ...
+    ) -> "Cursor[Never,  Never, GenericNewPyArrowTable]": ...
 
     @overload
     def execute_map(
@@ -165,8 +162,7 @@ class Cursor(
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
+    ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]": ...
 
     @override
     def execute_map(
@@ -241,8 +237,7 @@ class Cursor(
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
+    ) -> "Cursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]": ...
 
     @override
     def executemany_map(

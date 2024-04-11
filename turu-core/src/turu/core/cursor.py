@@ -27,34 +27,28 @@ GenericNewRowType = TypeVar("GenericNewRowType", bound=RowType)
 class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
     @property
     @abstractmethod
-    def rowcount(self) -> int:
-        ...
+    def rowcount(self) -> int: ...
 
     @property
     @abstractmethod
-    def arraysize(self) -> int:
-        ...
+    def arraysize(self) -> int: ...
 
     @arraysize.setter
     @abstractmethod
-    def arraysize(self, size: int) -> None:
-        ...
+    def arraysize(self, size: int) -> None: ...
 
     @abstractmethod
-    def close(self) -> None:
-        ...
+    def close(self) -> None: ...
 
     @abstractmethod
     def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
-    ) -> "Cursor":
-        ...
+    ) -> "Cursor": ...
 
     @abstractmethod
     def executemany(
         self, operation: str, seq_of_parameters: Sequence[Parameters], /
-    ) -> "Cursor":
-        ...
+    ) -> "Cursor": ...
 
     @abstractmethod
     def execute_map(
@@ -98,24 +92,20 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
         ...
 
     @abstractmethod
-    def fetchone(self) -> Optional[GenericRowType]:
-        ...
+    def fetchone(self) -> Optional[GenericRowType]: ...
 
     @abstractmethod
-    def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]:
-        ...
+    def fetchmany(self, size: Optional[int] = None) -> List[GenericRowType]: ...
 
     @abstractmethod
-    def fetchall(self) -> List[GenericRowType]:
-        ...
+    def fetchall(self) -> List[GenericRowType]: ...
 
     @override
     def __iter__(self) -> Self:
         return self
 
     @abstractmethod
-    def __next__(self) -> GenericRowType:
-        ...
+    def __next__(self) -> GenericRowType: ...
 
     @override
     def __enter__(self):

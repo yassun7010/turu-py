@@ -58,17 +58,17 @@ class TestTuruSnowflake:
     def test_execute_map_pandas_type(self, connection: turu.snowflake.Connection):
         import pandas as pd  # type: ignore[import]
 
-        _cursor: turu.snowflake.Cursor[
-            Never, pd.DataFrame, Never
-        ] = connection.execute_map(pd.DataFrame, "select 1")
+        _cursor: turu.snowflake.Cursor[Never, pd.DataFrame, Never] = (
+            connection.execute_map(pd.DataFrame, "select 1")
+        )
 
     @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
     def test_execute_pyarrow_type(self, connection: turu.snowflake.Connection):
         from turu.snowflake.features import PyArrowTable
 
-        _cursor: turu.snowflake.Cursor[
-            Never, Never, PyArrowTable
-        ] = connection.execute_map(PyArrowTable, "select 1")
+        _cursor: turu.snowflake.Cursor[Never, Never, PyArrowTable] = (
+            connection.execute_map(PyArrowTable, "select 1")
+        )
 
     @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
     def test_execute_map_pandera_type(self, connection: turu.snowflake.Connection):
@@ -78,9 +78,9 @@ class TestTuruSnowflake:
         class RowModel(pa.DataFrameModel):
             ID: pa.Int8
 
-        _cursor: turu.snowflake.Cursor[
-            Never, PanderaDataFrame[RowModel], Never
-        ] = connection.execute_map(RowModel, "select 1 as ID")
+        _cursor: turu.snowflake.Cursor[Never, PanderaDataFrame[RowModel], Never] = (
+            connection.execute_map(RowModel, "select 1 as ID")
+        )
 
     def test_execute_map_fetchone(self, connection: turu.snowflake.Connection):
         cursor = connection.execute_map(Row, "select 1")

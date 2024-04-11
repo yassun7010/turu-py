@@ -24,8 +24,7 @@ def record_to_csv(
     *,
     enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
-) -> "_GeneratorContextManager[turu.core.cursor.GenericCursor]":
-    ...
+) -> "_GeneratorContextManager[turu.core.cursor.GenericCursor]": ...
 
 
 @overload
@@ -35,8 +34,7 @@ def record_to_csv(
     *,
     enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
-) -> _AsyncGeneratorContextManager[turu.core.async_cursor.GenericAsyncCursor]:
-    ...
+) -> _AsyncGeneratorContextManager[turu.core.async_cursor.GenericAsyncCursor]: ...
 
 
 def record_to_csv(  # type: ignore
@@ -132,8 +130,7 @@ def record_as_csv(
     *,
     enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
-) -> "_GeneratorContextManager[turu.core.cursor.GenericCursor]":
-    ...
+) -> "_GeneratorContextManager[turu.core.cursor.GenericCursor]": ...
 
 
 @overload
@@ -143,8 +140,7 @@ def record_as_csv(
     *,
     enable: Union[str, bool, None] = True,
     **options: Unpack[CsvRecorderOptions],
-) -> _AsyncGeneratorContextManager[turu.core.async_cursor.GenericAsyncCursor]:
-    ...
+) -> _AsyncGeneratorContextManager[turu.core.async_cursor.GenericAsyncCursor]: ...
 
 
 @deprecated(

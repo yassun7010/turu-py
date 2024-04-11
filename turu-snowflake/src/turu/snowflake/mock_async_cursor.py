@@ -67,8 +67,7 @@ class MockAsyncCursor(  # type: ignore
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]":
-        ...
+    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]": ...
 
     @overload
     async def execute_map(
@@ -78,8 +77,7 @@ class MockAsyncCursor(  # type: ignore
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, GenericNewPandasDataFrame, Never]":
-        ...
+    ) -> "MockAsyncCursor[Never, GenericNewPandasDataFrame, Never]": ...
 
     @overload
     async def execute_map(
@@ -89,8 +87,7 @@ class MockAsyncCursor(  # type: ignore
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
+    ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]": ...
 
     @overload
     async def execute_map(
@@ -100,8 +97,7 @@ class MockAsyncCursor(  # type: ignore
         parameters: "Optional[Any]" = None,
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
+    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]": ...
 
     @override
     async def execute_map(  # type: ignore[override]
@@ -132,8 +128,7 @@ class MockAsyncCursor(  # type: ignore
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]":
-        ...
+    ) -> "MockAsyncCursor[GenericNewRowType, Never, Never]": ...
 
     @overload
     async def executemany_map(
@@ -143,8 +138,7 @@ class MockAsyncCursor(  # type: ignore
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, GenericNewPandasDataFrame, Never]":
-        ...
+    ) -> "MockAsyncCursor[Never, GenericNewPandasDataFrame, Never]": ...
 
     @overload
     async def executemany_map(
@@ -154,8 +148,7 @@ class MockAsyncCursor(  # type: ignore
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]":
-        ...
+    ) -> "MockAsyncCursor[Never, PanderaDataFrame[GenericNewPanderaDataFrameModel], Never]": ...
 
     @overload
     async def executemany_map(
@@ -165,8 +158,7 @@ class MockAsyncCursor(  # type: ignore
         seq_of_parameters: Sequence[Any],
         /,
         **options: Unpack[ExecuteOptions],
-    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]":
-        ...
+    ) -> "MockAsyncCursor[Never, Never, GenericNewPyArrowTable]": ...
 
     @override
     async def executemany_map(  # type: ignore[override]

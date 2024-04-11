@@ -22,23 +22,19 @@ class Connection(ConnectionProtocol):
 
     @abstractmethod
     @override
-    def close(self) -> None:
-        ...
+    def close(self) -> None: ...
 
     @abstractmethod
     @override
-    def commit(self) -> None:
-        ...
+    def commit(self) -> None: ...
 
     @abstractmethod
     @override
-    def rollback(self) -> None:
-        ...
+    def rollback(self) -> None: ...
 
     @abstractmethod
     @override
-    def cursor(self) -> turu.core.cursor.Cursor[Never, Any]:
-        ...
+    def cursor(self) -> turu.core.cursor.Cursor[Never, Any]: ...
 
     def execute(
         self,
