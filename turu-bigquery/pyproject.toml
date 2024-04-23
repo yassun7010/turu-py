@@ -33,7 +33,7 @@ bigquery-storage = ["google-cloud-bigquery-storage"]
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
 pyright = "^1.1.339"
-ruff = "^0.1.7"
+ruff = "^0.3.5"
 pytest = "^7.4.3"
 pydantic = "^2.5.2"
 pytest-xdist = "^3.5.0"

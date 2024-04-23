@@ -45,16 +45,14 @@ class MockConnection(turu.core.connection.Connection):
         self,
         row_type: None,
         response: Union[Optional[Sequence[Any]], Exception] = None,
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response(
         self,
         row_type: Type[GenericRowType],
         response: Union[Sequence[GenericRowType], Exception],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     def inject_response(
         self,
@@ -70,8 +68,7 @@ class MockConnection(turu.core.connection.Connection):
         row_type: None,
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     @overload
     def inject_response_from_csv(
@@ -79,8 +76,7 @@ class MockConnection(turu.core.connection.Connection):
         row_type: Type[GenericRowType],
         filepath: Union[str, pathlib.Path],
         **options: Unpack[CSVOptions],
-    ) -> Self:
-        ...
+    ) -> Self: ...
 
     def inject_response_from_csv(
         self,
@@ -110,5 +106,4 @@ class MockConnection(turu.core.connection.Connection):
         pass
 
     @abstractmethod
-    def cursor(self) -> MockCursor[Never, Any]:
-        ...
+    def cursor(self) -> MockCursor[Never, Any]: ...

@@ -1,17 +1,18 @@
 import pandera as pa
 import pytest
 import turu.snowflake
-from pandera.errors import SchemaInitError
-from pandera.typing import DataFrame
-from typing_extensions import Annotated
+from pandera.errors import SchemaError
+from pandera.typing import DataFrame, Series
 
 
 class User(pa.DataFrameModel):
-    id: Annotated[pa.Int64, pa.Field(ge=5)]
+    id: Series[pa.Int8] = pa.Field(ge=2, alias="ID")
 
 
 connection = turu.snowflake.connect_from_env()
 
-with pytest.raises(SchemaInitError):
-    with connection.execute_map(User, "select 1 as id union all select 2 id") as cursor:
+with pytest.raises(SchemaError):
+    with connection.execute_map(
+        User, "select 1 as id union all select 2 as id"
+    ) as cursor:
         df: DataFrame[User] = cursor.fetch_pandas_all()

@@ -11,8 +11,7 @@ class TuruError(TuruException):
 
     @property
     @abstractmethod
-    def message(self) -> str:
-        ...
+    def message(self) -> str: ...
 
     def __str__(self) -> str:
         return self.message
