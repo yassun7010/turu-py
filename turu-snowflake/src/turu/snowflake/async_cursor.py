@@ -320,7 +320,7 @@ class AsyncCursor(
         df = self._raw_cursor.fetch_pandas_all(**kwargs)
 
         if self._row_type and issubclass(self._row_type, PanderaDataFrameModel):
-            df = self._row_type.validate(df)  # type: ignore[union-attr]
+            df = self._row_type.validate(df, inplace=True)  # type: ignore[union-attr]
 
         return cast(GenericPandasDataFrame, df)
 

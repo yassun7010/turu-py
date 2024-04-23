@@ -331,7 +331,7 @@ class Cursor(
         df = self._raw_cursor.fetch_pandas_all(**kwargs)
 
         if self._row_type and issubclass(self._row_type, PanderaDataFrameModel):
-            df = self._row_type.validate(df)  # type: ignore[assignment]
+            df = self._row_type.validate(df, inplace=True)  # type: ignore[assignment]
 
         return cast(GenericPandasDataFrame, df)
 
