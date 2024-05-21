@@ -87,7 +87,7 @@ pydantic = "^2.5.3"
 pytest-cov = ">=4.1,<6.0"
 pytest-asyncio = "^0.23.3"
 pytest-xdist = "^3.5.0"
-pandera = "^0.18.0"
+pandera = ">=0.18,<0.20"
 typing-extensions = "^4.9.0"
 
 [tool.poetry.group.docs.dependencies]
