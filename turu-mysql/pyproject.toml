@@ -40,7 +40,7 @@ pytest-asyncio = "^0.23.2"
 python = "^3.8"
 typing-extensions = "^4.8.0"
 aiomysql = "^0.2.0"
-cryptography = "^41.0.7"
+cryptography = ">=41.0.7,<43.0.0"
 
 [tool.poetry.dependencies.turu-core]
 # INFO: poetry-dynamic-versioning to replace this.
