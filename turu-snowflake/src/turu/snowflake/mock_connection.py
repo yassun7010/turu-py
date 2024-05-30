@@ -40,7 +40,7 @@ class MockConnection(turu.core.mock.MockConnection, Connection):
     def cursor(
         self,
     ) -> "turu.snowflake.mock_cursor.MockCursor[Never, Never, Never]":
-        return turu.snowflake.mock_cursor.MockCursor(self._turu_mock_store)
+        return turu.snowflake.mock_cursor.MockCursor(self)
 
     @overload
     def inject_response(

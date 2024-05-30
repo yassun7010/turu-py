@@ -17,14 +17,16 @@ class TuruMockStore:
         self,
         row_type: None,
         response: Union[GenericRowType, Sequence[GenericRowType], None, Exception],
-    ): ...
+    ):
+        ...
 
     @overload
     def inject_response(
         self,
         row_type: Type[GenericRowType],
         response: Union[GenericRowType, Sequence[GenericRowType], Exception],
-    ): ...
+    ):
+        ...
 
     def inject_response(self, row_type, response):
         if row_type is not None and isinstance(response, row_type):

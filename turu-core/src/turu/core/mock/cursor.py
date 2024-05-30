@@ -124,13 +124,13 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
 
         if responses is None:
             return self.__class__(
-                self._turu_mock_store,
+                self,
                 row_type=row_type,
             )
 
         else:
             return self.__class__(
-                self._turu_mock_store,
+                self,
                 row_count=len(responses),
                 rows_iter=iter(responses),
                 row_type=row_type,

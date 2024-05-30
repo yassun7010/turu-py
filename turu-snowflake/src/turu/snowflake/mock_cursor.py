@@ -12,7 +12,7 @@ from typing import (
 
 import turu.core.cursor
 import turu.core.mock
-from turu.core.cursor import GenericNewRowType
+from turu.core.cursor import GenericNewRowType, GenericRowType
 from turu.snowflake.features import (
     GenericNewPandasDataFrame,
     GenericNewPanderaDataFrameModel,
@@ -38,6 +38,23 @@ class MockCursor(  # type: ignore
         turu.core.cursor.GenericRowType, GenericPandasDataFrame, GenericPyArrowTable
     ],  # type: ignore
 ):
+    def __init__(
+        self,
+        connection: "turu.core.mock.MockConnection",
+        *,
+        row_count: Optional[int] = None,
+        rows_iter: Optional[Iterator] = None,
+        row_type: Optional[Type[GenericRowType]] = None,
+    ):
+        turu.core.mock.MockCursor.__init__(
+            self,
+            connection._turu_mock_store,
+            row_count=row_count,
+            rows_iter=rows_iter,
+            row_type=row_type,
+        )
+        self.connection = connection
+
     @override
     def execute(
         self,
