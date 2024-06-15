@@ -763,13 +763,13 @@ grpc = ["grpcio (>=1.44.0,<2.0.0.dev0)"]
 
 [[package]]
 name = "griffe"
-version = "0.45.1"
+version = "0.45.3"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "griffe-0.45.1-py3-none-any.whl", hash = "sha256:12194c10ae07a7f46708741ad78419362cf8e5c883f449c7c48de1686611b853"},
-    {file = "griffe-0.45.1.tar.gz", hash = "sha256:84ce9243a9e63c07d55563a735a0d07ef70b46c455616c174010e7fc816f4648"},
+    {file = "griffe-0.45.3-py3-none-any.whl", hash = "sha256:ed1481a680ae3e28f91a06e0d8a51a5c9b97555aa2527abc2664447cc22337d6"},
+    {file = "griffe-0.45.3.tar.gz", hash = "sha256:02ee71cc1a5035864b97bd0dbfff65c33f6f2c8854d3bd48a791905c2b8a44b9"},
 ]
 
 [package.dependencies]
