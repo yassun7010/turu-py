@@ -220,9 +220,7 @@ class TestTuruMock:
             mock_connection.execute_map(RowDataclass, "SELECT 1")
 
     @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
-    def test_inject_operation_with_tag(
-        self, mock_connection: turu.core.mock.MockConnection
-    ):
+    def test_execute_with_tag(self, mock_connection: turu.core.mock.MockConnection):
         class Table(PydanticModel):
             pass
 
@@ -235,7 +233,7 @@ class TestTuruMock:
             )
 
     @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
-    def test_inject_operation_with_tag_when_other_table(
+    def test_execute_with_tag_when_other_table(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         class Table(PydanticModel):
@@ -251,7 +249,7 @@ class TestTuruMock:
                 cursor.execute_with_tag(tag.Insert[OtherTable], "INSERT table")
 
     @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
-    def test_inject_operation_with_tag_when_other_operation(
+    def test_execute_with_tag_when_other_operation(
         self, mock_connection: turu.core.mock.MockConnection
     ):
         class Table(PydanticModel):
