@@ -1,4 +1,4 @@
-from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type
+from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, Union
 
 from turu.core.cursor import (
     Cursor,
@@ -10,7 +10,8 @@ from turu.core.mock.exception import (
     TuruMockUnexpectedFetchError,
 )
 from turu.core.mock.store import TuruMockStore
-from typing_extensions import Self, override
+from turu.core.tag import Tag
+from typing_extensions import Never, Self, override
 
 
 class MockCursor(Cursor[GenericRowType, Parameters]):
@@ -77,6 +78,18 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
         return self._make_new_mock_cursor(row_type)
 
     @override
+    def execute_with_tag(
+        self, tag: type[Tag], operation: str, parameters: Optional[Parameters] = None
+    ) -> "MockCursor[Never, Parameters]":
+        return self._make_new_mock_cursor(None, tag)
+
+    @override
+    def executemany_with_tag(
+        self, tag: type[Tag], operation: str, seq_of_parameters: Sequence[Parameters]
+    ) -> "MockCursor[Never, Parameters]":
+        return self._make_new_mock_cursor(None, tag)
+
+    @override
     def fetchone(self) -> Optional[GenericRowType]:
         if self._rows_iter is None:
             return None
@@ -118,9 +131,11 @@ class MockCursor(Cursor[GenericRowType, Parameters]):
         return next(self._rows_iter)
 
     def _make_new_mock_cursor(
-        self, row_type: Optional[Type[GenericNewRowType]]
+        self,
+        row_type: Union[Type[GenericNewRowType], None],
+        tag: Optional[Type[Tag]] = None,
     ) -> "MockCursor":
-        responses = self._turu_mock_store.provide_response(row_type)
+        responses = self._turu_mock_store.provide_response(row_type or tag)
 
         if responses is None:
             return self.__class__(

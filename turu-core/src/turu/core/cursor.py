@@ -17,7 +17,8 @@ from turu.core.exception import TuruRowTypeMismatchError
 from turu.core.features import USE_PYDANTIC, PydanticModel
 from turu.core.protocols.cursor import CursorProtocol, Parameters
 from turu.core.protocols.dataclass import Dataclass
-from typing_extensions import Self, override
+from turu.core.tag import Tag
+from typing_extensions import Never, Self, override
 
 RowType = Union[Tuple[Any], Dataclass, PydanticModel]
 GenericRowType = TypeVar("GenericRowType", bound=RowType)
@@ -90,6 +91,38 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
             A cursor that holds a reference to an operation.
         """
         ...
+
+    def execute_with_tag(
+        self,
+        tag: type[Tag],
+        operation: str,
+        parameters: Optional[Parameters] = None,
+        /,
+    ) -> "Cursor[Never, Parameters]":
+        """Execute a database operation (Insert, Update, Delete) with a tag.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+
+        This method executes an operation (Insert, Update, Delete) that does not return a value with a tag.
+        This tag is used to verify that the specified operation is executed in order when testing with Mock.
+        """
+        return self.execute(operation, parameters)
+
+    def executemany_with_tag(
+        self,
+        tag: Type[Tag],
+        operation: str,
+        seq_of_parameters: Sequence[Parameters],
+        /,
+    ) -> "Cursor[Never, Parameters]":
+        """Execute a database operation (Insert, Update, Delete) against all parameter sequences or mappings with a tag.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+
+        This method executes an operation (Insert, Update, Delete) that does not return a value with a tag.
+        This tag is used to verify that the specified operation is executed in order when testing with Mock.
+        """
+        return self.executemany(operation, seq_of_parameters)
 
     @abstractmethod
     def fetchone(self) -> Optional[GenericRowType]: ...
