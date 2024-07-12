@@ -260,3 +260,47 @@ class TestTuruMock:
         with pytest.raises(TuruMockResponseTypeMismatchError):
             with mock_connection.cursor() as cursor:
                 cursor.execute_with_tag(tag.Update[Table], "UPDATE table")
+
+    @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
+    def test_executemany_with_tag(self, mock_connection: turu.core.mock.MockConnection):
+        class Table(PydanticModel):
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with mock_connection.cursor() as cursor:
+            assert (
+                cursor.executemany_with_tag(
+                    tag.Insert[Table], "INSERT table", []
+                ).fetchone()
+                is None
+            )
+
+    @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
+    def test_executemany_with_tag_when_other_table(
+        self, mock_connection: turu.core.mock.MockConnection
+    ):
+        class Table(PydanticModel):
+            pass
+
+        class OtherTable(PydanticModel):
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.executemany_with_tag(tag.Insert[OtherTable], "INSERT table", [])
+
+    @pytest.mark.skipif(not USE_PYDANTIC, reason="pydantic is not found")
+    def test_executemany_with_tag_when_other_operation(
+        self, mock_connection: turu.core.mock.MockConnection
+    ):
+        class Table(PydanticModel):
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.executemany_with_tag(tag.Update[Table], "UPDATE table", [])
