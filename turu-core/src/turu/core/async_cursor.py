@@ -8,11 +8,12 @@ from typing import (
     TypeVar,
 )
 
+import turu.core.tag
 from turu.core.cursor import GenericNewRowType as GenericNewRowType
 from turu.core.cursor import GenericRowType as GenericRowType
 from turu.core.protocols.async_cursor import AsyncCursorProtocol
 from turu.core.protocols.async_cursor import Parameters as Parameters
-from typing_extensions import Self, override
+from typing_extensions import Never, Self, override
 
 
 class AsyncCursor(Generic[GenericRowType, Parameters], AsyncCursorProtocol[Parameters]):
@@ -81,6 +82,38 @@ class AsyncCursor(Generic[GenericRowType, Parameters], AsyncCursorProtocol[Param
             A cursor that holds a reference to an operation.
         """
         ...
+
+    async def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: Optional[Parameters] = None,
+        /,
+    ) -> "AsyncCursor[Never, Parameters]":
+        """Execute a database operation (Insert, Update, Delete) with a tag.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+
+        This method executes an operation (Insert, Update, Delete) that does not return a value with a tag.
+        This tag is used to verify that the specified operation is executed in order when testing with Mock.
+        """
+        return await self.execute(operation, parameters)
+
+    async def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: Sequence[Parameters],
+        /,
+    ) -> "AsyncCursor[Never, Parameters]":
+        """Execute a database operation (Insert, Update, Delete) against all parameter sequences or mappings with a tag.
+
+        This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
+
+        This method executes an operation (Insert, Update, Delete) that does not return a value with a tag.
+        This tag is used to verify that the specified operation is executed in order when testing with Mock.
+        """
+        return await self.executemany(operation, seq_of_parameters)
 
     @abstractmethod
     async def fetchone(self) -> Optional[GenericRowType]: ...

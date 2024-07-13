@@ -1,8 +1,13 @@
+from dataclasses import dataclass
 from typing import NamedTuple
 
 import pytest
 from turu.bigquery import MockConnection
-from turu.core.mock.exception import TuruMockUnexpectedFetchError
+from turu.core import tag
+from turu.core.mock.exception import (
+    TuruMockResponseTypeMismatchError,
+    TuruMockUnexpectedFetchError,
+)
 
 
 class Row(NamedTuple):
@@ -70,3 +75,89 @@ class TestBigqueryMock:
         with mock_connection.execute_map(Row, "SELECT 1") as cursor:
             assert cursor.fetchall() == expected
             assert cursor.fetchall() == []
+
+    def test_execute_with_tag(self, mock_connection: MockConnection):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with mock_connection.cursor() as cursor:
+            assert (
+                cursor.execute_with_tag(tag.Insert[Table], "INSERT table").fetchone()
+                is None
+            )
+
+    def test_execute_with_tag_when_other_table(self, mock_connection: MockConnection):
+        @dataclass
+        class Table:
+            pass
+
+        @dataclass
+        class OtherTable:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.execute_with_tag(tag.Insert[OtherTable], "INSERT table")
+
+    def test_execute_with_tag_when_other_operation(
+        self, mock_connection: MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.execute_with_tag(tag.Update[Table], "UPDATE table")
+
+    def test_executemany_with_tag(self, mock_connection: MockConnection):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with mock_connection.cursor() as cursor:
+            assert (
+                cursor.executemany_with_tag(
+                    tag.Insert[Table], "INSERT table", []
+                ).fetchone()
+                is None
+            )
+
+    def test_executemany_with_tag_when_other_table(
+        self, mock_connection: MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        @dataclass
+        class OtherTable:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.executemany_with_tag(tag.Insert[OtherTable], "INSERT table", [])
+
+    def test_executemany_with_tag_when_other_operation(
+        self, mock_connection: MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.executemany_with_tag(tag.Update[Table], "UPDATE table", [])

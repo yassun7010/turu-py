@@ -17,6 +17,7 @@ from typing import (
 import turu.core.async_cursor
 import turu.core.cursor
 import turu.core.mock
+import turu.core.tag
 from turu.core.cursor import map_row
 from turu.snowflake.cursor import (
     GenericNewRowType,
@@ -274,6 +275,30 @@ class AsyncCursor(
         self._row_type = cast(Type[GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
+
+    @override
+    async def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: Optional[Any] = None,
+    ) -> "AsyncCursor[Never, Never, Never]":
+        return cast(
+            AsyncCursor,
+            await self.execute(operation, parameters),
+        )
+
+    @override
+    async def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: Sequence[Any],
+    ) -> "AsyncCursor[Never, Never, Never]":
+        return cast(
+            AsyncCursor,
+            await self.executemany(operation, seq_of_parameters),
+        )
 
     @override
     async def fetchone(self) -> Optional[GenericRowType]:

@@ -3,7 +3,8 @@ from typing import Any, List, Mapping, Optional, Sequence, Type, Union, cast
 import pymysql.cursors
 import turu.core.cursor
 import turu.core.mock
-from typing_extensions import LiteralString, override
+import turu.core.tag
+from typing_extensions import LiteralString, Never, override
 
 Parameters = Union[Sequence[Any], Mapping[str, Any]]
 
@@ -86,6 +87,24 @@ class Cursor(
         self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
         return cast(Cursor, self)
+
+    @override
+    def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: "Optional[Parameters]" = None,
+    ) -> "Cursor[Never]":
+        return cast(Cursor, self.execute(operation, parameters))
+
+    @override
+    def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: "Sequence[Parameters]",
+    ) -> "Cursor[Never]":
+        return cast(Cursor, self.executemany(operation, seq_of_parameters))
 
     @override
     def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:

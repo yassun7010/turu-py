@@ -10,7 +10,8 @@ from turu.core.mock.exception import (
     TuruMockUnexpectedFetchError,
 )
 from turu.core.mock.store import TuruMockStore
-from typing_extensions import Self, override
+from turu.core.tag import Tag
+from typing_extensions import Never, Self, override
 
 
 class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
@@ -48,13 +49,13 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
     async def execute(
         self, operation: str, parameters: Optional[Parameters] = None, /
     ) -> "MockAsyncCursor[Tuple[Any], Parameters]":
-        return self._make_new_cursor(None)
+        return self._make_new_mock_cursor(None)
 
     @override
     async def executemany(
         self, operation: str, seq_of_parameters: Sequence[Parameters], /
     ) -> "MockAsyncCursor[Tuple[Any], Parameters]":
-        return self._make_new_cursor(None)
+        return self._make_new_mock_cursor(None)
 
     @override
     async def execute_map(
@@ -64,7 +65,7 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         parameters: Optional[Parameters] = None,
         /,
     ) -> "MockAsyncCursor[GenericNewRowType, Parameters]":
-        return self._make_new_cursor(row_type)
+        return self._make_new_mock_cursor(row_type)
 
     @override
     async def executemany_map(
@@ -74,7 +75,19 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         seq_of_parameters: Sequence[Parameters],
         /,
     ) -> "MockAsyncCursor[GenericNewRowType, Parameters]":
-        return self._make_new_cursor(row_type)
+        return self._make_new_mock_cursor(row_type)
+
+    @override
+    async def execute_with_tag(
+        self, tag: type[Tag], operation: str, parameters: Optional[Parameters] = None
+    ) -> "MockAsyncCursor[Never, Parameters]":
+        return self._make_new_mock_cursor(None, tag)
+
+    @override
+    async def executemany_with_tag(
+        self, tag: type[Tag], operation: str, seq_of_parameters: Sequence[Parameters]
+    ) -> "MockAsyncCursor[Never, Parameters]":
+        return self._make_new_mock_cursor(None, tag)
 
     @override
     async def fetchone(self) -> Optional[GenericRowType]:
@@ -124,10 +137,12 @@ class MockAsyncCursor(AsyncCursor[GenericRowType, Parameters]):
         except StopIteration as e:
             raise StopAsyncIteration from e
 
-    def _make_new_cursor(
-        self, row_type: Optional[Type[GenericNewRowType]]
+    def _make_new_mock_cursor(
+        self,
+        row_type: Optional[Type[GenericNewRowType]],
+        tag: Optional[Type[Tag]] = None,
     ) -> "MockAsyncCursor":
-        responses = self._turu_mock_store.provide_response(row_type)
+        responses = self._turu_mock_store.provide_response(row_type or tag)
 
         if responses is None:
             return self.__class__(

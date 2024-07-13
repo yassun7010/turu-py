@@ -5,12 +5,18 @@ from turu.core.mock.exception import (
     TuruMockResponseTypeMismatchError,
     TuruMockStoreDataNotFoundError,
 )
+from turu.core.tag import Tag
 
 
 class TuruMockStore:
     def __init__(self):
         self._data: List[Tuple[Optional[Type], Union[Sequence, None, Exception]]] = []
         self._counter = 0
+
+    def inject_operation_with_tag(
+        self, tag: Type[Tag], exception: Optional[Exception] = None
+    ):
+        self._data.append((tag, exception))
 
     @overload
     def inject_response(
@@ -41,15 +47,14 @@ class TuruMockStore:
         if len(self._data) == 0:
             raise TuruMockStoreDataNotFoundError(self._counter)
 
-        _row_type, _response = self._data.pop(0)
+        store_row_type, store_response = self._data.pop(0)
 
-        if _row_type is not row_type and not (
-            row_type.__module__ == _row_type.__module__
-            and row_type.__name__ == _row_type.__name__  # type: ignore
-        ):
-            raise TuruMockResponseTypeMismatchError(row_type, _row_type, self._counter)
+        if store_row_type is not row_type and (str(row_type) != str(store_row_type)):
+            raise TuruMockResponseTypeMismatchError(
+                row_type, store_row_type, self._counter
+            )
 
-        if isinstance(_response, Exception):
-            raise _response
+        if isinstance(store_response, Exception):
+            raise store_response
 
-        return _response
+        return store_response
