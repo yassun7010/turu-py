@@ -282,9 +282,9 @@ class AsyncCursor(
         tag: Type[turu.core.tag.Tag],
         operation: str,
         parameters: Optional[Any] = None,
-    ) -> turu.core.async_cursor.AsyncCursor[Never, Never]:
+    ) -> "AsyncCursor[Never, Never, Never]":
         return cast(
-            turu.core.async_cursor.AsyncCursor,
+            AsyncCursor,
             await self.execute(operation, parameters),
         )
 
@@ -294,9 +294,9 @@ class AsyncCursor(
         tag: Type[turu.core.tag.Tag],
         operation: str,
         seq_of_parameters: Sequence[Any],
-    ) -> turu.core.async_cursor.AsyncCursor[Never, Never]:
+    ) -> "AsyncCursor[Never, Never, Never]":
         return cast(
-            turu.core.async_cursor.AsyncCursor,
+            AsyncCursor,
             await self.executemany(operation, seq_of_parameters),
         )
 
