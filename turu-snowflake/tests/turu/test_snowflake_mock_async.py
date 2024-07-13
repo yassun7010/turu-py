@@ -9,6 +9,7 @@ import turu.snowflake
 from turu.core import tag
 from turu.core.mock.exception import TuruMockResponseTypeMismatchError
 from turu.core.record import record_to_csv
+from turu.snowflake import MockAsyncConnection
 from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW, PyArrowTable
 from typing_extensions import Never
 
@@ -19,9 +20,7 @@ class Row(NamedTuple):
 
 class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.asyncio
-    async def test_execute(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_execute(self, mock_async_connection: MockAsyncConnection):
         mock_async_connection.inject_response(None, [(1,)])
         cursor = await mock_async_connection.execute("select 1")
         assert await cursor.fetchone() == (1,)
@@ -29,7 +28,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_named_tuple_type(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         class Row(NamedTuple):
             id: int
@@ -42,7 +41,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_dataclass_type(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         from dataclasses import dataclass
 
@@ -59,7 +58,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_execute_map_pandas_type(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
 
@@ -72,7 +71,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
     @pytest.mark.asyncio
     async def test_execute_pyarrow_type(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pyarrow as pa  # type: ignore[import]
 
@@ -90,7 +89,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
     @pytest.mark.asyncio
     async def test_execute_map_pandera_type(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
@@ -107,7 +106,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchone(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1), Row(2)]
 
@@ -120,7 +119,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchmany(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1), Row(2)]
         (
@@ -139,7 +138,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchmany_with_size(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1), Row(2), Row(3)]
         mock_async_connection.inject_response(Row, expected)
@@ -154,7 +153,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchall(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1), Row(2)]
         mock_async_connection.inject_response(Row, expected)
@@ -167,9 +166,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_executemany(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_executemany(self, mock_async_connection: MockAsyncConnection):
         expected = [(1,), (2,)]
         mock_async_connection.inject_response(None, expected)
 
@@ -181,9 +178,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_executemany_map(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_executemany_map(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
 
@@ -193,9 +188,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_connection_timeout(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_connection_timeout(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await mock_async_connection.execute_map(
@@ -205,7 +198,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_connection_num_statements(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
@@ -216,9 +209,7 @@ class TestTuruSnowflakeMockAsyncConnection:
             assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_cursor_timeout(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_cursor_timeout(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await mock_async_connection.execute_map(
@@ -228,7 +219,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_cursor_num_statements(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
@@ -240,7 +231,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_cursor_use_warehouse(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
@@ -256,7 +247,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_cursor_use_database(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
@@ -271,9 +262,7 @@ class TestTuruSnowflakeMockAsyncConnection:
             assert await cursor.fetchmany() == expected
 
     @pytest.mark.asyncio
-    async def test_cursor_use_schema(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_cursor_use_schema(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await (
@@ -287,9 +276,7 @@ class TestTuruSnowflakeMockAsyncConnection:
             assert await cursor.fetchmany() == expected
 
     @pytest.mark.asyncio
-    async def test_cursor_use_role(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_cursor_use_role(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(1)]
         mock_async_connection.inject_response(Row, expected)
         async with await (
@@ -307,9 +294,7 @@ class TestTuruSnowflakeMockAsyncConnection:
         reason="pyarrow is not installed",
     )
     @pytest.mark.asyncio
-    async def test_fetch_arrow_all(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_fetch_arrow_all(self, mock_async_connection: MockAsyncConnection):
         import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
@@ -330,7 +315,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_fetch_arrow_batches(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pyarrow as pa  # type: ignore[import]
 
@@ -348,9 +333,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
-    async def test_fetch_pandas_all(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_fetch_pandas_all(self, mock_async_connection: MockAsyncConnection):
         import pandas as pd  # type: ignore[import]
 
         expected = pd.DataFrame({"ID": [1, 2]})
@@ -365,7 +348,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_fetch_pandas_batches(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
 
@@ -385,7 +368,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_fetch_pandas_all_using_pandera_model(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
@@ -405,7 +388,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_fetch_pandas_all_using_pandera_model_raise_validation_error(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
@@ -425,7 +408,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_inject_pyarrow_response_from_csv(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pyarrow as pa  # type: ignore[import]
 
@@ -456,7 +439,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_inject_pandas_response_from_csv(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
 
@@ -485,7 +468,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_inject_pandas_response_from_csv_with_pandera_validation(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
@@ -516,7 +499,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_record_to_csv_and_fetch_pandas_all_with_limit_options(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
 
@@ -535,7 +518,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_record_to_csv_and_fetch_pandas_batches_with_limit_options(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
 
@@ -555,7 +538,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_record_to_csv_and_fetch_arrow_all_with_limit_options(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         import pyarrow as pa  # type: ignore[import]
@@ -578,7 +561,7 @@ class TestTuruSnowflakeMockAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_record_to_csv_and_fetch_arrow_batches_with_limit_options(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         import pyarrow as pa  # type: ignore[import]
@@ -596,9 +579,7 @@ class TestTuruSnowflakeMockAsyncConnection:
                     assert batch.equals(pa.table(pd.DataFrame({"ID": list(range(5))})))
 
     @pytest.mark.asyncio
-    async def test_execute_with_tag(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
-    ):
+    async def test_execute_with_tag(self, mock_async_connection: MockAsyncConnection):
         @dataclass
         class Table:
             pass
@@ -614,7 +595,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_with_tag_when_other_table(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -632,7 +613,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_with_tag_when_other_operation(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -646,7 +627,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_executemany_with_tag(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -665,7 +646,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_executemany_with_tag_when_other_table(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -685,7 +666,7 @@ class TestTuruSnowflakeMockAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_executemany_with_tag_when_other_operation(
-        self, mock_async_connection: turu.snowflake.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:

@@ -7,6 +7,7 @@ from typing import Annotated, NamedTuple, cast
 import pytest
 import turu.snowflake
 from turu.core.record import record_to_csv
+from turu.snowflake import AsyncConnection
 from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW
 from typing_extensions import Never
 
@@ -27,13 +28,13 @@ class Row(NamedTuple):
 )
 class TestTuruSnowflakeAsyncConnection:
     @pytest.mark.asyncio
-    async def test_execute(self, async_connection: turu.snowflake.AsyncConnection):
+    async def test_execute(self, async_connection: AsyncConnection):
         cursor = await async_connection.execute("select 1")
         assert await cursor.fetchall() == [(1,)]
 
     @pytest.mark.asyncio
     async def test_execute_map_named_tuple_type(
-        self, async_connection: turu.snowflake.AsyncConnection
+        self, async_connection: AsyncConnection
     ):
         class Row(NamedTuple):
             pass
@@ -43,9 +44,7 @@ class TestTuruSnowflakeAsyncConnection:
         ] = await async_connection.execute_map(Row, "select 1")
 
     @pytest.mark.asyncio
-    async def test_execute_map_dataclass_type(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_dataclass_type(self, async_connection: AsyncConnection):
         from dataclasses import dataclass
 
         @dataclass
@@ -58,9 +57,7 @@ class TestTuruSnowflakeAsyncConnection:
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
-    async def test_execute_map_pandas_type(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_pandas_type(self, async_connection: AsyncConnection):
         import pandas as pd  # type: ignore[import]
 
         _cursor: turu.snowflake.AsyncCursor[
@@ -69,9 +66,7 @@ class TestTuruSnowflakeAsyncConnection:
 
     @pytest.mark.skipif(not USE_PYARROW, reason="pyarrow is not installed")
     @pytest.mark.asyncio
-    async def test_execute_pyarrow_type(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_pyarrow_type(self, async_connection: AsyncConnection):
         import pyarrow as pa  # type: ignore[import]
 
         _cursor: turu.snowflake.AsyncCursor[
@@ -80,9 +75,7 @@ class TestTuruSnowflakeAsyncConnection:
 
     @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
     @pytest.mark.asyncio
-    async def test_execute_map_pandera_type(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_pandera_type(self, async_connection: AsyncConnection):
         import pandera as pa  # type: ignore[import]
         from turu.snowflake.features import PanderaDataFrame
 
@@ -94,23 +87,17 @@ class TestTuruSnowflakeAsyncConnection:
         ] = await async_connection.execute_map(RowModel, "select 1 as ID")
 
     @pytest.mark.asyncio
-    async def test_execute_fetchone(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_fetchone(self, async_connection: AsyncConnection):
         cursor = await async_connection.execute("select 1")
         assert await cursor.fetchone() == (1,)
 
     @pytest.mark.asyncio
-    async def test_execute_map_fetchone(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_fetchone(self, async_connection: AsyncConnection):
         async with await async_connection.execute_map(Row, "select 1") as cursor:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
-    async def test_execute_map_fetchmany(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_fetchmany(self, async_connection: AsyncConnection):
         cursor = await async_connection.execute_map(Row, "select 1 union all select 2")
         assert await cursor.fetchmany() == [Row(1)]
         assert await cursor.fetchone() == Row(2)
@@ -118,7 +105,7 @@ class TestTuruSnowflakeAsyncConnection:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchmany_with_size(
-        self, async_connection: turu.snowflake.AsyncConnection
+        self, async_connection: AsyncConnection
     ):
         cursor = await async_connection.execute_map(
             Row, "select 1 union all select 2 union all select 3"
@@ -128,16 +115,14 @@ class TestTuruSnowflakeAsyncConnection:
         assert await cursor.fetchmany(2) == [Row(3)]
 
     @pytest.mark.asyncio
-    async def test_execute_map_fetchall(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_fetchall(self, async_connection: AsyncConnection):
         cursor = await async_connection.execute_map(Row, "select 1 union all select 2")
 
         assert await cursor.fetchall() == [Row(1), Row(2)]
         assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_executemany(self, async_connection: turu.snowflake.AsyncConnection):
+    async def test_executemany(self, async_connection: AsyncConnection):
         cursor = await async_connection.executemany(
             "select 1 union all select 2", [(), ()]
         )
@@ -146,9 +131,7 @@ class TestTuruSnowflakeAsyncConnection:
         assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_executemany_map(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_executemany_map(self, async_connection: AsyncConnection):
         async with await async_connection.executemany_map(
             Row, "select 1", [(), ()]
         ) as cursor:
@@ -156,74 +139,56 @@ class TestTuruSnowflakeAsyncConnection:
             assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_execute_iter(self, async_connection: turu.snowflake.AsyncConnection):
+    async def test_execute_iter(self, async_connection: AsyncConnection):
         async with await async_connection.execute(
             "select 1 union all select 2"
         ) as cursor:
             assert [row async for row in cursor] == [(1,), (2,)]
 
     @pytest.mark.asyncio
-    async def test_execute_map_iter(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_execute_map_iter(self, async_connection: AsyncConnection):
         async with await async_connection.execute_map(
             Row, "select 1 union all select 2"
         ) as cursor:
             assert [row async for row in cursor] == [Row(1), Row(2)]
 
     @pytest.mark.asyncio
-    async def test_connection_close(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_connection_close(self, async_connection: AsyncConnection):
         await async_connection.close()
 
     @pytest.mark.asyncio
-    async def test_connection_commit(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_connection_commit(self, async_connection: AsyncConnection):
         await async_connection.commit()
 
     @pytest.mark.asyncio
-    async def test_connection_rollback(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_connection_rollback(self, async_connection: AsyncConnection):
         await async_connection.rollback()
 
     @pytest.mark.asyncio
-    async def test_cursor_rowcount(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_rowcount(self, async_connection: AsyncConnection):
         cursor = await async_connection.cursor()
         assert cursor.rowcount == -1
 
     @pytest.mark.asyncio
-    async def test_cursor_arraysize(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_arraysize(self, async_connection: AsyncConnection):
         cursor = await async_connection.cursor()
         assert cursor.arraysize == 1
 
     @pytest.mark.asyncio
-    async def test_cursor_arraysize_setter(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_arraysize_setter(self, async_connection: AsyncConnection):
         cursor = await async_connection.cursor()
         cursor.arraysize = 2
         assert cursor.arraysize == 2
 
     @pytest.mark.asyncio
-    async def test_connection_timeout(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_connection_timeout(self, async_connection: AsyncConnection):
         async with await async_connection.execute_map(
             Row, "select 1", timeout=10
         ) as cursor:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
-    async def test_connection_num_statements(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_connection_num_statements(self, async_connection: AsyncConnection):
         async with await async_connection.execute_map(
             Row, "select 1; select 2;", num_statements=2
         ) as cursor:
@@ -231,18 +196,14 @@ class TestTuruSnowflakeAsyncConnection:
             assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_cursor_timeout(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_timeout(self, async_connection: AsyncConnection):
         async with await async_connection.execute_map(
             Row, "select 1", timeout=10
         ) as cursor:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
-    async def test_cursor_num_statements(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_num_statements(self, async_connection: AsyncConnection):
         async with await async_connection.execute_map(
             Row, "select 1; select 2;", num_statements=2
         ) as cursor:
@@ -250,9 +211,7 @@ class TestTuruSnowflakeAsyncConnection:
             assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_cursor_use_warehouse(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_use_warehouse(self, async_connection: AsyncConnection):
         async with await (
             (await async_connection.cursor())
             .use_warehouse(os.environ["SNOWFLAKE_WAREHOUSE"])
@@ -261,9 +220,7 @@ class TestTuruSnowflakeAsyncConnection:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
-    async def test_cursor_use_schema(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_use_schema(self, async_connection: AsyncConnection):
         async with await (
             (await async_connection.cursor())
             .use_schema(os.environ["SNOWFLAKE_SCHEMA"])
@@ -272,9 +229,7 @@ class TestTuruSnowflakeAsyncConnection:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
-    async def test_cursor_use_database(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_use_database(self, async_connection: AsyncConnection):
         async with await (
             (await async_connection.cursor())
             .use_database(os.environ["SNOWFLAKE_DATABASE"])
@@ -283,9 +238,7 @@ class TestTuruSnowflakeAsyncConnection:
             assert await cursor.fetchone() == Row(1)
 
     @pytest.mark.asyncio
-    async def test_cursor_use_role(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_cursor_use_role(self, async_connection: AsyncConnection):
         async with await (
             (await async_connection.cursor())
             .use_role(os.environ["SNOWFLAKE_ROLE"])
@@ -298,9 +251,7 @@ class TestTuruSnowflakeAsyncConnection:
         reason="pyarrow is not installed",
     )
     @pytest.mark.asyncio
-    async def test_fetch_arrow_all(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_fetch_arrow_all(self, async_connection: AsyncConnection):
         import pyarrow  # type: ignore[import]
 
         async with await async_connection.execute_map(
@@ -315,9 +266,7 @@ class TestTuruSnowflakeAsyncConnection:
         reason="pyarrow is not installed",
     )
     @pytest.mark.asyncio
-    async def test_fetch_arrow_batches(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_fetch_arrow_batches(self, async_connection: AsyncConnection):
         import pyarrow  # type: ignore[import]
         from pandas import DataFrame  # type: ignore[import]
         from pandas.testing import assert_frame_equal  # type: ignore[import]
@@ -336,9 +285,7 @@ class TestTuruSnowflakeAsyncConnection:
         reason="pandas is not installed",
     )
     @pytest.mark.asyncio
-    async def test_fetch_pandas_all(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_fetch_pandas_all(self, async_connection: AsyncConnection):
         from pandas import DataFrame  # type: ignore[import]
 
         async with await async_connection.execute_map(
@@ -351,9 +298,7 @@ class TestTuruSnowflakeAsyncConnection:
         reason="pandas is not installed",
     )
     @pytest.mark.asyncio
-    async def test_fetch_pandas_batches(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_fetch_pandas_batches(self, async_connection: AsyncConnection):
         from pandas import DataFrame  # type: ignore[import]
         from pandas.testing import assert_frame_equal  # type: ignore[import]
 
@@ -365,9 +310,7 @@ class TestTuruSnowflakeAsyncConnection:
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
-    async def test_record_pandas_dataframe(
-        self, async_connection: turu.snowflake.AsyncConnection
-    ):
+    async def test_record_pandas_dataframe(self, async_connection: AsyncConnection):
         import pandas as pd  # type: ignore[import]
         from pandas.testing import assert_frame_equal  # type: ignore[import]
 
@@ -397,7 +340,7 @@ class TestTuruSnowflakeAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_record_pandas_dataframe_without_header_option(
-        self, async_connection: turu.snowflake.AsyncConnection
+        self, async_connection: AsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         from pandas.testing import assert_frame_equal  # type: ignore[import]
@@ -428,7 +371,7 @@ class TestTuruSnowflakeAsyncConnection:
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")
     @pytest.mark.asyncio
     async def test_record_pandas_dataframe_with_limit_option(
-        self, async_connection: turu.snowflake.AsyncConnection
+        self, async_connection: AsyncConnection
     ):
         import pandas as pd  # type: ignore[import]
         from pandas.testing import assert_frame_equal  # type: ignore[import]
@@ -462,7 +405,7 @@ class TestTuruSnowflakeAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_fetch_pandas_all_using_pandera_model(
-        self, async_connection: turu.snowflake.AsyncConnection
+        self, async_connection: AsyncConnection
     ):
         import pandera as pa  # type: ignore[import]
 
@@ -479,7 +422,7 @@ class TestTuruSnowflakeAsyncConnection:
     )
     @pytest.mark.asyncio
     async def test_fetch_pandas_all_using_pandera_model_raise_validation_error(
-        self, async_connection: turu.snowflake.AsyncConnection
+        self, async_connection: AsyncConnection
     ):
         import pandera as pa  # type: ignore[import]
         import pandera.errors  # type: ignore[import]
