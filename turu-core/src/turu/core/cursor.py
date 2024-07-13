@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from dataclasses import is_dataclass
 from typing import (
+    TYPE_CHECKING,
     Any,
     Generic,
     List,
@@ -17,12 +18,14 @@ from turu.core.exception import TuruRowTypeMismatchError
 from turu.core.features import USE_PYDANTIC, PydanticModel
 from turu.core.protocols.cursor import CursorProtocol, Parameters
 from turu.core.protocols.dataclass import Dataclass
-from turu.core.tag import Tag
 from typing_extensions import Never, Self, override
 
 RowType = Union[Tuple[Any], Dataclass, PydanticModel]
 GenericRowType = TypeVar("GenericRowType", bound=RowType)
 GenericNewRowType = TypeVar("GenericNewRowType", bound=RowType)
+
+if TYPE_CHECKING:
+    import turu.core.tag
 
 
 class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
@@ -94,7 +97,7 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
 
     def execute_with_tag(
         self,
-        tag: type[Tag],
+        tag: Type["turu.core.tag.Tag"],
         operation: str,
         parameters: Optional[Parameters] = None,
         /,
@@ -110,7 +113,7 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
 
     def executemany_with_tag(
         self,
-        tag: Type[Tag],
+        tag: Type["turu.core.tag.Tag"],
         operation: str,
         seq_of_parameters: Sequence[Parameters],
         /,

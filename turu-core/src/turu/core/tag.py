@@ -1,8 +1,6 @@
-from typing import Generic, TypeVar
+from typing import Generic
 
-from turu.core.features import PydanticModel
-
-GenericTagTarget = TypeVar("GenericTagTarget", bound=PydanticModel)
+from turu.core.cursor import GenericRowType
 
 
 class Tag:
@@ -13,7 +11,7 @@ class Tag:
     pass
 
 
-class Insert(Tag, Generic[GenericTagTarget]):
+class Insert(Tag, Generic[GenericRowType]):
     """
     Tag to specify when executing an INSERT query with `execute_with_tag`.
 
@@ -35,7 +33,7 @@ class Insert(Tag, Generic[GenericTagTarget]):
     pass
 
 
-class Update(Tag, Generic[GenericTagTarget]):
+class Update(Tag, Generic[GenericRowType]):
     """
     Tag to specify when executing an UPDATE query with `execute_with_tag`.
 
@@ -57,7 +55,7 @@ class Update(Tag, Generic[GenericTagTarget]):
     pass
 
 
-class Delete(Tag, Generic[GenericTagTarget]):
+class Delete(Tag, Generic[GenericRowType]):
     """
     Tag to specify when executing a DELETE query with `execute_with_tag`.
 
