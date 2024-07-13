@@ -16,27 +16,21 @@ Turu supports `MockConnection` for all of the database adapters.
 For queries that do not require a return value, such as INSERT,
 `MockConnection.inject_response` can be injected as `None`.
 
-```python title="production_code.py"
-def do_something(connection: turu.sqlite3.Connection):
-    with connection.execute("insert ...") as cursor:
-        ...
-
-    with connection.execute_map(Row, "select ...") as cursor:
-        ...
-
+```python
+--8<-- "docs/data/turu_testing_response.py"
 ```
 
-```python title="test_code.py"
-def test_do_something():
-    connection = turu.sqlite3.MockConnection()
+## Operation Tag Injection
 
-    # Indicates the use of the `execute` method call.
-    connection.inject_response(None)
+How can I teach `MockConnection` about operations that do not have a return value, such as `INSERT`, `UPDATE`, and `DELETE`?
 
-    # Indicates the use of the `execute_map` method call.
-    connection.inject_response(Row)
+For this purpose, `Cursor.execute_with_tag` and `MockConnection.inject_operation_with_tag` are provided.
 
-    do_something(connection)
+By injecting a tag instead of a return value, MockConnection can determine the type of operation and test whether the calls are made in the intended order.
+
+```python
+--8<-- "docs/data/turu_testing_operation_with_tag.py"
+
 ```
 
 ## Recording & Testing
