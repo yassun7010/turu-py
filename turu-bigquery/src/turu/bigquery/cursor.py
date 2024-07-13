@@ -4,7 +4,8 @@ import google.cloud.bigquery
 import google.cloud.bigquery.dbapi
 import turu.core.cursor
 import turu.core.mock
-from typing_extensions import deprecated, override
+import turu.core.tag
+from typing_extensions import Never, deprecated, override
 
 Parameter = Union[Mapping[str, Any], Sequence[Any]]
 
@@ -101,6 +102,24 @@ class Cursor(turu.core.cursor.Cursor[turu.core.cursor.GenericRowType, Parameter]
         self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
         return cast(Cursor, self)
+
+    @override
+    def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: "Optional[Parameter]" = None,
+    ) -> "Cursor[Never]":
+        return cast(Cursor, self.execute(operation, parameters))
+
+    @override
+    def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: "Sequence[Parameter]",
+    ) -> "Cursor[Never]":
+        return cast(Cursor, self.executemany(operation, seq_of_parameters))
 
     @override
     def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
