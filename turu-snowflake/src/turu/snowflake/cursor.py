@@ -15,6 +15,7 @@ from typing import (
 
 import turu.core.cursor
 import turu.core.mock
+import turu.core.tag
 from turu.core.cursor import GenericNewRowType, GenericRowType
 from turu.snowflake.features import (
     GenericNewPandasDataFrame,
@@ -269,6 +270,24 @@ class Cursor(
         self._row_type = cast(Type[GenericRowType], row_type)
 
         return cast(Cursor, self)
+
+    @override
+    def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: "Optional[Any]" = None,
+    ) -> "Cursor[Never, Never, Never]":
+        return cast(Cursor, self.execute(operation, parameters))
+
+    @override
+    def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: "Sequence[Any]",
+    ) -> "Cursor[Never, Never, Never]":
+        return cast(Cursor, self.executemany(operation, seq_of_parameters))
 
     @override
     def fetchone(self) -> Optional[GenericRowType]:

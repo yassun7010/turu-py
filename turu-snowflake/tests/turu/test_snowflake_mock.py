@@ -1,10 +1,13 @@
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from textwrap import dedent
 from typing import Annotated, NamedTuple
 
 import pytest
 import turu.snowflake
+from turu.core import tag
+from turu.core.mock.exception import TuruMockResponseTypeMismatchError
 from turu.core.record import record_to_csv
 from turu.snowflake.features import (
     USE_PANDAS,
@@ -501,3 +504,91 @@ class TestTuruSnowflakeMockConnection:
             ) as cursor:
                 for batch in cursor.fetch_arrow_batches():
                     assert batch.equals(pa.table(pd.DataFrame({"ID": list(range(5))})))
+
+    def test_execute_with_tag(self, mock_connection: turu.snowflake.MockConnection):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with mock_connection.cursor() as cursor:
+            assert (
+                cursor.execute_with_tag(tag.Insert[Table], "INSERT table").fetchone()
+                is None
+            )
+
+    def test_execute_with_tag_when_other_table(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        @dataclass
+        class OtherTable:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.execute_with_tag(tag.Insert[OtherTable], "INSERT table")
+
+    def test_execute_with_tag_when_other_operation(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.execute_with_tag(tag.Update[Table], "UPDATE table")
+
+    def test_executemany_with_tag(self, mock_connection: turu.snowflake.MockConnection):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with mock_connection.cursor() as cursor:
+            assert (
+                cursor.executemany_with_tag(
+                    tag.Insert[Table], "INSERT table", []
+                ).fetchone()
+                is None
+            )
+
+    def test_executemany_with_tag_when_other_table(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        @dataclass
+        class OtherTable:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.executemany_with_tag(tag.Insert[OtherTable], "INSERT table", [])
+
+    def test_executemany_with_tag_when_other_operation(
+        self, mock_connection: turu.snowflake.MockConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            with mock_connection.cursor() as cursor:
+                cursor.executemany_with_tag(tag.Update[Table], "UPDATE table", [])
