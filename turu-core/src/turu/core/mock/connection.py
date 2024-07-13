@@ -42,15 +42,15 @@ class MockConnection(turu.core.connection.Connection):
         return self
 
     @overload
-    def inject_operation_with_tag(self, tag: type[Tag]) -> Self: ...
+    def inject_operation_with_tag(self, tag: Type[Tag]) -> Self: ...
 
     @overload
     def inject_operation_with_tag(
-        self, tag: type[Tag], exception: Exception
+        self, tag: Type[Tag], exception: Exception
     ) -> Self: ...
 
     def inject_operation_with_tag(
-        self, tag: type[Tag], exception: Optional[Exception] = None
+        self, tag: Type[Tag], exception: Optional[Exception] = None
     ):
         self._turu_mock_store.inject_operation_with_tag(tag, exception)
         return self

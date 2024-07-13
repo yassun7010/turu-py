@@ -14,6 +14,7 @@ import turu.core.async_connection
 from turu.core.cursor import GenericRowType, map_row
 from turu.core.mock.connection import CSVOptions
 from turu.core.mock.store import TuruMockStore
+from turu.core.tag import Tag
 from typing_extensions import Never, Self, Unpack
 
 from .async_cursor import MockAsyncCursor
@@ -34,6 +35,20 @@ class MockAsyncConnection(turu.core.async_connection.AsyncConnection):
     def chain(self) -> Self:
         """this method is just for code formatting by black."""
 
+        return self
+
+    @overload
+    def inject_operation_with_tag(self, tag: Type[Tag]) -> Self: ...
+
+    @overload
+    def inject_operation_with_tag(
+        self, tag: Type[Tag], exception: Exception
+    ) -> Self: ...
+
+    def inject_operation_with_tag(
+        self, tag: Type[Tag], exception: Optional[Exception] = None
+    ):
+        self._turu_mock_store.inject_operation_with_tag(tag, exception)
         return self
 
     @overload

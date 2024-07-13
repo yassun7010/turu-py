@@ -106,8 +106,8 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
 
-        This method executes an operation (Insert, Update, Delete) that does not return a value with a tag.
-        This tag is used to verify that the specified operation is executed in order when testing with Mock.
+        This method is provided for testing,
+        and is intended to be used in conjunction with `MockConnection.inject_operation_with_tag`.
         """
         return self.execute(operation, parameters)
 
@@ -122,8 +122,8 @@ class Cursor(Generic[GenericRowType, Parameters], CursorProtocol[Parameters]):
 
         This is not defined in [PEP 249](https://peps.python.org/pep-0249/),
 
-        This method executes an operation (Insert, Update, Delete) that does not return a value with a tag.
-        This tag is used to verify that the specified operation is executed in order when testing with Mock.
+        This method is provided for testing,
+        and is intended to be used in conjunction with `MockConnection.inject_operation_with_tag`.
         """
         return self.executemany(operation, seq_of_parameters)
 

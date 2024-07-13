@@ -1,7 +1,12 @@
+from dataclasses import dataclass
 from typing import NamedTuple
 
 import pytest
-from turu.core.mock.exception import TuruMockUnexpectedFetchError
+from turu.core import tag
+from turu.core.mock.exception import (
+    TuruMockResponseTypeMismatchError,
+    TuruMockUnexpectedFetchError,
+)
 from turu.sqlite3.mock_async_connection import MockAsyncConnection
 
 
@@ -80,3 +85,103 @@ class TestTuruSqlite3MockAsync:
         async with await mock_async_connection.execute_map(Row, "SELECT 1") as cursor:
             assert await cursor.fetchall() == expected
             assert await cursor.fetchall() == []
+
+    @pytest.mark.asyncio
+    async def test_execute_with_tag(self, mock_async_connection: MockAsyncConnection):
+        @dataclass
+        class Table:
+            pass
+
+        mock_async_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        async with await mock_async_connection.cursor() as cursor:
+            assert (
+                await (
+                    await cursor.execute_with_tag(tag.Insert[Table], "INSERT table")
+                ).fetchone()
+            ) is None
+
+    @pytest.mark.asyncio
+    async def test_execute_with_tag_when_other_table(
+        self, mock_async_connection: MockAsyncConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        @dataclass
+        class OtherTable:
+            pass
+
+        mock_async_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            async with await mock_async_connection.cursor() as cursor:
+                await cursor.execute_with_tag(tag.Insert[OtherTable], "INSERT table")
+
+    @pytest.mark.asyncio
+    async def test_execute_with_tag_when_other_operation(
+        self, mock_async_connection: MockAsyncConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_async_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            async with await mock_async_connection.cursor() as cursor:
+                await cursor.execute_with_tag(tag.Update[Table], "UPDATE table")
+
+    @pytest.mark.asyncio
+    async def test_executemany_with_tag(
+        self, mock_async_connection: MockAsyncConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_async_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        async with await mock_async_connection.cursor() as cursor:
+            assert (
+                await (
+                    await cursor.executemany_with_tag(
+                        tag.Insert[Table], "INSERT table", []
+                    )
+                ).fetchone()
+            ) is None
+
+    @pytest.mark.asyncio
+    async def test_executemany_with_tag_when_other_table(
+        self, mock_async_connection: MockAsyncConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        @dataclass
+        class OtherTable:
+            pass
+
+        mock_async_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            async with await mock_async_connection.cursor() as cursor:
+                await cursor.executemany_with_tag(
+                    tag.Insert[OtherTable], "INSERT table", []
+                )
+
+    @pytest.mark.asyncio
+    async def test_executemany_with_tag_when_other_operation(
+        self, mock_async_connection: MockAsyncConnection
+    ):
+        @dataclass
+        class Table:
+            pass
+
+        mock_async_connection.inject_operation_with_tag(tag.Insert[Table])
+
+        with pytest.raises(TuruMockResponseTypeMismatchError):
+            async with await mock_async_connection.cursor() as cursor:
+                await cursor.executemany_with_tag(tag.Update[Table], "UPDATE table", [])

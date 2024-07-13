@@ -3,8 +3,9 @@ from typing import Any, Iterator, List, Optional, Sequence, Tuple, Type, cast
 import aiosqlite
 import turu.core.async_cursor
 import turu.core.mock
+import turu.core.tag
 from turu.core.cursor import map_row
-from typing_extensions import override
+from typing_extensions import Never, override
 
 
 class AsyncCursor(
@@ -81,6 +82,30 @@ class AsyncCursor(
         self._row_type = cast(Type[turu.core.async_cursor.GenericRowType], row_type)
 
         return cast(AsyncCursor, self)
+
+    @override
+    async def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: "Optional[Iterator[Any]]" = None,
+    ) -> turu.core.async_cursor.AsyncCursor[Never, Iterator[Any]]:
+        return cast(
+            turu.core.async_cursor.AsyncCursor,
+            await self.execute(operation, parameters),
+        )
+
+    @override
+    async def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: Sequence[Iterator[Any]],
+    ) -> turu.core.async_cursor.AsyncCursor[Never, Iterator[Any]]:
+        return cast(
+            turu.core.async_cursor.AsyncCursor,
+            await self.executemany(operation, seq_of_parameters),
+        )
 
     @override
     async def fetchone(self) -> Optional[turu.core.async_cursor.GenericRowType]:

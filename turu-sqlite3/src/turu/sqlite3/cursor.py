@@ -1,9 +1,19 @@
 import sqlite3
-from typing import TYPE_CHECKING, Any, List, Optional, Sequence, Tuple, Type, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    cast,
+)
 
 import turu.core.cursor
 import turu.core.mock
-from typing_extensions import override
+import turu.core.tag
+from typing_extensions import Never, override
 
 if TYPE_CHECKING:
     from sqlite3.dbapi2 import _Parameters
@@ -80,6 +90,24 @@ class Cursor(
         self._row_type = cast(Type[turu.core.cursor.GenericRowType], row_type)
 
         return cast(Cursor, self)
+
+    @override
+    def execute_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        parameters: "Optional[_Parameters]" = None,
+    ) -> "Cursor[Never]":
+        return cast(Cursor, self.execute(operation, parameters))
+
+    @override
+    def executemany_with_tag(
+        self,
+        tag: Type[turu.core.tag.Tag],
+        operation: str,
+        seq_of_parameters: "Sequence[_Parameters]",
+    ) -> "Cursor[Never]":
+        return cast(Cursor, self.executemany(operation, seq_of_parameters))
 
     @override
     def fetchone(self) -> Optional[turu.core.cursor.GenericRowType]:
