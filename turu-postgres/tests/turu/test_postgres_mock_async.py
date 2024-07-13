@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
 import pytest
-import turu.postgres
 from pydantic import BaseModel
 from turu.core import tag
 from turu.core.mock.exception import TuruMockResponseTypeMismatchError
+from turu.postgres import MockAsyncConnection
 
 
 class Row(BaseModel):
@@ -13,9 +13,7 @@ class Row(BaseModel):
 
 class TestTuruPostgresMockAsync:
     @pytest.mark.asyncio
-    async def test_execute(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_execute(self, mock_async_connection: MockAsyncConnection):
         expected = [(1,)]
         mock_async_connection.inject_response(None, expected)
 
@@ -23,9 +21,7 @@ class TestTuruPostgresMockAsync:
             assert await cursor.fetchall() == expected
 
     @pytest.mark.asyncio
-    async def test_execute_fetchone(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_execute_fetchone(self, mock_async_connection: MockAsyncConnection):
         expected = [(1,)]
         mock_async_connection.inject_response(None, expected)
 
@@ -34,7 +30,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchone(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(id=1)]
         mock_async_connection.inject_response(Row, expected)
@@ -44,7 +40,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchmany(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(id=1), Row(id=2)]
         mock_async_connection.inject_response(Row, expected)
@@ -58,7 +54,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchmany_with_size(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         mock_async_connection.inject_response(Row, [Row(id=1), Row(id=2), Row(id=3)])
 
@@ -70,7 +66,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_execute_map_fetchall(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         expected = [Row(id=1), Row(id=2)]
 
@@ -83,9 +79,7 @@ class TestTuruPostgresMockAsync:
             assert await cursor.fetchone() is None
 
     @pytest.mark.asyncio
-    async def test_executemany(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_executemany(self, mock_async_connection: MockAsyncConnection):
         expected = [(1,)]
         mock_async_connection.inject_response(None, expected)
 
@@ -93,9 +87,7 @@ class TestTuruPostgresMockAsync:
             assert await cursor.fetchall() == expected
 
     @pytest.mark.asyncio
-    async def test_executemany_map(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_executemany_map(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(id=1), Row(id=2)]
         mock_async_connection.inject_response(Row, expected)
 
@@ -105,9 +97,7 @@ class TestTuruPostgresMockAsync:
             assert await cursor.fetchall() == expected
 
     @pytest.mark.asyncio
-    async def test_execute_iter(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_execute_iter(self, mock_async_connection: MockAsyncConnection):
         expected = [(1,), (2,)]
         mock_async_connection.inject_response(None, expected)
 
@@ -117,9 +107,7 @@ class TestTuruPostgresMockAsync:
             assert [row async for row in cursor] == expected
 
     @pytest.mark.asyncio
-    async def test_execute_map_iter(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_execute_map_iter(self, mock_async_connection: MockAsyncConnection):
         expected = [Row(id=1), Row(id=2)]
         mock_async_connection.inject_response(Row, expected)
         async with await mock_async_connection.execute_map(
@@ -129,48 +117,42 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_mock_connection_close(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         await mock_async_connection.close()
 
     @pytest.mark.asyncio
     async def test_mock_connection_commit(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         await mock_async_connection.commit()
 
     @pytest.mark.asyncio
     async def test_mock_connection_rollback(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         await mock_async_connection.rollback()
 
     @pytest.mark.asyncio
-    async def test_cursor_rowcount(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_cursor_rowcount(self, mock_async_connection: MockAsyncConnection):
         cursor = await mock_async_connection.cursor()
         assert cursor.rowcount == -1
 
     @pytest.mark.asyncio
-    async def test_cursor_arraysize(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_cursor_arraysize(self, mock_async_connection: MockAsyncConnection):
         cursor = await mock_async_connection.cursor()
         assert cursor.arraysize == 1
 
     @pytest.mark.asyncio
     async def test_cursor_arraysize_setter(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         cursor = await mock_async_connection.cursor()
         cursor.arraysize = 2
         assert cursor.arraysize == 2
 
     @pytest.mark.asyncio
-    async def test_execute_with_tag(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
-    ):
+    async def test_execute_with_tag(self, mock_async_connection: MockAsyncConnection):
         @dataclass
         class Table:
             pass
@@ -186,7 +168,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_execute_with_tag_when_other_table(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -204,7 +186,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_execute_with_tag_when_other_operation(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -218,7 +200,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_executemany_with_tag(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -237,7 +219,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_executemany_with_tag_when_other_table(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
@@ -257,7 +239,7 @@ class TestTuruPostgresMockAsync:
 
     @pytest.mark.asyncio
     async def test_executemany_with_tag_when_other_operation(
-        self, mock_async_connection: turu.postgres.MockAsyncConnection
+        self, mock_async_connection: MockAsyncConnection
     ):
         @dataclass
         class Table:
