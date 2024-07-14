@@ -14,11 +14,11 @@ class Row(BaseModel):
 def do_something(connection: turu.sqlite3.Connection):
     with record_to_csv(
         "test.csv",
-        connection.execute_map(Row, "select 1, 'a'"),
+        connection.cursor(),
         enable=os.environ.get("ENABLE_RECORDING"),
         limit=100,
-    ) as _cursor:
-        ...  # Your logic
+    ) as cursor:
+        cursor.execute_map(Row, "select 1, 'a'")
 
 
 # Test code

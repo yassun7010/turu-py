@@ -9,7 +9,11 @@ class User(pydantic.BaseModel):
 
 connection = turu.bigquery.connect()
 
-with connection.execute_map(
-    User, "select %(id)s, %(name)s", {"id": 1, "name": "taro"}
-) as cursor:
-    assert cursor.fetchone() == User(id=1, name="taro")
+with connection.cursor() as cursor:
+    user = cursor.execute_map(
+        User,
+        "select %(id)s, %(name)s",
+        {"id": 1, "name": "taro"},
+    ).fetchone()
+
+    assert user == User(id=1, name="taro")

@@ -12,7 +12,8 @@ class User(pa.DataFrameModel):
 connection = turu.snowflake.connect_from_env()
 
 with pytest.raises(SchemaError):
-    with connection.execute_map(
-        User, "select 1 as id union all select 2 as id"
-    ) as cursor:
-        df: DataFrame[User] = cursor.fetch_pandas_all()
+    with connection.cursor() as cursor:
+        df: DataFrame[User] = cursor.execute_map(
+            User,
+            "select 1 as id union all select 2 as id",
+        ).fetch_pandas_all()

@@ -16,6 +16,9 @@ with (
     .use_warehouse(os.environ["SNOWFLAKE_WAREHOUSE"])
     .use_database(os.environ["SNOWFLAKE_DATABASE"])
 ) as cursor:
-    assert cursor.execute_map(User, "select 1, 'taro'").fetchone() == User(
-        id=1, name="taro"
-    )
+    user = cursor.execute_map(
+        User,
+        "select 1, 'taro'",
+    ).fetchone()
+
+    assert user == User(id=1, name="taro")
