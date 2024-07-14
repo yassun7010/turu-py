@@ -67,8 +67,8 @@ class Row(BaseModel):
 
 connection = turu.sqlite3.connect("test.db")
 
-with connection.execute_map(Row, "select 1, 'a'") as cursor:
-    assert cursor.fetchone() == Row(id=1, name="a")
+with connection.cursor() as cursor:
+    assert cursor.execute_map(Row, "select 1, 'a'").fetchone() == Row(id=1, name="a")
 ```
 
 ## Testing
@@ -97,8 +97,8 @@ connection = turu.sqlite3.MockConnection()
 )
 
 for expected in [expected1, expected2, expected3]:
-    with connection.execute_map(Row, "select 1, 'a'") as cursor:
-        assert cursor.fetchall() == expected
+    with connection.cursor() as cursor:
+        assert cursor.execute_map(Row, "select 1, 'a'").fetchall() == expected
 ```
 
 ## Recording and Testing
@@ -118,7 +118,7 @@ from your_package.schema import Row
 def do_something(connection: turu.sqlite3.Connection):
     with record_to_csv(
         RECORD_DIR / "test.csv",
-        connection.execute_map(Row, "select 1, 'a'"),
+        connection.curosr(),
         enable=os.environ.get("ENABLE_RECORDING"),
         limit=100,
     ) as cursor:
