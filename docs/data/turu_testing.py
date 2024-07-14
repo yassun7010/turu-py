@@ -21,5 +21,5 @@ connection = turu.sqlite3.MockConnection()
 )
 
 for expected in [expected1, expected2, expected3]:
-    with connection.execute_map(Row, "select 1, 'a'") as cursor:
-        assert cursor.fetchall() == expected
+    with connection.cursor() as cursor:
+        assert cursor.execute_map(Row, "select 1, 'a'").fetchall() == expected

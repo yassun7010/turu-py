@@ -9,7 +9,11 @@ class User(pydantic.BaseModel):
 
 connection = turu.sqlite3.connect(":memory:")
 
-with connection.execute_map(
-    User, "select :id, :name", {"id": 1, "name": "taro"}
-) as cursor:
-    assert cursor.fetchone() == User(id=1, name="taro")
+with connection.cursor() as cursor:
+    user = cursor.execute_map(
+        User,
+        "select :id, :name",
+        {"id": 1, "name": "taro"},
+    ).fetchone()
+
+    assert user == User(id=1, name="taro")
