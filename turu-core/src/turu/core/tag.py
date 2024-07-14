@@ -74,3 +74,18 @@ class Delete(Tag, Generic[GenericRowType]):
     """
 
     pass
+
+
+class Truncate(Tag, Generic[GenericRowType]):
+    """
+    Tag to specify when executing a TRUNCATE query with `execute_with_tag`.
+
+    ```python
+    with database_conn.cursor() as cursor:
+        cursor.execute_with_tag(
+            tag.Truncate,
+            "TRUNCATE TABLE users"
+        )
+    """
+
+    pass
