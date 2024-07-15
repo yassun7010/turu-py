@@ -96,7 +96,7 @@ mkdocs-material = { extras = ["imaging"], version = "^9.5.3" }
 mkdocs-plugin-inline-svg = "^0.1.0"
 mkdocs-exclude = "^1.0.2"
 mkdocstrings = { extras = ["python"], version = ">=0.24,<0.26" }
-griffe = ">=0.47.0,<0.48.0"
+griffe = ">=0.47.0,<0.49.0"
 griffe-inherited-docstrings = "^1.0.0"
 mkdocs-awesome-pages-plugin = "^2.9.2"
 
