@@ -20,7 +20,7 @@ For queries that do not require a return value, such as INSERT,
 --8<-- "docs/data/turu_testing_response.py"
 ```
 
-## Operation Tag Injection
+## Operation Injection
 
 How can I teach `MockConnection` about operations that do not have a return value, such as `INSERT`, `UPDATE`, and `DELETE`?
 
