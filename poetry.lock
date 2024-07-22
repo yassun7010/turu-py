@@ -1423,13 +1423,13 @@ xml = ["lxml (>=4.9.2)"]
 
 [[package]]
 name = "pandera"
-version = "0.20.1"
+version = "0.20.3"
 description = "A light-weight and flexible data validation and testing tool for statistical data objects."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pandera-0.20.1-py3-none-any.whl", hash = "sha256:ebf5cd5e42bacc451ac332f531cca2d6788a0662a2e565cb8d095e5bc55ebb6c"},
-    {file = "pandera-0.20.1.tar.gz", hash = "sha256:eda8d8330d16b2a1ae38eddcb34c4da287ce03c84696f654399a0068663c7e4d"},
+    {file = "pandera-0.20.3-py3-none-any.whl", hash = "sha256:0c251a3947d8c6d7a0e26602e78fa425268bc9f448f3a0fded85249b158a65c2"},
+    {file = "pandera-0.20.3.tar.gz", hash = "sha256:d8542a68493d2dfe3226c186cc145be8d27535d7edf396178e93811515fe3470"},
 ]
 
 [package.dependencies]
