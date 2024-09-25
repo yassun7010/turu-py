@@ -9,16 +9,7 @@ This tool is a simple wrapper for PEP 249 that allows you to specify and inspect
 In addition to `execute`/`executemany`, we provide `execute_map`/`executemany_map` with processing to map query results to a specified type.
 
 ```python
-import pydantic
-import turu.sqlite3
-
-class Row(pydantic.BaseModel):
-    id: int
-
-conn = turu.sqlite3.connect(":memory:")
-
-with conn.execute_map(Row, "select 1") as cursor:
-    assert cursor.fetchall() == [Row(id=1)]
+--8<-- "docs/data/turu_sqlite3_sample.py"
 ```
 
 !!! note
