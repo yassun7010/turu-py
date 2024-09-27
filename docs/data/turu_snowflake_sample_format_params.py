@@ -12,7 +12,7 @@ connection = turu.snowflake.connect_from_env()
 with connection.cursor() as cursor:
     user = cursor.execute_map(
         User,
-        "select %s, %s",
+        "SELECT %s, %s",
         [1, "taro"],
     ).fetchone()
 

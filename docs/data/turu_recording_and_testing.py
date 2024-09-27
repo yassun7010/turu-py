@@ -18,7 +18,7 @@ def do_something(connection: turu.sqlite3.Connection):
         enable=os.environ.get("ENABLE_RECORDING"),
         limit=100,
     ) as cursor:
-        cursor.execute_map(Row, "select 1, 'a'")
+        cursor.execute_map(Row, "SELECT 1, 'a'")
 
 
 # Test code
