@@ -12,5 +12,5 @@ connection = turu.sqlite3.connect(":memory:")
 
 cursor1: turu.sqlite3.Cursor[Never] = connection.cursor()
 cursor2: turu.sqlite3.Cursor[Row] = cursor1.execute_map(
-    Row, "select :id, :name", {"id": 1, "name": "taro"}
+    Row, "SELECT :id, :name", {"id": 1, "name": "taro"}
 )

@@ -12,7 +12,7 @@ connection = turu.bigquery.connect()
 with connection.cursor() as cursor:
     user = cursor.execute_map(
         User,
-        "select %s, %s",
+        "SELECT %s, %s",
         [1, "taro"],
     ).fetchone()
     assert user == User(id=1, name="taro")
