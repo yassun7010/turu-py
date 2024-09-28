@@ -15,5 +15,9 @@ with pytest.raises(SchemaError):
     with connection.cursor() as cursor:
         df: DataFrame[User] = cursor.execute_map(
             User,
-            "select 1 as id union all select 2 as id",
+            """
+            SELECT 1 AS id
+            UNION ALL
+            SELECT 2 AS id
+            """,
         ).fetch_pandas_all()

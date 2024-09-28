@@ -12,7 +12,7 @@ connection = turu.sqlite3.connect(":memory:")
 with connection.cursor() as cursor:
     user = cursor.execute_map(
         User,
-        "select ?, ?",
+        "SELECT ?, ?",
         [1, "taro"],
     ).fetchone()
 
