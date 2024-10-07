@@ -777,17 +777,17 @@ colorama = ">=0.4"
 
 [[package]]
 name = "griffe-inherited-docstrings"
-version = "1.0.0"
+version = "1.0.1"
 description = "Griffe extension for inheriting docstrings."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "griffe_inherited_docstrings-1.0.0-py3-none-any.whl", hash = "sha256:46a7861401022330d39d4e937e52bae4d8b309c943204720d737835214bad8bc"},
-    {file = "griffe_inherited_docstrings-1.0.0.tar.gz", hash = "sha256:ae3e2362af11f1eb95eb81a0ddc744d4fd05649f4ec749ea4559da033d863a46"},
+    {file = "griffe_inherited_docstrings-1.0.1-py3-none-any.whl", hash = "sha256:76854a4fc10acabe223cd5cbd42637e45cafb30dcaf36f120c4752fca99e48a8"},
+    {file = "griffe_inherited_docstrings-1.0.1.tar.gz", hash = "sha256:c827ce1a571ada3fdc0f74be05ba31e40743cc909c9463fac60779a57d387e60"},
 ]
 
 [package.dependencies]
-griffe = ">=0.38"
+griffe = ">=0.49"
 
 [[package]]
 name = "grpcio"
