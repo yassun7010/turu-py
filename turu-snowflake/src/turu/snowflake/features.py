@@ -49,7 +49,7 @@ try:
     from typing import TypeVar
 
     import pandera  # type: ignore[import]  # noqa: F401
-    import pandera.typing
+    import pandera.typing  # type: ignore[import]  # noqa: F401
 
     USE_PANDERA = True
     PanderaDataFrame: TypeAlias = pandera.typing.DataFrame[T]  # type: ignore
