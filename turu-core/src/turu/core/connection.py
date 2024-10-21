@@ -1,10 +1,11 @@
 from abc import abstractmethod
 from typing import Any, Optional, Sequence, Tuple, Type
 
+from typing_extensions import Never, Self, override
+
 import turu.core.cursor
 from turu.core.protocols.connection import ConnectionProtocol
 from turu.core.protocols.cursor import Parameters
-from typing_extensions import Never, Self, override
 
 
 class Connection(ConnectionProtocol):
@@ -125,3 +126,9 @@ class Connection(ConnectionProtocol):
         """
 
         return self.cursor().executemany_map(row_type, operation, seq_of_parameters)
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.close()
