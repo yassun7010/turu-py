@@ -1,7 +1,9 @@
 from typing import Generic, TypeVar
 
-from turu.core.features import _NotSupportFeature
+import pandera.typing
 from typing_extensions import TypeAlias
+
+from turu.core.features import _NotSupportFeature
 
 T = TypeVar("T")
 
@@ -48,6 +50,7 @@ try:
     from typing import TypeVar
 
     import pandera  # type: ignore[import]  # noqa: F401
+    import pandera.typing
 
     USE_PANDERA = True
     PanderaDataFrame: TypeAlias = pandera.typing.DataFrame[T]  # type: ignore
