@@ -1,6 +1,5 @@
 from typing import Generic, TypeVar
 
-import pandera.typing
 from typing_extensions import TypeAlias
 
 from turu.core.features import _NotSupportFeature
