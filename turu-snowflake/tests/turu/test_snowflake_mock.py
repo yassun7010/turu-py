@@ -2,9 +2,11 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import dedent
-from typing import Annotated, NamedTuple
+from typing import NamedTuple
 
 import pytest
+from typing_extensions import Never
+
 import turu.snowflake
 from turu.core import tag
 from turu.core.mock.exception import TuruMockResponseTypeMismatchError
@@ -17,7 +19,6 @@ from turu.snowflake.features import (
     PandasDataFrame,
     PyArrowTable,
 )
-from typing_extensions import Never
 
 
 class Row(NamedTuple):
@@ -81,6 +82,7 @@ class TestTuruSnowflakeMockConnection:
     def test_execute_map_pandera_type(self, mock_connection: MockConnection):
         import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
+
         from turu.snowflake.features import PanderaDataFrame
 
         class RowModel(pa.DataFrameModel):
@@ -396,14 +398,15 @@ class TestTuruSnowflakeMockConnection:
         import pandas as pd  # type: ignore[import]
         import pandera as pa  # type: ignore[import]
         import pandera.errors  # type: ignore[import]
+        from pandera.typing import Series  # type: ignore[import]
 
         class RowModel(pa.DataFrameModel):
-            uuid: Annotated[pa.Int64, pa.Field(le=5)]
+            uuid: Series[int] = pa.Field(ge=5)
 
         with mock_connection.inject_response(
             RowModel, pd.DataFrame({"ID": [1, 2]})
         ).execute_map(RowModel, "select 1 as ID union all select 2 ID") as cursor:
-            with pytest.raises(pandera.errors.SchemaInitError):
+            with pytest.raises(pandera.errors.SchemaError):
                 cursor.fetch_pandas_all()
 
     @pytest.mark.skipif(not USE_PANDAS, reason="pandas is not installed")

@@ -2,7 +2,7 @@ import os
 import tempfile
 from pathlib import Path
 from textwrap import dedent
-from typing import Annotated, NamedTuple, cast
+from typing import NamedTuple, cast
 
 import pytest
 from typing_extensions import Never
@@ -347,12 +347,13 @@ class TestTuruSnowflake:
     ):
         import pandera as pa  # type: ignore[import]
         import pandera.errors  # type: ignore[import]
+        from pandera.typing import Series  # type: ignore[import]
 
         class RowModel(pa.DataFrameModel):
-            uuid: Annotated[pa.Int64, pa.Field(le=5)]
+            ID: Series[int] = pa.Field(le=5)
 
         with connection.execute_map(
             RowModel, "select 1 as ID union all select 2 ID"
         ) as cursor:
-            with pytest.raises(pandera.errors.SchemaInitError):
+            with pytest.raises(pandera.errors.SchemaError):
                 cursor.fetch_pandas_all()
