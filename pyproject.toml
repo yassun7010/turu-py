@@ -12,7 +12,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -81,7 +80,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.4.4,<9.0.0"
 taskipy = "^1.12.0"
-pyright = "^1.1.345"
+pyright = "1.1.345"
 ruff = ">=0.3.5,<0.7.0"
 pydantic = "^2.5.3"
 pytest-cov = ">=4.1,<6.0"

@@ -2,14 +2,15 @@ import os
 import tempfile
 from pathlib import Path
 from textwrap import dedent
-from typing import Annotated, NamedTuple, cast
+from typing import NamedTuple, cast
 
 import pytest
+from typing_extensions import Never
+
 import turu.snowflake
 from turu.core.record import record_to_csv
 from turu.snowflake import AsyncConnection
 from turu.snowflake.features import USE_PANDAS, USE_PANDERA, USE_PYARROW
-from typing_extensions import Never
 
 
 class TestTuruSnowflake:
@@ -77,6 +78,7 @@ class TestTuruSnowflakeAsyncConnection:
     @pytest.mark.asyncio
     async def test_execute_map_pandera_type(self, async_connection: AsyncConnection):
         import pandera as pa  # type: ignore[import]
+
         from turu.snowflake.features import PanderaDataFrame
 
         class RowModel(pa.DataFrameModel):
@@ -426,12 +428,13 @@ class TestTuruSnowflakeAsyncConnection:
     ):
         import pandera as pa  # type: ignore[import]
         import pandera.errors  # type: ignore[import]
+        from pandera.typing import Series  # type: ignore[import]
 
         class RowModel(pa.DataFrameModel):
-            uuid: Annotated[pa.Int64, pa.Field(le=5)]
+            ID: Series[int] = pa.Field(le=5)
 
         async with await async_connection.execute_map(
             RowModel, "select 1 as ID union all select 2 ID"
         ) as cursor:
-            with pytest.raises(pandera.errors.SchemaInitError):
+            with pytest.raises(pandera.errors.SchemaError):
                 await cursor.fetch_pandas_all()

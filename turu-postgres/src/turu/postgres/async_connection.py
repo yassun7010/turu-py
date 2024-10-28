@@ -39,7 +39,7 @@ class AsyncConnection(turu.core.async_connection.AsyncConnection):
                 cursor_factory=cursor_factory,
                 context=context,
                 **kwargs,
-            )
+            )  # type: ignore
         )
 
     @override
