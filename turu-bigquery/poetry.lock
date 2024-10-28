@@ -1282,4 +1282,4 @@ bigquery-storage = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "b202841cc8f85a1dd2d7482a3965e26016d6b818db9c88b30a2ccb98b816da33"
+content-hash = "30b502b529dbf414deff6186c6c8570733be1d4693d2ec5873d0b6e2840efa63"
