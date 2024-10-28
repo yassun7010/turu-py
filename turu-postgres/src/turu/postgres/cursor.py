@@ -117,7 +117,7 @@ class Cursor(
             return turu.core.cursor.map_row(self._row_type, row)
 
         else:
-            return row
+            return row  # type: ignore
 
     @override
     def fetchmany(
@@ -152,4 +152,4 @@ class Cursor(
             return turu.core.cursor.map_row(self._row_type, next_row)
 
         else:
-            return next_row
+            return next_row  # type: ignore

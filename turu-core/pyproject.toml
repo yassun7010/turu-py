@@ -44,7 +44,7 @@ pydantic = { version = "^2", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
-pyright = "^1.1.339"
+pyright = "1.1.345"
 ruff = "^0.3.5"
 pytest = "^7.4.3"
 pytest-cov = "^4.1.0"

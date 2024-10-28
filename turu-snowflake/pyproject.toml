@@ -57,7 +57,7 @@ patterns = [
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.2"
-pyright = "^1.1.339"
+pyright = "1.1.345"
 pytest = "^7.4.3"
 pydantic = "^2.5.2"
 pytest-xdist = "^3.5.0"

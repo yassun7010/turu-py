@@ -5,6 +5,8 @@ from textwrap import dedent
 from typing import Annotated, NamedTuple, cast
 
 import pytest
+from typing_extensions import Never
+
 import turu.snowflake
 from turu.core.record import record_to_csv
 from turu.snowflake import Connection
@@ -13,7 +15,6 @@ from turu.snowflake.features import (
     USE_PANDERA,
     USE_PYARROW,
 )
-from typing_extensions import Never
 
 
 def test_version():
@@ -74,6 +75,7 @@ class TestTuruSnowflake:
     @pytest.mark.skipif(not USE_PANDERA, reason="pandera is not installed")
     def test_execute_map_pandera_type(self, connection: Connection):
         import pandera as pa  # type: ignore[import]
+
         from turu.snowflake.features import PanderaDataFrame
 
         class RowModel(pa.DataFrameModel):
@@ -205,7 +207,7 @@ class TestTuruSnowflake:
         import pyarrow as pa  # type: ignore[import]
 
         expected: pa.Table = pa.table(
-            data=[pa.array([1, 2], type=pa.int8())],
+            data=[pa.array([1, 2], type=pa.int8())],  # type: ignore
             schema=pa.schema([pa.field("ID", pa.int8(), False)]),
         )  # type: ignore
 

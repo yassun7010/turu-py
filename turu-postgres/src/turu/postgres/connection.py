@@ -38,7 +38,7 @@ class Connection(turu.core.connection.Connection):
                 cursor_factory=cursor_factory,
                 context=context,
                 **kwargs,
-            )
+            )  # type: ignore
         )
 
     @override
