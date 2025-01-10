@@ -130,13 +130,13 @@ class Connection(turu.core.connection.Connection):
             connections_file_path,
             user=kwargs.pop("user", os.environ.get(user_envname)),
             password=kwargs.pop("password", os.environ.get(password_envname)),
-            account=kwargs.get("account", os.environ.get(account_envname)),
-            database=kwargs.get("database", os.environ.get(database_envname)),
-            schema=kwargs.get("schema", os.environ.get(schema_envname)),
-            warehouse=kwargs.get("warehouse", os.environ.get(warehouse_envname)),
-            role=kwargs.get("role", os.environ.get(role_envname)),
-            private_key=kwargs.get("private_key", os.environ.get(private_key_envname)),
-            private_key_passphrase=kwargs.get(
+            account=kwargs.pop("account", os.environ.get(account_envname)),
+            database=kwargs.pop("database", os.environ.get(database_envname)),
+            schema=kwargs.pop("schema", os.environ.get(schema_envname)),
+            warehouse=kwargs.pop("warehouse", os.environ.get(warehouse_envname)),
+            role=kwargs.pop("role", os.environ.get(role_envname)),
+            private_key=kwargs.pop("private_key", os.environ.get(private_key_envname)),
+            private_key_passphrase=kwargs.pop(
                 "private_key_passphrase", os.environ.get(private_key_passphrase_envname)
             ),
             **kwargs,
