@@ -83,7 +83,7 @@ taskipy = "^1.12.0"
 pyright = "1.1.345"
 ruff = ">=0.3.5,<0.7.0"
 pydantic = "^2.5.3"
-pytest-cov = ">=4.1,<6.0"
+pytest-cov = ">=4.1,<7.0"
 pytest-asyncio = ">=0.23.3,<0.25.0"
 pytest-xdist = "^3.5.0"
 pandera = ">=0.18,<0.21"
@@ -95,7 +95,7 @@ mkdocs-material = { extras = ["imaging"], version = "^9.5.3" }
 mkdocs-plugin-inline-svg = "^0.1.0"
 mkdocs-exclude = "^1.0.2"
 mkdocstrings = { extras = ["python"], version = ">=0.24,<0.27" }
-griffe = ">=0.47.0,<1.4.0"
+griffe = ">=0.47.0,<1.6.0"
 griffe-inherited-docstrings = "^1.0.0"
 mkdocs-awesome-pages-plugin = "^2.9.2"
 
