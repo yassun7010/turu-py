@@ -1,6 +1,16 @@
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, Sequence, Tuple, Type, Union, cast, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+    cast,
+    overload,
+)
 
 from typing_extensions import Never, Unpack, override
 
@@ -62,14 +72,16 @@ class Connection(turu.core.connection.Connection):
         if isinstance(private_key_passphrase, str):
             private_key_passphrase = private_key_passphrase.encode("utf-8")
 
-        if isinstance(private_key, bytes) and  private_key_passphrase is not None:
+        if isinstance(private_key, bytes) and private_key_passphrase is not None:
             import base64
-            from cryptography.hazmat.primitives.serialization import load_der_private_key
+            from cryptography.hazmat.primitives.serialization import (
+                load_der_private_key,
+            )
 
             private_key = load_der_private_key(
                 data=base64.b64decode(private_key),
                 password=private_key_passphrase,
-            ) # type: ignore[assignment]
+            )  # type: ignore[assignment]
 
         return cls(
             snowflake.connector.SnowflakeConnection(
