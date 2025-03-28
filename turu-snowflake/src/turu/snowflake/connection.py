@@ -63,25 +63,23 @@ class Connection(turu.core.connection.Connection):
         warehouse: Optional[str] = None,
         role: Optional[str] = None,
         private_key: "Union[str ,bytes ,RSAPrivateKey, None]" = None,
+        private_key_file: Union[str, Path, None] = None,
         private_key_passphrase: Union[str, bytes, None] = None,
         **kwargs,
     ) -> Self:
-        if isinstance(private_key, str):
+        if isinstance(private_key_file, (str, Path)):
+            with open(private_key_file, "rb") as key:
+                private_key = key.read()
+        elif isinstance(private_key, str):
             private_key = private_key.encode("utf-8")
 
-        if isinstance(private_key_passphrase, str):
-            private_key_passphrase = private_key_passphrase.encode("utf-8")
+        if isinstance(private_key, bytes):
+            from turu.snowflake._key_pair import load_private_key
 
-        if isinstance(private_key, bytes) and private_key_passphrase is not None:
-            import base64
-            from cryptography.hazmat.primitives.serialization import (
-                load_der_private_key,
-            )
+            if isinstance(private_key_passphrase, str):
+                private_key_passphrase = private_key_passphrase.encode("utf-8")
 
-            private_key = load_der_private_key(
-                data=base64.b64decode(private_key),
-                password=private_key_passphrase,
-            )  # type: ignore[assignment]
+            private_key = load_private_key(private_key, private_key_passphrase)
 
         return cls(
             snowflake.connector.SnowflakeConnection(
@@ -114,6 +112,7 @@ class Connection(turu.core.connection.Connection):
         role_envname: str = "SNOWFLAKE_ROLE",
         authenticator_envname: str = "SNOWFLAKE_AUTHENTICATOR",
         private_key_envname: str = "SNOWFLAKE_PRIVATE_KEY",
+        private_key_file_envname: str = "SNOWFLAKE_PRIVATE_KEY_FILE",
         private_key_passphrase_envname: str = "SNOWFLAKE_PRIVATE_KEY_PASSPHRASE",
         **kwargs: Any,
     ) -> Self:
@@ -136,6 +135,9 @@ class Connection(turu.core.connection.Connection):
             warehouse=kwargs.pop("warehouse", os.environ.get(warehouse_envname)),
             role=kwargs.pop("role", os.environ.get(role_envname)),
             private_key=kwargs.pop("private_key", os.environ.get(private_key_envname)),
+            private_key_file=kwargs.pop(
+                "private_key_file", os.environ.get(private_key_file_envname)
+            ),
             private_key_passphrase=kwargs.pop(
                 "private_key_passphrase", os.environ.get(private_key_passphrase_envname)
             ),
