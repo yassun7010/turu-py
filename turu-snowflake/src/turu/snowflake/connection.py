@@ -67,40 +67,19 @@ class Connection(turu.core.connection.Connection):
         private_key_passphrase: Union[str, bytes, None] = None,
         **kwargs,
     ) -> Self:
-        if isinstance(private_key_passphrase, str):
-            private_key_passphrase = private_key_passphrase.encode("utf-8")
-
         if isinstance(private_key_file, (str, Path)):
-            from cryptography.hazmat.primitives.serialization import (
-                load_der_private_key, load_pem_private_key, Encoding, PrivateFormat, NoEncryption
-            )
             with open(private_key_file, "rb") as key:
-                p_key = load_pem_private_key(
-                    key.read(), password=private_key_passphrase
-                )
-            private_key = p_key.private_bytes(
-                encoding=Encoding.DER,
-                format=PrivateFormat.PKCS8,
-                encryption_algorithm=NoEncryption(),
-            )
-            private_key = load_der_private_key(
-                data=private_key,
-                password=None,
-            ) # type: ignore[assignment]
-        else:
-            if isinstance(private_key, str):
-                private_key = private_key.encode("utf-8")
+                private_key = key.read()
+        elif isinstance(private_key, str):
+            private_key = private_key.encode("utf-8")
 
-            if isinstance(private_key, bytes):
-                import base64
-                from cryptography.hazmat.primitives.serialization import (
-                    load_der_private_key,
-                )
+        if isinstance(private_key, bytes):
+            from turu.snowflake._key_pair import load_private_key
 
-                private_key = load_der_private_key(
-                    data=base64.b64decode(private_key),
-                    password=private_key_passphrase,
-                )  # type: ignore[assignment]
+            if isinstance(private_key_passphrase, str):
+                private_key_passphrase = private_key_passphrase.encode("utf-8")
+
+            private_key = load_private_key(private_key, private_key_passphrase)
 
         return cls(
             snowflake.connector.SnowflakeConnection(
