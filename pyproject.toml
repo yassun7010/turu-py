@@ -81,7 +81,7 @@ optional = true
 pytest = ">=7.4.4,<9.0.0"
 taskipy = "^1.12.0"
 pyright = "1.1.345"
-ruff = ">=0.3.5,<0.7.0"
+ruff = ">=0.3.5,<0.12.0"
 pydantic = "^2.5.3"
 pytest-cov = ">=4.1,<7.0"
 pytest-asyncio = ">=0.23.3,<0.26.0"
